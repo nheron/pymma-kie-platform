@@ -20,7 +20,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <jbpm.version>7.25.0.Final</jbpm.version>
+        <jbpm.version>7.38.0.Final</jbpm.version>
 
         <spring.boot.version>2.1.2.RELEASE</spring.boot.version>
 
