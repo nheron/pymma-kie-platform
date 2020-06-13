@@ -24,7 +24,7 @@
 
         <spring.boot.version>2.1.2.RELEASE</spring.boot.version>
 
-        <spring.version>4.3.16.RELEASE</spring.version>
+        <spring.version>5.2.7.RELEASE</spring.version>
         <version.thorntail>2.2.1.Final</version.thorntail>
         <!--registry.host>registry.hub.docker.com/pymmasoftware</registry.host-->
         <registry.host>192.168.1.122:18083</registry.host>
