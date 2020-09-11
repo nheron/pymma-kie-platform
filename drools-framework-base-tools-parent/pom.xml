@@ -190,7 +190,7 @@
             <dependency>
                 <groupId>org.sonatype.sisu.inject</groupId>
                 <artifactId>guice-servlet</artifactId>
-                <version>3.2.3</version>
+                <version>4.2.0</version>
             </dependency>
             <dependency>
                 <groupId>javax.ws.rs</groupId>
