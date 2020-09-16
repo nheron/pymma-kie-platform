@@ -23,7 +23,7 @@
         <frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
         <spring.boot.version>2.2.6.RELEASE</spring.boot.version>
 
-        <spring.version>5.2.6.RELEASE</spring.version>
+        <spring.version>5.2.9.RELEASE</spring.version>
         <version.thorntail>2.2.1.Final</version.thorntail>
         <!--registry.host>registry.hub.docker.com/pymmasoftware</registry.host-->
         <registry.host>192.168.1.122:18083</registry.host>
