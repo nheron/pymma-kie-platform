@@ -271,7 +271,7 @@ public class DroolsSpringBootConsoleApplication extends SpringBootServletInitial
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("org.chtijbug.drools.console.restExpose"))
+                .apis(RequestHandlerSelectors.basePackage("org.chtijbug.drools.console.restexpose"))
                 //.paths(PathSelectors.regex("/api/wb./wb.*"))
                 .paths(PathSelectors.regex("/api/wb.*"))
                 .build()
