@@ -344,7 +344,7 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.21.0</version>
+                        <version>0.34.1</version>
 
                         <configuration>
                             <!--registry>192.168.1.184:12500</registry-->
@@ -407,7 +407,7 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.21.0</version>
+                        <version>0.34.1</version>
 
                         <configuration>
                             <registry>${registry.host}</registry>
