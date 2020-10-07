@@ -24,7 +24,7 @@ public class RuleService {
     private KafkaTemplate<String, ChtijbugObjectRequest> kafkaTemplateLogging;
 
     public RuleService() {
-       logger.info("Rule Service created");
+        logger.info("Rule Service created");
     }
 
     public Object runSessionObject(String transactionID, String id, String processID, Object input) {

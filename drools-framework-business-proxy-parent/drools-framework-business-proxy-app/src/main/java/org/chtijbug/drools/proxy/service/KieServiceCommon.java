@@ -96,7 +96,7 @@ public class KieServiceCommon {
     NewTopic responseTopic;
 
     public KieServiceCommon() {
-      //Needed
+        //Needed
     }
 
     public static String getKieServerID() {
@@ -134,37 +134,37 @@ public class KieServiceCommon {
             logger.info("initCamelBusinessRoutes.getLocalHost", e);
         }
         List<RuntimePersist> itIsMes;
-        if (runtimePort==-1){
+        if (runtimePort == -1) {
             itIsMes = runtimeRepository.findByServerNameAndHostname(serverName, hostName);
-        }else{
+        } else {
             itIsMes = runtimeRepository.findByServerName(serverName);
         }
         RuntimePersist runtimePersist;
         ServiceResponse<KieServerInfo> result = server.getInfo();
         String version = result.getResult().getVersion();
         if (itIsMes.isEmpty()) {
-             runtimePersist = new RuntimePersist(serverName, version, hostName,
+            runtimePersist = new RuntimePersist(serverName, version, hostName,
                     String.valueOf(serverPort), null,
                     hostName, RuntimePersist.STATUS.UP.toString());
-            if (runtimePort!=-1){
+            if (runtimePort != -1) {
                 runtimePersist.setHostname(runtimeServer);
                 runtimePersist.setServerPort(String.valueOf(runtimePort));
             }
             String isSwarm = System.getProperty("org.kie.server.swarm");
-            String swarmPort=System.getProperty("org.kie.server.swarm.port");
-            String baseurl="http://";
+            String swarmPort = System.getProperty("org.kie.server.swarm.port");
+            String baseurl = "http://";
             if ("1".equals(isSwarm)) {
-                if (swarmPort!= null &&
-                        swarmPort.length()>0){
+                if (swarmPort != null &&
+                        swarmPort.length() > 0) {
                     runtimePersist.setServerUrl(baseurl + serverName + ":" + swarmPort);
-                }else{
+                } else {
                     runtimePersist.setServerUrl(baseurl + serverName + ":" + serverPort);
                 }
 
             } else {
-                if (runtimePort==-1) {
+                if (runtimePort == -1) {
                     runtimePersist.setServerUrl(baseurl + hostName + ":" + serverPort);
-                }else{
+                } else {
                     runtimePersist.setServerUrl(baseurl + runtimeServer + ":" + runtimePort);
                 }
             }
@@ -260,7 +260,7 @@ public class KieServiceCommon {
                     String projectName = container.getContainerId();
                     String processId = container.getProcessID();
                     this.deleteCamelBusinessRoute(projectName);
-                    DroolsRouter droolsRouter = new DroolsRouter(camelContext, theClass, projectName, kieContainerInstance, processId);
+                    DroolsRouter droolsRouter = new DroolsRouter(camelContext, theClass, projectName,  processId);
                     camelContext.addRoutes(droolsRouter);
                     routes.put(containerId, droolsRouter);
                 }
@@ -306,59 +306,6 @@ public class KieServiceCommon {
         return result.getResult();
     }
 
-
-
-
-    public KieContainerResource createContainerWithRestBusinessService(String id, KieContainerResource container, String className, String processID) {
-
-
-        KieContainerResource containerResource = this.createContainer(id, container);
-        if (containerResource.getMessages().size() == 1
-                && containerResource.getMessages().get(0).getSeverity() != null
-                && containerResource.getMessages().get(0).getSeverity().equals(Severity.INFO)) {
-            ClassLoader localClassLoader = null;
-
-            try {
-                localClassLoader = Thread.currentThread()
-                        .getContextClassLoader();
-            } catch (ClassCastException e) {
-                logger.info("GenericResource.runSession", e);
-            }
-            try {
-                String serverName = KieServiceCommon.getKieServerID();
-                ContainerPojoPersist containerPojoPersist = containerRepository.findByServerNameAndContainerId(serverName, id);
-                if (containerPojoPersist == null) {
-                    containerPojoPersist = new ContainerPojoPersist();
-                    containerPojoPersist.setId(UUID.randomUUID().toString());
-                    containerPojoPersist.setContainerId(id);
-                    containerPojoPersist.setClassName(className);
-                    containerPojoPersist.setProjectName(id);
-                    containerPojoPersist.setServerName(serverName);
-                    containerPojoPersist.setProcessID(processID);
-
-                } else {
-                    containerPojoPersist.setContainerId(id);
-                    containerPojoPersist.setClassName(className);
-                    containerPojoPersist.setProjectName(id);
-                    containerPojoPersist.setProcessID(processID);
-                    containerPojoPersist.setServerName(serverName);
-
-                }
-                this.initCamelBusinessRoute(containerPojoPersist);
-                containerRepository.save(containerPojoPersist);
-
-            } catch (Exception e) {
-                logger.error("createContainerWithRestBusinessService", e);
-            } finally {
-                if (localClassLoader != null) {
-                    Thread.currentThread().setContextClassLoader(localClassLoader);
-                }
-            }
-        }
-        return containerResource;
-
-
-    }
 
     public KieContainerResource createContainer(String id, KieContainerResource container) {
 
@@ -429,15 +376,15 @@ public class KieServiceCommon {
         return result;
     }
     @Scheduled(fixedDelay = 5000)
-    public void updateConfig(){
-        logger.info("updateConfig - check for new version to deploy");
+    public void updateConfig() {
+        logger.debug("updateConfig - check for new version to deploy");
 
         try {
 
             String serverName = KieServiceCommon.getKieServerID();
             List<ContainerRuntimePojoPersist> containerRuntimePojoPersists = containerRuntimeRepository.findByServerNameAndHostname(serverName, hostName);
             for (ContainerRuntimePojoPersist element : containerRuntimePojoPersists) {
-                logger.info("runtime {} has status {}",element.getContainerId(),element.getStatus());
+                logger.debug("runtime {} has status {}", element.getContainerId(), element.getStatus());
                 ContainerPojoPersist containerPojoPersist = containerRepository.findByServerNameAndContainerId(serverName, element.getContainerId());
                 if (element.getStatus().equals(ContainerRuntimePojoPersist.STATUS.TODEPLOY.name())) {
                     logger.info("start deploy new container");
