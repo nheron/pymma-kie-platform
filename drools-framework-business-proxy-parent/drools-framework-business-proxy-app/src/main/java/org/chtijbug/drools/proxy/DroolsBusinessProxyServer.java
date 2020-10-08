@@ -19,9 +19,12 @@ package org.chtijbug.drools.proxy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.config.SslConfigs;
+import org.apache.kafka.common.security.auth.SecurityProtocol;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.chtijbug.drools.ChtijbugObjectRequest;
 import org.chtijbug.drools.KieContainerResponse;
@@ -57,10 +60,40 @@ public class DroolsBusinessProxyServer {
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
 
+    @Value("${pymma.kafka.activateSsl:false}")
+    private boolean activateSsl;
+
+    @Value("${pymma.kafka.sslTruststoreLocation:}")
+    private String sslTruststoreLocation;
+
+    @Value("${pymma.kafka.sslTruststorePassword:}")
+    private String sslTruststorePassword;
+
+    @Value("${pymma.kafka.sslKeyPassword:}")
+    private String sslKeyPassword;
+
+    @Value("${pymma.kafka.sslKeystorePassword:}")
+    private String sslKeystorePassword;
+
+    @Value("${pymma.kafka.sslKeystoreLocation:}")
+    private String sslKeystoreLocation;
+
+    @Value("${pymma.kafka.sslKeystoreType:}")
+    private String sslKeystoreType;
+
     @Bean
     public KafkaAdmin kafkaAdmin() {
         Map<String, Object> configs = new HashMap<>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        if (activateSsl) {
+            configs.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
+            configs.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, this.sslTruststoreLocation);
+            configs.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, this.sslTruststorePassword);
+            configs.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, this.sslKeyPassword);
+            configs.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, this.sslKeystorePassword);
+            configs.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, this.sslKeystoreLocation);
+            configs.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, this.sslKeystoreType);
+        }
         return new KafkaAdmin(configs);
     }
 
@@ -83,6 +116,15 @@ public class DroolsBusinessProxyServer {
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 JsonSerializer.class);
+        if (activateSsl) {
+            configProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
+            configProps.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, this.sslTruststoreLocation);
+            configProps.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, this.sslTruststorePassword);
+            configProps.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, this.sslKeyPassword);
+            configProps.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, this.sslKeystorePassword);
+            configProps.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, this.sslKeystoreLocation);
+            configProps.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, this.sslKeystoreType);
+        }
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -101,6 +143,15 @@ public class DroolsBusinessProxyServer {
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 JsonSerializer.class);
+        if (activateSsl) {
+            configProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
+            configProps.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, this.sslTruststoreLocation);
+            configProps.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, this.sslTruststorePassword);
+            configProps.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, this.sslKeyPassword);
+            configProps.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, this.sslKeystorePassword);
+            configProps.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, this.sslKeystoreLocation);
+            configProps.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, this.sslKeystoreType);
+        }
         DefaultKafkaProducerFactory<String, KieContainerResponse> producer = new DefaultKafkaProducerFactory<>(configProps);
         producer.transactionCapable();
         producer.setTransactionIdPrefix("trans");

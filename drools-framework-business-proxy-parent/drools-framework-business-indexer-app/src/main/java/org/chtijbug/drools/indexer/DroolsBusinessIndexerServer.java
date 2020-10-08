@@ -16,7 +16,10 @@
  */
 package org.chtijbug.drools.indexer;
 
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.config.SslConfigs;
+import org.apache.kafka.common.security.auth.SecurityProtocol;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.chtijbug.drools.ChtijbugObjectRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +47,26 @@ public class DroolsBusinessIndexerServer {
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
 
+    @Value("${pymma.kafka.activateSsl:false}")
+    private boolean activateSsl;
+
+    @Value("${pymma.kafka.sslTruststoreLocation:}")
+    private String sslTruststoreLocation;
+
+    @Value("${pymma.kafka.sslTruststorePassword:}")
+    private String sslTruststorePassword;
+
+    @Value("${pymma.kafka.sslKeyPassword:}")
+    private String sslKeyPassword;
+
+    @Value("${pymma.kafka.sslKeystorePassword:}")
+    private String sslKeystorePassword;
+
+    @Value("${pymma.kafka.sslKeystoreLocation:}")
+    private String sslKeystoreLocation;
+
+    @Value("${pymma.kafka.sslKeystoreType:}")
+    private String sslKeystoreType;
 
     @Value(value = "${kafka.index.groupid})")
     private String groupID;
@@ -54,6 +77,15 @@ public class DroolsBusinessIndexerServer {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupID);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        if (activateSsl) {
+            props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
+            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, this.sslTruststoreLocation);
+            props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, this.sslTruststorePassword);
+            props.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, this.sslKeyPassword);
+            props.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, this.sslKeystorePassword);
+            props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, this.sslKeystoreLocation);
+            props.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, this.sslKeystoreType);
+        }
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(ChtijbugObjectRequest.class));
     }
     @Bean
