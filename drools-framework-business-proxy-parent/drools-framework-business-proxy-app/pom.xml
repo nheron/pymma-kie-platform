@@ -228,7 +228,7 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.21.0</version>
+                        <version>${fabri8.plugin.version}</version>
 
                         <configuration>
                             <!--registry>192.168.1.184:12500</registry-->
@@ -291,7 +291,7 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.21.0</version>
+                        <version>${fabri8.plugin.version}</version>
 
                         <configuration>
                             <registry>${registry.host}</registry>
@@ -326,6 +326,67 @@
                             <authConfig>
                                 <username>nheron</username>
                                 <password>pymmalomme</password>
+                            </authConfig>
+                            <retries>5</retries>
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <id>mydeploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                    <goal>push</goal>
+                                </goals>
+                            </execution>
+
+                        </executions>
+
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>docker-hub</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>${fabri8.plugin.version}</version>
+
+                        <configuration>
+
+                            <verbose>true</verbose>
+                            <images>
+                                <image>
+                                    <name>pymmasoftware/runtime-proxy:${version.number}</name>
+                                    <build>
+                                        <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
+
+                                        <!--copies Jar to the maven directory (uses Assembly system)-->
+                                        <assembly>
+                                            <descriptorRef>artifact</descriptorRef>
+                                        </assembly>
+                                        <tags>
+                                            <tag>latest</tag>
+                                        </tags>
+
+                                    </build>
+
+                                    <run>
+                                        <extraHosts>
+                                            <host>mongodb:192.168.1.100</host>
+                                        </extraHosts>
+                                        <ports>
+                                            <port>8080:8080</port>
+                                        </ports>
+                                    </run>
+                                </image>
+                            </images>
+                            <authConfig>
+                                <username>pymmasoftwaredeploy</username>
+                                <password>${dockerhub.password}</password>
                             </authConfig>
                             <retries>5</retries>
                         </configuration>
