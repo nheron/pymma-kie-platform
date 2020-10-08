@@ -451,7 +451,6 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
 
         }
         ProcessInstance processInstance = this.knowledgeSession.startProcess(processName);
-
         if (this.historyListener != null) {
             try {
                 SessionStartProcessEndEvent sessionStartProcessEndEvent = new SessionStartProcessEndEvent(eventCounter.next(), processName, this.ruleBaseID, this.sessionId, processInstance.getProcessId());

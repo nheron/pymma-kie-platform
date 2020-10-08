@@ -241,7 +241,7 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.21.0</version>
+                        <version>${fabri8.plugin.version}</version>
 
                         <configuration>
                             <!--registry>192.168.1.184:12500</registry-->
@@ -339,7 +339,7 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.21.0</version>
+                        <version>${fabri8.plugin.version}</version>
 
                         <configuration>
                             <registry>${registry.host}</registry>
@@ -406,6 +406,100 @@
                             <authConfig>
                                 <username>nheron</username>
                                 <password>pymmalomme</password>
+                            </authConfig>
+                            <retries>5</retries>
+                        </configuration>
+
+                        <executions>
+
+
+                            <execution>
+                                <id>mydeploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                    <goal>push</goal>
+                                </goals>
+                            </execution>
+
+                        </executions>
+
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>docker-hub</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>${fabri8.plugin.version}</version>
+
+                        <configuration>
+                            <verbose>true</verbose>
+                            <images>
+                                <image>
+                                    <name>pymmasoftware/kie-wb:${version.number}</name>
+                                    <build>
+                                        <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
+
+                                        <!--copies Jar to the maven directory (uses Assembly system)-->
+                                        <assembly>
+                                            <mode>dir</mode>
+                                            <name>maven/</name>
+                                            <inline xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+                                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+                                                <id>middleware-rest</id>
+                                                <files>
+                                                    <file>
+                                                        <source>${project.build.directory}/kie-wb.war</source>
+                                                        <outputDirectory>./</outputDirectory>
+                                                        <destName>kie-wb.war</destName>
+                                                    </file>
+                                                    <file>
+                                                        <source>${project.build.directory}/pymma-kie-login-module.jar</source>
+                                                        <outputDirectory>./</outputDirectory>
+                                                        <destName>pymma-kie-login-module.jar</destName>
+                                                    </file>
+                                                    <file>
+                                                        <source>${project.build.directory}/bson.jar</source>
+                                                        <outputDirectory>./</outputDirectory>
+                                                        <destName>bson.jar</destName>
+                                                    </file>
+                                                    <file>
+                                                        <source>${project.build.directory}/mongodb-driver-core.jar</source>
+                                                        <outputDirectory>./</outputDirectory>
+                                                        <destName>mongodb-driver-core.jar</destName>
+                                                    </file>
+                                                    <file>
+                                                        <source>${project.build.directory}/mongodb-driver.jar</source>
+                                                        <outputDirectory>./</outputDirectory>
+                                                        <destName>mongodb-driver.jar</destName>
+                                                    </file>
+                                                </files>
+                                            </inline>
+                                        </assembly>
+
+
+                                    </build>
+
+                                    <run>
+                                        <extraHosts>
+                                            <host>mongodb:192.168.1.102</host>
+                                            <host>declasin:192.168.1.184</host>
+                                        </extraHosts>
+                                        <ports>
+                                            <port>8080:8080</port>
+                                        </ports>
+                                    </run>
+                                </image>
+                            </images>
+                            <authConfig>
+                                <username>${dockerhub.username}</username>
+                                <password>${dockerhub.password}</password>
                             </authConfig>
                             <retries>5</retries>
                         </configuration>
