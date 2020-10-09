@@ -21,7 +21,7 @@
         <jbpm.version>7.44.0.Final</jbpm.version>
         <node.version>v10.16.3</node.version>
         <npm.version>6.11.3</npm.version>
-        <frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
+        <frontend-maven-plugin.version>1.10.3</frontend-maven-plugin.version>
         <spring.boot.version>2.2.6.RELEASE</spring.boot.version>
 
         <spring.version>5.2.6.RELEASE</spring.version>
