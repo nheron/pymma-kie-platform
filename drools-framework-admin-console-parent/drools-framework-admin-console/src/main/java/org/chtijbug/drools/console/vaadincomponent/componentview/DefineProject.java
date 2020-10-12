@@ -112,7 +112,6 @@ public class DefineProject extends VerticalLayout {
             if (createMode) {
                 projectPersist.setStatus(ProjectPersist.DEFINI);
             }
-            projectPersistService.addProjectToSession(projectPersist,true);
             projectPersistService.getProjectRepository().save(projectPersist);
             deploymentView.setDataProvider();
             dialog.close();

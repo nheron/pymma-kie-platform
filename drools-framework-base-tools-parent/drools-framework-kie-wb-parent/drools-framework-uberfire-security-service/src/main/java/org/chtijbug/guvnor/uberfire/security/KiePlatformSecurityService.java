@@ -42,7 +42,7 @@ public class KiePlatformSecurityService implements UserManagementService {
         //-DconnectionString=localhost:28017 -Ddatabase=businessProxyDB
 
         this.connectionString = System.getProperty("connectionString");
-        this.databaseName=System.getProperty("database");
+        this.databaseName=System.getProperty("name");
         System.out.println("KiePlatformSecurityService initialized with databaseName = " + connectionString );
         this.mongoClient = MongoClients.create(connectionString);
         this.pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),

@@ -39,6 +39,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.PathSelectors;
@@ -56,6 +57,7 @@ import java.util.Map;
 @EnableKafka
 @PropertySource("classpath:application.properties")
 @EnableSwagger2
+@EnableScheduling
 public class DroolsSpringBootConsoleApplication extends SpringBootServletInitializer {
 
 

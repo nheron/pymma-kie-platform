@@ -3,9 +3,13 @@ package org.chtijbug.drools.console.vaadincomponent.leftMenu.Action;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import org.chtijbug.drools.console.service.ProjectPersistService;
+import org.chtijbug.drools.console.service.util.AppContext;
 import org.chtijbug.drools.console.vaadincomponent.componentperso.ComboBoxPerso;
 import org.chtijbug.drools.console.view.TemplateView;
-import org.chtijbug.guvnor.server.jaxrs.model.PlatformProjectData;
+import org.chtijbug.drools.proxy.persistence.model.ProjectPersist;
+
+import java.util.Map;
 
 public class TemplatesAction extends VerticalLayout {
 
@@ -15,16 +19,20 @@ public class TemplatesAction extends VerticalLayout {
 
     private Button edit;
 
-    private ComboBoxPerso<PlatformProjectData> spaceSelection;
+    private ComboBoxPerso<ProjectPersist> spaceSelection;
+
+    private ProjectPersistService projectPersistService;
 
     public TemplatesAction(TemplateView templateView){
 
         setClassName("leftMenu-global-action");
-
+        projectPersistService = AppContext.getApplicationContext().getBean(ProjectPersistService.class);
+        Map<String, ProjectPersist> map = projectPersistService.findProjectsConnectedUser();
 
         spaceSelection = new ComboBoxPerso<>("Project",VaadinIcon.SEARCH.create());
-        spaceSelection.getComboBox().setItems(templateView.getUserConnectedService().getUserConnected().getProjectResponses());
-        spaceSelection.getComboBox().setItemLabelGenerator(PlatformProjectData::getName);
+        spaceSelection.getComboBox().setItems(map.values());
+        spaceSelection.getComboBox().setItemLabelGenerator(ProjectPersist::getKieProjectName);
+
         spaceSelection.getComboBox().addValueChangeListener(valueChangeEvent -> {
             templateView.setDataProvider(spaceSelection.getComboBox());
         });

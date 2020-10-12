@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.chtijbug.drools.console.service.IndexerService;
 import org.chtijbug.drools.console.service.JobService;
+import org.chtijbug.drools.console.service.ProjectPersistService;
 import org.chtijbug.drools.proxy.persistence.model.KieWorkbench;
 import org.chtijbug.drools.proxy.persistence.model.User;
+import org.chtijbug.drools.proxy.persistence.model.UserGroups;
 import org.chtijbug.drools.proxy.persistence.repository.KieWorkbenchRepository;
+import org.chtijbug.drools.proxy.persistence.repository.UserGroupsRepository;
 import org.chtijbug.drools.proxy.persistence.repository.UserRepository;
 import org.chtijbug.guvnor.server.jaxrs.model.PlatformProjectData;
 import org.guvnor.rest.client.CreateProjectJobRequest;
@@ -45,11 +48,16 @@ public class AssetServiceExpose {
     private KieWorkbenchRepository kieWorkbenchRepository;
 
     @Autowired
+    private UserGroupsRepository userGroupsRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private JobService jobService;
 
+    @Autowired
+    private ProjectPersistService projectPersistService;
 
     @PostMapping(value = "/spaces",
             consumes = {javax.ws.rs.core.MediaType.APPLICATION_JSON, javax.ws.rs.core.MediaType.APPLICATION_XML},
@@ -85,6 +93,7 @@ public class AssetServiceExpose {
                     }
                     return new ResponseEntity<>(extractedResponse, clientHttpResponse.getHeaders(), clientHttpResponse.getStatusCode());
                 });
+        projectPersistService.createWorkSpaceGroupIfNeeded(request.getSpaceName(),kieWorkbench);
         jobService.executeWrite(kieWorkbench.getExternalUrl()+"/rest", connectedUser.getLogin(), connectedUser.getPassword(), null, response.getBody().getJobId(), null);
         Variant variant = Variant.mediaTypes(javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE).add().build().get(0);
         return Response.status(Response.Status.CREATED).entity(response.getBody()).variant(variant).build();
@@ -143,6 +152,8 @@ public class AssetServiceExpose {
 
 
         Variant variant = Variant.mediaTypes(javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE).add().build().get(0);
+        UserGroups workspaceUsergroup = userGroupsRepository.findByName("wrk_" + spaceName);
+        projectPersistService.createProjectGroupIfNeeded(request.getName(),kieWorkbench,null,workspaceUsergroup);
         return Response.status(Response.Status.CREATED).entity(response2.getBody()).variant(variant).build();
     }
     private RequestCallback requestCallback(final Object content, String username, String password) {

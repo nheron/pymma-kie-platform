@@ -34,6 +34,12 @@
             <scope>provided</scope>
 
         </dependency>
+        <dependency>
+            <groupId>org.uberfire</groupId>
+            <artifactId>uberfire-rest-backend</artifactId>
+            <version>${jbpm.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.kie</groupId>

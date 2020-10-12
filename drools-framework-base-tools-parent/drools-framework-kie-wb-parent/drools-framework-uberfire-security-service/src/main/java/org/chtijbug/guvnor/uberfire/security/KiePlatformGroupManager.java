@@ -16,7 +16,9 @@
 
 package org.chtijbug.guvnor.uberfire.security;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -36,6 +38,8 @@ import org.uberfire.ext.security.management.search.IdentifierRuntimeSearchEngine
 import org.uberfire.ext.security.management.util.SecurityManagementUtils;
 
 import java.util.*;
+
+import static com.mongodb.client.model.Filters.eq;
 
 /**
  * <p>Groups manager service provider implementation for Apache tomcat, when using default realm based on properties files.</p>
@@ -85,14 +89,39 @@ public class KiePlatformGroupManager  implements GroupManager, ContextualManager
 
     @Override
     public SearchResponse<Group> search(SearchRequest request) throws SecurityManagementException {
-        SearchResponse<Group> result = new SearchResponseImpl<>();
-        return result;
+        MongoCollection<Document> userCollection = database.getCollection("userGroups");
+        BasicDBObject regexQuery = new BasicDBObject();
+        regexQuery.put("name", new BasicDBObject("$regex", request.getSearchPattern() + ".*").append("$options", "i"));
+        List<Group> groups = new ArrayList<>();
+        long totalNumber = userCollection.countDocuments(regexQuery);
+        FindIterable<Document> documents = userCollection.find(regexQuery).skip(request.getPageSize() * (request.getPage() - 1)).limit(request.getPageSize());
+        documents.forEach((Block<? super Document>) document -> {
+            String groupName = document.getString("name");
+            Group group = new GroupImpl(groupName);
+            groups.add(group);
+        });
+        boolean hasNextPage = true;
+        if ((request.getPageSize() * (request.getPage()) > totalNumber)) {
+            hasNextPage = false;
+        }
+        SearchResponse<Group> response = new SearchResponseImpl(groups, request.getPage(), request.getPageSize(), Long.valueOf(totalNumber).intValue(), hasNextPage);
+        return response;
     }
 
     @Override
     public Group get(String identifier) throws SecurityManagementException {
-        Group group = new GroupImpl(identifier);
-        return group;
+        MongoCollection<Document> userCollection = database.getCollection("userGroups");
+        List<Group> groups = new ArrayList<>();
+        userCollection.find(eq("name", identifier)).forEach((Block<? super Document>) document -> {
+            String groupName = document.getString("name");
+            Group group = new GroupImpl(groupName);
+            groups.add(group);
+        });
+        if (groups.size() == 1) {
+            return groups.get(0);
+        } else {
+            return null;
+        }
     }
 
     @Override

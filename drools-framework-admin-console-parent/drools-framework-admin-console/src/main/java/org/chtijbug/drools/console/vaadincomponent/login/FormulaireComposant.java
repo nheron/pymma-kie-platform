@@ -130,7 +130,7 @@ public class FormulaireComposant extends VerticalLayout {
         if(connected!=null) {
             connected.setConnected(true);
             userConnectedService.addUserToSession(connected);
-            projectPersistService.saveIfnotExist(connected.getProjectResponses(),configKie.getName());
+            //projectPersistService.saveIfnotExist(connected.getProjectResponses(),configKie.getName());
 
             return true;
         }else {
