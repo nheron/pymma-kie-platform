@@ -15,3 +15,5 @@ the workbench will be at the following url : htto://host.docker:8080/kie-wb
 
 We need an ip visible from your browser when used as a callback once identified 
 
+A test
+
