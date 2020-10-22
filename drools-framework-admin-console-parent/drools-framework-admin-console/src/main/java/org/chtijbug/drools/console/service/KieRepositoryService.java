@@ -51,7 +51,7 @@ public class KieRepositoryService {
         logger.info("url updateAssetSource : {}",  completeurl);
 
        restTemplateKiewb
-                .execute(completeurl, HttpMethod.POST, requestCallback(assetSource, username, password), clientHttpResponse -> {
+                .execute(completeurl, HttpMethod.PUT, requestCallback(assetSource, username, password), clientHttpResponse -> {
                     String extractedResponse = null;
                     if (clientHttpResponse.getBody() != null) {
                         Scanner s = new Scanner(clientHttpResponse.getBody()).useDelimiter("\\A");
@@ -125,12 +125,17 @@ public class KieRepositoryService {
                     });
             UserConnected userConnected = new UserConnected();
 
-            UserLoginInformation responseBody = response.getBody();
+
             userConnected.setUserName(username);
             userConnected.setUserPassword(password);
             userConnected.setUserPassword(password);
-            userConnected.getProjectResponses().addAll(responseBody.getProjects());
-            userConnected.getRoles().addAll(responseBody.getRoles());
+            if (response!= null) {
+                UserLoginInformation responseBody = response.getBody();
+                if (responseBody!= null) {
+                    userConnected.getProjectResponses().addAll(responseBody.getProjects());
+                    userConnected.getRoles().addAll(responseBody.getRoles());
+                }
+            }
             userConnected.setUserName(username);
             userConnected.setKieWorkbenchName(workbenchName);
             return userConnected;
@@ -152,7 +157,7 @@ public class KieRepositoryService {
             logger.info("url moteur reco : {}" , completeurl);
             ResponseEntity<UserLoginInformation> response = restTemplateKiewb
                     .execute(completeurl, HttpMethod.GET, requestCallback(null, username, password), clientHttpResponse -> {
-                        UserLoginInformation extractedResponse = null;
+                        UserLoginInformation extractedResponse =null;
                         if (clientHttpResponse.getBody() != null) {
                             Scanner s = new Scanner(clientHttpResponse.getBody()).useDelimiter("\\A");
                             String result = s.hasNext() ? s.next() : "";

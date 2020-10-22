@@ -30,7 +30,7 @@ public class CustomMappingsProvider extends MappingsProvider {
     @Override
     public MappingProperties resolveMapping(String originUri, HttpServletRequest request) {
 
-        MappingProperties result = mappingPropertiesMap.get(originUri);
+        MappingProperties result = mappingPropertiesMap.get(UpdateService.removeSlach(originUri));
         if (result!= null){
             return result;
         }else {

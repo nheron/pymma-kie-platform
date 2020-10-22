@@ -24,7 +24,9 @@ import org.uberfire.io.IOService;
 import org.uberfire.java.nio.base.options.CommentedOption;
 import org.uberfire.java.nio.file.DirectoryStream;
 import org.uberfire.java.nio.file.Paths;
+import org.uberfire.security.authz.AuthorizationPolicy;
 import org.uberfire.security.authz.PermissionManager;
+import org.uberfire.security.impl.authz.AuthorizationPolicyBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -460,5 +462,22 @@ public class PackageResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
         }
 
+    }
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/auth")
+    public AuthorizationPolicy getAuth() {
+
+        AuthorizationPolicy authorizationPolicy = this.permissionManager.getAuthorizationPolicy();
+        return  authorizationPolicy;
+    }
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/auth2")
+    public AuthorizationPolicy getAuth2() {
+        AuthorizationPolicyBuilder tata = this.permissionManager.newAuthorizationPolicy();
+
+        AuthorizationPolicy authorizationPolicy =  this.permissionManager.getAuthorizationPolicy();
+        return  authorizationPolicy;
     }
 }

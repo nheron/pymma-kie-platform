@@ -28,7 +28,7 @@ public class MenuSecondaireAssets extends HorizontalLayout {
             TemplateView templateView=new TemplateView();
             TemplatesAction templatesAction=new TemplatesAction(templateView);
             templateView.setTemplatesAction(templatesAction);
-            squeletteComposant.navigate(templateView,TemplateView.pageName,templatesAction);
+            squeletteComposant.navigate(templateView,TemplateView.PAGE_NAME,templatesAction);
         });
     }
     private boolean isActive(Button button){

@@ -30,19 +30,19 @@ import java.util.Set;
 @StyleSheet("css/accueil.css")
 public class TemplateView extends VerticalLayout {
 
-    public static final String pageName="Templates";
+    public static final String PAGE_NAME = "Templates";
 
-    private KieConfigurationData config;
+    private transient KieConfigurationData config;
 
-    private KieRepositoryService kieRepositoryService;
+    private transient KieRepositoryService kieRepositoryService;
 
-    private UserConnected userConnected;
+    private transient UserConnected userConnected;
 
-    private UserConnectedService userConnectedService;
+    private transient UserConnectedService userConnectedService;
 
-    private UserGroupsRepository userGroupsRepository;
+    private transient UserGroupsRepository userGroupsRepository;
 
-    private ProjectPersistService projectPersistService;
+    private transient ProjectPersistService projectPersistService;
 
     private ListDataProvider<Asset> dataProvider;
 
@@ -50,7 +50,7 @@ public class TemplateView extends VerticalLayout {
 
     private TextField searchTemplate;
 
-    private ConfigurableFilterDataProvider<Asset,Void,SerializablePredicate<Asset>> filterDataProvider;
+    private ConfigurableFilterDataProvider<Asset, Void, SerializablePredicate<Asset>> filterDataProvider;
 
     private TemplatesAction templatesAction;
 
@@ -58,7 +58,7 @@ public class TemplateView extends VerticalLayout {
 
         setClassName("template-content");
 
-        dataProvider=new ListDataProvider<>(new ArrayList<>());
+        dataProvider = new ListDataProvider<>(new ArrayList<>());
         filterDataProvider = dataProvider.withConfigurableFilter();
 
         this.kieRepositoryService = AppContext.getApplicationContext().getBean(KieRepositoryService.class);
@@ -68,31 +68,27 @@ public class TemplateView extends VerticalLayout {
         this.projectPersistService = AppContext.getApplicationContext().getBean(ProjectPersistService.class);
         this.config = AppContext.getApplicationContext().getBean(KieConfigurationData.class);
 
-        assetListGrid = new Grid();
+        assetListGrid = new Grid<>();
         assetListGrid.setClassName("templates-grid-perso");
         assetListGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
-        Grid.Column<Asset> assetColumn=assetListGrid.addColumn(asset -> asset.getTitle());
-        searchTemplate=new TextField("title");
+        Grid.Column<Asset> assetColumn = assetListGrid.addColumn(Asset::getTitle);
+        searchTemplate = new TextField("title");
         searchTemplate.setValueChangeMode(ValueChangeMode.EAGER);
-        searchTemplate.addValueChangeListener(e -> {
-            refreshtGrid(searchTemplate.getValue(), "title");
-        });
+        searchTemplate.addValueChangeListener(e ->
+                refreshtGrid(searchTemplate.getValue(), "title")
+        );
         assetColumn.setHeader(searchTemplate);
         add(assetListGrid);
 
-        assetListGrid.addSelectionListener(selectionEvent -> {
-           if(assetListGrid.getSelectedItems()==null){
-               templatesAction.getEdit().setEnabled(false);
-           }else {
-               templatesAction.getEdit().setEnabled(true);
-           }
-        });
+        assetListGrid.addSelectionListener(selectionEvent ->
+                templatesAction.getEdit().setEnabled(assetListGrid.getSelectedItems() != null)
+        );
     }
 
-    public void setDataProvider(ComboBox<ProjectPersist> spaceSelection){
+    public void setDataProvider(ComboBox<ProjectPersist> spaceSelection) {
         ProjectPersist response = spaceSelection.getValue();
-        if (response!= null) {
+        if (response != null) {
             UserGroups projectGroups = userGroupsRepository.findUserGroupsByProjectPersist(response);
             String workspaceName = projectGroups.getWorkspaceUserGroup().getSpaceName();
             List<Asset> tmp = kieRepositoryService.getListAssets(config.getKiewbUrl(),
@@ -111,7 +107,7 @@ public class TemplateView extends VerticalLayout {
             filterDataProvider = dataProvider.withConfigurableFilter();
             assetListGrid.setDataProvider(filterDataProvider);
             reinitFilter();
-        }else{
+        } else {
             List<Asset> result = new ArrayList<>();
             dataProvider = new ListDataProvider<>(result);
             filterDataProvider = dataProvider.withConfigurableFilter();
@@ -123,17 +119,17 @@ public class TemplateView extends VerticalLayout {
     public void refreshList(ComboBox<ProjectPersist> spaceSelection) {
         spaceSelection.setItems(projectPersistService.findProjectsConnectedUser().values());
     }
-    public void edit(ComboBox<ProjectPersist> spaceSelection){
+
+    public void edit(ComboBox<ProjectPersist> spaceSelection) {
         Set<Asset> selectedElements = assetListGrid.getSelectedItems();
         if (selectedElements.toArray().length > 0) {
             Optional<Asset> assetOptional = selectedElements.stream().findFirst();
             if (assetOptional.isPresent()) {
                 String assetName = assetOptional.get().getTitle();
                 if (assetName != null) {
-                    //latformProjectData response = spaceSelection.getValue();
                     userConnectedService.addAssetToSession(assetName);
                     UserGroups projectGroups = userGroupsRepository.findUserGroupsByProjectPersist(spaceSelection.getValue());
-                    String workspaceName=projectGroups.getWorkspaceUserGroup().getSpaceName();
+                    String workspaceName = projectGroups.getWorkspaceUserGroup().getSpaceName();
                     userConnectedService.addProjectToSession(projectGroups.getProjectName());
                     userConnectedService.addSpaceToSession(workspaceName);
                     DialogPerso dialog = new DialogPerso();
@@ -144,16 +140,18 @@ public class TemplateView extends VerticalLayout {
             }
         }
     }
-    private void refreshtGrid(String value,String type){
 
-        filterDataProvider.setFilter(filterGrid(value.toUpperCase(),type));
+    private void refreshtGrid(String value, String type) {
+
+        filterDataProvider.setFilter(filterGrid(value.toUpperCase(), type));
         assetListGrid.getDataProvider().refreshAll();
     }
-    private SerializablePredicate<Asset> filterGrid(String value, String type){
+
+    private SerializablePredicate<Asset> filterGrid(String value, String type) {
         SerializablePredicate<Asset> columnPredicate = null;
-        if(value.equals(" ")||type.equals(" ")){
+        if (value.equals(" ") || type.equals(" ")) {
             columnPredicate = asset -> (true);
-        }else {
+        } else {
             if (type.equals("Asset Title")) {
                 columnPredicate = asset -> (asset.getTitle().contains(value));
             }
@@ -169,9 +167,11 @@ public class TemplateView extends VerticalLayout {
         this.userConnectedService = userConnectedService;
     }
 
-    public void duplicate(){}
+    public void duplicate() {
+        //NOP
+    }
 
-    public void reinitFilter(){
+    public void reinitFilter() {
         searchTemplate.setValue("");
     }
 

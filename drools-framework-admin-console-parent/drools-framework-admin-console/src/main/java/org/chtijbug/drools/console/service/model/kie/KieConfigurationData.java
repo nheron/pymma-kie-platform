@@ -1,6 +1,8 @@
 package org.chtijbug.drools.console.service.model.kie;
 
-public class KieConfigurationData {
+import java.io.Serializable;
+
+public class KieConfigurationData implements Serializable {
 
     private String kiewbUrl;
 

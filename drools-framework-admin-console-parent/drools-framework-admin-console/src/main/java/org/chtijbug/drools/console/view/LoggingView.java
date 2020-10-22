@@ -9,7 +9,7 @@ import org.chtijbug.drools.console.vaadincomponent.leftMenu.Action.ActionLogging
 @StyleSheet("css/accueil.css")
 public class LoggingView extends VerticalLayout {
 
-    public static final String pageName="Logging";
+    public static final String PAGE_NAME = "Logging";
 
     private Label title;
 
@@ -17,29 +17,25 @@ public class LoggingView extends VerticalLayout {
 
     private ActionLogging actionLogging;
 
-    public LoggingView(){
+    public LoggingView() {
 
-        title=new Label("Logging : ");
+        title = new Label("Logging : ");
 
         add(title);
 
-        gridLogging=new GridLogging();
+        gridLogging = new GridLogging();
 
         add(gridLogging);
 
 
-        gridLogging.addSelectionListener(selectionEvent -> {
+        gridLogging.addSelectionListener(selectionEvent ->
+                actionLogging.getViewAction().setEnabled(selectionEvent.getFirstSelectedItem().isPresent())
 
-            if(selectionEvent.getFirstSelectedItem().isPresent()) {
-                actionLogging.getViewAction().setEnabled(true);
-            }else {
-                actionLogging.getViewAction().setEnabled(false);
-            }
-        });
+        );
     }
 
     public static String getPageName() {
-        return pageName;
+        return PAGE_NAME;
     }
 
     public GridLogging getGridLogging() {

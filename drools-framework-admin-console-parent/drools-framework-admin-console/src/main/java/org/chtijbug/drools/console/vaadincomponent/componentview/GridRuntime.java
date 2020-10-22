@@ -97,7 +97,7 @@ public class GridRuntime extends Grid<RuntimePersist> {
         branch.addValueChangeListener(e -> {
             refreshtGrid(branch.getValue(), strBranch);
         });
-        versionCo.setHeader(branch);
+        statusCo.setHeader(branch);
 
         Grid.Column<RuntimePersist> branchCo = addColumn(runtimePersist -> runtimePersist.getStatus());
         status = new TextField(strStatus);
@@ -156,13 +156,9 @@ public class GridRuntime extends Grid<RuntimePersist> {
                     urlMap.put(runtimePersist.getServerName(), runtimePersist.getServerUrl());
                     RuntimePersist runtimePersist1 = runtimePersist.duplicate();
                     if (projectPersist != null) {
+                        runtimeToShow.add(runtimePersist1);
                         if (projectPersist.getServerNames().contains(runtimePersist1.getServerName())) {
-                            runtimeToShow.add(runtimePersist1);
                             getSelectionModel().select(runtimePersist1);
-                        } else {
-                            if (projectPersist.getServerNames().size() == 0){
-                                runtimeToShow.add(runtimePersist1);
-                            }
                         }
                     }else{
                         runtimeToShow.add(runtimePersist1);
