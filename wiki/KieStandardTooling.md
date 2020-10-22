@@ -53,6 +53,8 @@ The sequence is
 2. Insert B that is an attribute of A , 
 3. execute fireAllrules.
 The JSON message will contain something like this : 
+
+	
 	{ "commands":[
 	       {
 	          "insert":{
@@ -61,7 +63,7 @@ The JSON message will contain something like this :
 	             "object": {
 	              "CLASSB":{
 					"name" : "heron"
-	                            
+	
 	              } 
 	           },
 	       "insert":{
@@ -69,16 +71,16 @@ The JSON message will contain something like this :
 	             "return-object":"true",
 	             "object": {
 					"name" : "heron"
-	                            
+	
 	              }
 	           },
-	        
+	
 	       {
 	          "fire-all-rules":""
 	       } 
 	     ]
 	  }
-	
+
 
 On the server side, 
 1. instance A will be created with its attribute B  and inserted to the working memory. This new A instance will be created with a B instance that is not inserted. 
@@ -98,7 +100,7 @@ To avoid this, another approach is :
 	3. the top class to expose.
 In our Kie Platform our execution server exposes endpoint like this.
 ## Missing features
-###  logging rule execution
+### logging rule execution
 The API proposed by drools allows the add callbacks to see what is happening in the  engine during its execution.
 For many business areas, traceability is key feature that is mandatory.  Our platform is offering that functionality : traceability and storing of all execution request. Over the user interface, it is possible to get details of all rule executed,  fact inserted/updated/retracted and rule flow executions. 
 ### Logging deployment history
