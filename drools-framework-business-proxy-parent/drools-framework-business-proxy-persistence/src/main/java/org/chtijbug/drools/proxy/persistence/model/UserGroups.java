@@ -2,6 +2,7 @@ package org.chtijbug.drools.proxy.persistence.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
@@ -16,7 +17,14 @@ public class UserGroups {
     @Indexed
     private String projectName;
 
+    @DBRef
+    private KieWorkbench kieWorkbench;
 
+    @DBRef
+    private ProjectPersist projectPersist;
+
+    @DBRef
+    private UserGroups workspaceUserGroup;
 
     public UserGroups() {
     }
@@ -56,6 +64,30 @@ public class UserGroups {
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
+    }
+
+    public KieWorkbench getKieWorkbench() {
+        return kieWorkbench;
+    }
+
+    public void setKieWorkbench(KieWorkbench kieWorkbench) {
+        this.kieWorkbench = kieWorkbench;
+    }
+
+    public ProjectPersist getProjectPersist() {
+        return projectPersist;
+    }
+
+    public void setProjectPersist(ProjectPersist projectPersist) {
+        this.projectPersist = projectPersist;
+    }
+
+    public UserGroups getWorkspaceUserGroup() {
+        return workspaceUserGroup;
+    }
+
+    public void setWorkspaceUserGroup(UserGroups workspaceUserGroup) {
+        this.workspaceUserGroup = workspaceUserGroup;
     }
 
 }

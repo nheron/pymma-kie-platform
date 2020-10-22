@@ -25,7 +25,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.types.ObjectId;
 import org.jboss.errai.security.shared.api.Group;
 import org.jboss.errai.security.shared.api.GroupImpl;
 import org.jboss.errai.security.shared.api.Role;
@@ -179,7 +178,7 @@ public class KiePlatformUserManager implements UserManager, ContextualManager {
         MongoCollection<Document> userRolesCollection = database.getCollection("userRoles");
         AtomicReference<ArrayList<DBRef>> roles = new AtomicReference<>(new ArrayList<>());
         AtomicReference<ArrayList<DBRef>> groups = new AtomicReference<>(new ArrayList<>());
-        List<Document> users = new ArrayList<>();
+        ArrayList<Document> users = new ArrayList<>();
         if (isCreated) {
             userCollection.find(eq("login", entity.getIdentifier())).forEach((Block<? super Document>) document -> {
                 throw new SecurityManagementException("Existing identifier " + entity.getIdentifier());
@@ -211,15 +210,21 @@ public class KiePlatformUserManager implements UserManager, ContextualManager {
                 roles.get().add(dbRef);
             });
         }
-        Document userDocument = new Document("_id", new ObjectId());
-        userDocument.append("login", entity.getIdentifier());
-        userDocument.append("password", entity.getIdentifier());
-        userDocument.append("userRoles", roles);
-        userDocument.append("userGroups", groups);
+
         if (isCreated) {
+            Document userDocument = new Document();
+            userDocument.append("login", entity.getIdentifier());
+            userDocument.append("password", entity.getIdentifier());
+            userDocument.append("userRoles", roles);
+            userDocument.append("userGroups", groups);
+
             userCollection.insertOne(userDocument);
         } else {
-            userCollection.replaceOne(eq("login", entity.getIdentifier()), userDocument);
+            userCollection.find(eq("login", entity.getIdentifier())).forEach((Block<? super Document>) document -> {
+                document.append("userRoles", roles);
+                document.append("userGroups", groups);
+                userCollection.replaceOne(eq("login", entity.getIdentifier()), document);
+            });
         }
 
     }

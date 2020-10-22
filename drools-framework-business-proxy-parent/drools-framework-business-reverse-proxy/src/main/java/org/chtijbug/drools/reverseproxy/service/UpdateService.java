@@ -49,7 +49,7 @@ public class UpdateService {
     public void store(ReverseProxyUpdate update) {
         boolean found = false;
         for (MappingProperties mappingProperties : mappingPropertiesMap.values()) {
-            if (mappingProperties.getPath().equals(update.getPath())) {
+            if (UpdateService.removeSlach(mappingProperties.getPath()).equals(UpdateService.removeSlach(update.getPath()))) {
                 found = true;
                 mappingProperties.getDestinations().clear();
                 logger.info("Updating path {}",update.getPath());
@@ -69,7 +69,7 @@ public class UpdateService {
                 newMappingProperties.getDestinations().add(destination);
                 logger.info("for path {} adding server {} ",update.getPath(),destination);
             }
-            mappingPropertiesMap.put(update.getPath(), newMappingProperties);
+            mappingPropertiesMap.put(UpdateService.removeSlach(update.getPath()), newMappingProperties);
         }
         mappings.clear();
         mappings.addAll(mappingPropertiesMap.values());
@@ -79,6 +79,13 @@ public class UpdateService {
     public List<MappingProperties> retrievePath() {
         this.toUpdate = false;
         return mappings;
+    }
+
+    public static String removeSlach(String target){
+        if (target!= null) {
+            return target.replace("/", "");
+        }
+        return null;
     }
 
     private void generateMappings() {
@@ -118,7 +125,7 @@ public class UpdateService {
                 mappingProperties2.getCustomConfiguration().put("read", 2000);
                 mappingProperties2.setStripPath(true);
                 if (mappingProperties2.getDestinations().size() > 0) {
-                    mappingPropertiesMap.put(mappingProperties2.getPath(), mappingProperties2);
+                    mappingPropertiesMap.put(UpdateService.removeSlach(mappingProperties2.getPath()), mappingProperties2);
                     paths.add(mappingProperties2);
                     logger.info("Startup creating path {}",mappingProperties2.getPath());
                     for (String serverName : mappingProperties2.getDestinations()){

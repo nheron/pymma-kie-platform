@@ -17,12 +17,13 @@ import org.springframework.data.domain.PageRequest;
 import java.util.List;
 
 public class ActionLogging extends VerticalLayout {
+    private static String active="active";
 
     private Button viewAction;
 
     private TextFieldPerso transactionIdSearch;
 
-    private IndexerService indexerService;
+    private transient IndexerService indexerService;
 
     public ActionLogging(LoggingView loggingView){
 
@@ -78,17 +79,17 @@ public class ActionLogging extends VerticalLayout {
 
     }
     private boolean isActive(Button button){
-        return button.getClassNames().contains("active");
+        return button.getClassNames().contains(active);
     }
     private void removeActive(Button button) {
 
-        if(button.getClassNames().contains("active")){
-            button.getClassNames().remove("active");
+        if(button.getClassNames().contains(active)){
+            button.getClassNames().remove(active);
         }
     }
     private void active(Button button){
         removeActive(viewAction);
-        button.getClassNames().add("active");
+        button.getClassNames().add(active);
     }
 
     public Button getViewAction() {

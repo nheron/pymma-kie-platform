@@ -16,7 +16,9 @@
 
 package org.chtijbug.guvnor.uberfire.security;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -37,6 +39,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.mongodb.client.model.Filters.eq;
 
 /**
  * <p>Groups manager service provider implementation for Apache tomcat, when using default realm based on properties files.</p>
@@ -85,14 +89,39 @@ public class KiePlatformRoleManager implements RoleManager, ContextualManager {
 
     @Override
     public SearchResponse<Role> search(SearchRequest request) throws SecurityManagementException {
-        SearchResponse<Role> roleSearchResponse = new SearchResponseImpl<>();
-        return roleSearchResponse;
+        MongoCollection<Document> roleCollection = database.getCollection("userRoles");
+        BasicDBObject regexQuery = new BasicDBObject();
+        regexQuery.put("name", new BasicDBObject("$regex", request.getSearchPattern() + ".*").append("$options", "i"));
+        List<Role> roles = new ArrayList<>();
+        long totalNumber = roleCollection.countDocuments(regexQuery);
+        FindIterable<Document> documents = roleCollection.find(regexQuery).skip(request.getPageSize() * (request.getPage() - 1)).limit(request.getPageSize());
+        documents.forEach((Block<? super Document>) document -> {
+            String roleName = document.getString("name");
+            Role role = new RoleImpl(roleName);
+            roles.add(role);
+        });
+        boolean hasNextPage = true;
+        if ((request.getPageSize() * (request.getPage()) > totalNumber)) {
+            hasNextPage = false;
+        }
+        SearchResponse<Role> response = new SearchResponseImpl(roles, request.getPage(), request.getPageSize(), Long.valueOf(totalNumber).intValue(), hasNextPage);
+        return response;
     }
 
     @Override
     public Role get(String identifier) throws SecurityManagementException {
-        RoleImpl role = new RoleImpl(identifier);
-        return role;
+        MongoCollection<Document> userCollection = database.getCollection("userRoles");
+        List<Role> roles = new ArrayList<>();
+        userCollection.find(eq("name", identifier)).forEach((Block<? super Document>) document -> {
+            String roleName = document.getString("name");
+            Role role = new RoleImpl(roleName);
+            roles.add(role);
+        });
+        if (roles.size() == 1) {
+            return roles.get(0);
+        } else {
+            return null;
+        }
     }
 
     @Override

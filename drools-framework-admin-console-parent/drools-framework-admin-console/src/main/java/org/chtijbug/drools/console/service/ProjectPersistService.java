@@ -1,7 +1,6 @@
 package org.chtijbug.drools.console.service;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.server.VaadinSession;
 import org.chtijbug.drools.ReverseProxyUpdate;
 import org.chtijbug.drools.common.KafkaTopicConstants;
 import org.chtijbug.drools.console.AddLog;
@@ -20,10 +19,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @DependsOn("applicationContext")
@@ -40,6 +36,13 @@ public class ProjectPersistService {
     private KieRepositoryService kieRepositoryService;
 
     private KieConfigurationData config;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserRolesRepository userRolesRepository;
+
 
     @Autowired
     private UserConnectedService userConnectedService;
@@ -62,6 +65,8 @@ public class ProjectPersistService {
     @Autowired
     private KafkaTemplate<String, ReverseProxyUpdate> kafkaTemplateProxyUpdate;
 
+    @Autowired
+    private UserGroupsRepository userGroupsRepository;
 
 
     public ProjectPersistService() {
@@ -69,57 +74,101 @@ public class ProjectPersistService {
 
     }
 
+    public ProjectPersist saveorUpdateProject(PlatformProjectData platformProjectData, KieWorkbench kieWorkbench) {
+        ProjectPersist projectPersist = projectRepository.findByProjectNameAndBranch(new KieProject(platformProjectData.getSpaceName(), platformProjectData.getName()), platformProjectData.getBranch());
 
-    public void saveIfnotExist(List<PlatformProjectData> platformProjectResponses, String workbenchName) {
+        if (projectPersist == null) {
+            projectPersist = platformProjectResponseToProjectPersist(platformProjectData);
+            projectPersist.setKieWorkbench(kieWorkbench);
+            projectPersist.setProjectVersion(platformProjectData.getVersion());
+            projectPersist.setArtifactID(platformProjectData.getArtifactId());
+            projectPersist.setGroupID(platformProjectData.getGroupId());
+            projectPersist.setClassNameList(new ArrayList<>());
+            for (String className : platformProjectData.getJavaClasses()) {
+                projectPersist.getClassNameList().add(className);
 
-
-        KieWorkbench kieWorkbench = workbenchRepository.findByName(workbenchName);
-        for (PlatformProjectData platformProjectResponse : platformProjectResponses) {
-
-            ProjectPersist projectPersist = projectRepository.findByProjectNameAndBranch(new KieProject(platformProjectResponse.getSpaceName(), platformProjectResponse.getName()), platformProjectResponse.getBranch());
-
-            if (projectPersist == null) {
-                projectPersist = platformProjectResponseToProjectPersist(platformProjectResponse);
-                projectPersist.setKieWorkbench(kieWorkbench);
-                projectPersist = projectRepository.save(projectPersist);
-                addProjectToSession(projectPersist, true);
-
-            } else {
-                projectPersist.setKieWorkbench(kieWorkbench);
-                projectPersist.getClassNameList().clear();
-                for (String className : platformProjectResponse.getJavaClasses()) {
-                    projectPersist.getClassNameList().add(className);
-                    projectRepository.save(projectPersist);
-                }
-                addProjectToSession(projectPersist, false);
             }
-        }
-    }
+            projectPersist = projectRepository.save(projectPersist);
 
-    public Map<String, ProjectPersist> getProjectsSession() {
-        return (Map<String, ProjectPersist>) VaadinSession.getCurrent().getAttribute(projectVariable);
-    }
-
-    public void addProjectToSession(ProjectPersist projectPersist, boolean isModifiable) {
-
-        Map<String, ProjectPersist> projectPersists = getProjectsSession();
-
-        if (projectPersists == null) {
-            projectPersists = new HashMap<>();
-        }
-
-        if (isModifiable) {
-            projectPersists.put(projectPersist.getProjectName().toString() + "-" + projectPersist.getBranch(), projectPersist);
         } else {
+            projectPersist.setKieWorkbench(kieWorkbench);
+            projectPersist.setProjectVersion(platformProjectData.getVersion());
+            projectPersist.setArtifactID(platformProjectData.getArtifactId());
+            projectPersist.setGroupID(platformProjectData.getGroupId());
+            projectPersist.setClassNameList(new ArrayList<>());
+            for (String className : platformProjectData.getJavaClasses()) {
+                projectPersist.getClassNameList().add(className);
 
-            ProjectPersist tmp = projectPersists.get(projectPersist.getProjectName().toString() + "-" + projectPersist.getBranch());
-            if (tmp == null) {
-                projectPersists.put(projectPersist.getProjectName().toString() + "-" + projectPersist.getBranch(), projectPersist);
             }
+            projectRepository.save(projectPersist);
+
+        }
+        return projectPersist;
+    }
+
+    public void createProjectGroupIfNeeded(String projectName, KieWorkbench kieWorkbench,ProjectPersist projectPersist,UserGroups workspaceUserGroup ) {
+        UserGroups userGroups = userGroupsRepository.findByName("prj_" + projectName);
+        if (userGroups == null) {
+            UserGroups projectGroup = new UserGroups(UUID.randomUUID().toString(), "prj_" + projectName);
+            projectGroup.setKieWorkbench(kieWorkbench);
+            projectGroup.setProjectName(projectName);
+            projectGroup.setProjectPersist(projectPersist);
+            projectGroup.setWorkspaceUserGroup(workspaceUserGroup);
+            userGroupsRepository.save(projectGroup);
+            User groupUser = new User(UUID.randomUUID().toString(), "prj_user_" + projectName, "adminadmin99#");
+            groupUser.getUserGroups().add(projectGroup);
+            groupUser.getUserRoles().add(userRolesRepository.findByName("analyst"));
+            userRepository.save(groupUser);
+        }else{
+            userGroups.setWorkspaceUserGroup(workspaceUserGroup);
+            userGroupsRepository.save(userGroups);
+        }
+    }
+
+    public UserGroups createWorkSpaceGroupIfNeeded(String workSpaceName, KieWorkbench kieWorkbench) {
+        UserGroups userGroupsWorkSpace = userGroupsRepository.findByName("wrk_" + workSpaceName);
+        if (userGroupsWorkSpace == null) {
+            userGroupsWorkSpace = new UserGroups(UUID.randomUUID().toString(), "wrk_" + workSpaceName);
+            userGroupsWorkSpace.setKieWorkbench(kieWorkbench);
+            userGroupsWorkSpace.setSpaceName(workSpaceName);
+            userGroupsRepository.save(userGroupsWorkSpace);
+            User groupUser = new User(UUID.randomUUID().toString(), "wrk_user_" + workSpaceName, "pymma#");
+            groupUser.getUserGroups().add(userGroupsWorkSpace);
+            groupUser.getUserRoles().add(userRolesRepository.findByName("analyst"));
+            userRepository.save(groupUser);
         }
 
-        VaadinSession.getCurrent().setAttribute(projectVariable, projectPersists);
+
+        return userGroupsWorkSpace;
     }
+
+    public Map<String, ProjectPersist> findProjectsConnectedUser() {
+        //VaadinSession.getCurrent().get
+        boolean isAdmin =false;
+
+        UserConnected userConnected = userConnectedService.getUserConnected();
+        User user = userRepository.findByLogin(userConnected.getUserName());
+        for (UserRoles userRoles : user.getUserRoles()){
+            if ("admin".equals(userRoles.getName())){
+                isAdmin=true;
+            }
+        }
+        List<ProjectPersist> projectPersists = new ArrayList<>();
+        if (isAdmin) {
+            projectPersists = projectRepository.findAll();
+        }else {
+            List<UserGroups> userGroups = user.getUserGroups();
+
+        }
+        Map<String, ProjectPersist> map = new HashMap<>();
+        for (ProjectPersist projectPersist : projectPersists){
+            map.put(projectPersist.getProjectName().toString() + "-" + projectPersist.getBranch(),projectPersist);
+        }
+
+        return map;
+    }
+
+
 
     public boolean associate(ProjectPersist projectPersist, List<RuntimePersist> runtimePersists) {
         projectPersist.setStatus(ProjectPersist.Deployable);
@@ -148,7 +197,6 @@ public class ProjectPersistService {
             reverseProxyUpdate.getServerNames().add(hostName);
         }
         projectRepository.save(projectPersist);
-        addProjectToSession(projectPersist, true);
         kafkaTemplateProxyUpdate.send(KafkaTopicConstants.REVERSE_PROXY, reverseProxyUpdate);
         return true;
     }
@@ -175,7 +223,6 @@ public class ProjectPersistService {
     }
 
 
-
     public void waitForJobToBeEnded(String url, String username, String password, ProjectPersist projectPersist, AddLog workOnGoingView, UI ui) {
 
         UserConnected userConnected = userConnectedService.getUserConnected();
@@ -193,7 +240,6 @@ public class ProjectPersistService {
                         userConnected.getUserPassword(), projectPersist.getProjectName().getSpaceName(), projectPersist.getProjectName().getName(), projectPersist.getBranch(), "install", workOnGoingView, ui);
 
                 jobService.executeWrite(url, username, password, workOnGoingView, result.getJobId(), ui);
-
 
 
                 for (String serverName : projectPersist.getServerNames()) {
@@ -222,7 +268,6 @@ public class ProjectPersistService {
         thread.start();
 
     }
-
 
 
     public ProjectRepository getProjectRepository() {

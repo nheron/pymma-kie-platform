@@ -10,14 +10,17 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.function.SerializablePredicate;
 import org.chtijbug.drools.console.service.KieRepositoryService;
+import org.chtijbug.drools.console.service.ProjectPersistService;
 import org.chtijbug.drools.console.service.UserConnectedService;
 import org.chtijbug.drools.console.service.model.UserConnected;
 import org.chtijbug.drools.console.service.model.kie.KieConfigurationData;
 import org.chtijbug.drools.console.service.util.AppContext;
 import org.chtijbug.drools.console.vaadincomponent.componentperso.DialogPerso;
 import org.chtijbug.drools.console.vaadincomponent.leftMenu.Action.TemplatesAction;
+import org.chtijbug.drools.proxy.persistence.model.ProjectPersist;
+import org.chtijbug.drools.proxy.persistence.model.UserGroups;
+import org.chtijbug.drools.proxy.persistence.repository.UserGroupsRepository;
 import org.chtijbug.guvnor.server.jaxrs.jaxb.Asset;
-import org.chtijbug.guvnor.server.jaxrs.model.PlatformProjectData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +30,19 @@ import java.util.Set;
 @StyleSheet("css/accueil.css")
 public class TemplateView extends VerticalLayout {
 
-    public static final String pageName="Templates";
+    public static final String PAGE_NAME = "Templates";
 
-    private KieConfigurationData config;
+    private transient KieConfigurationData config;
 
-    private KieRepositoryService kieRepositoryService;
+    private transient KieRepositoryService kieRepositoryService;
 
-    private UserConnected userConnected;
+    private transient UserConnected userConnected;
 
-    private UserConnectedService userConnectedService;
+    private transient UserConnectedService userConnectedService;
+
+    private transient UserGroupsRepository userGroupsRepository;
+
+    private transient ProjectPersistService projectPersistService;
 
     private ListDataProvider<Asset> dataProvider;
 
@@ -43,7 +50,7 @@ public class TemplateView extends VerticalLayout {
 
     private TextField searchTemplate;
 
-    private ConfigurableFilterDataProvider<Asset,Void,SerializablePredicate<Asset>> filterDataProvider;
+    private ConfigurableFilterDataProvider<Asset, Void, SerializablePredicate<Asset>> filterDataProvider;
 
     private TemplatesAction templatesAction;
 
@@ -51,66 +58,80 @@ public class TemplateView extends VerticalLayout {
 
         setClassName("template-content");
 
-        dataProvider=new ListDataProvider<>(new ArrayList<>());
+        dataProvider = new ListDataProvider<>(new ArrayList<>());
         filterDataProvider = dataProvider.withConfigurableFilter();
 
         this.kieRepositoryService = AppContext.getApplicationContext().getBean(KieRepositoryService.class);
         this.userConnectedService = AppContext.getApplicationContext().getBean(UserConnectedService.class);
+        this.userGroupsRepository = AppContext.getApplicationContext().getBean(UserGroupsRepository.class);
         this.userConnected = userConnectedService.getUserConnected();
+        this.projectPersistService = AppContext.getApplicationContext().getBean(ProjectPersistService.class);
         this.config = AppContext.getApplicationContext().getBean(KieConfigurationData.class);
 
-        assetListGrid = new Grid();
+        assetListGrid = new Grid<>();
         assetListGrid.setClassName("templates-grid-perso");
         assetListGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
-        Grid.Column<Asset> assetColumn=assetListGrid.addColumn(asset -> asset.getTitle());
-        searchTemplate=new TextField("title");
+        Grid.Column<Asset> assetColumn = assetListGrid.addColumn(Asset::getTitle);
+        searchTemplate = new TextField("title");
         searchTemplate.setValueChangeMode(ValueChangeMode.EAGER);
-        searchTemplate.addValueChangeListener(e -> {
-            refreshtGrid(searchTemplate.getValue(), "title");
-        });
+        searchTemplate.addValueChangeListener(e ->
+                refreshtGrid(searchTemplate.getValue(), "title")
+        );
         assetColumn.setHeader(searchTemplate);
         add(assetListGrid);
 
-        assetListGrid.addSelectionListener(selectionEvent -> {
-           if(assetListGrid.getSelectedItems()==null){
-               templatesAction.getEdit().setEnabled(false);
-           }else {
-               templatesAction.getEdit().setEnabled(true);
-           }
-        });
+        assetListGrid.addSelectionListener(selectionEvent ->
+                templatesAction.getEdit().setEnabled(assetListGrid.getSelectedItems() != null)
+        );
     }
 
-    public void setDataProvider(ComboBox<PlatformProjectData> spaceSelection){
-        PlatformProjectData response = spaceSelection.getValue();
-        List<Asset> tmp = kieRepositoryService.getListAssets(config.getKiewbUrl(), userConnected.getUserName(), userConnected.getUserPassword(), response.getSpaceName(), response.getName());
-        List<Asset> result = new ArrayList<>();
-        for (Asset asset : tmp) {
-            if (asset.getTitle().endsWith(".template")
-                    || asset.getTitle().endsWith(".gdst")) {
-                result.add(asset);
+    public void setDataProvider(ComboBox<ProjectPersist> spaceSelection) {
+        ProjectPersist response = spaceSelection.getValue();
+        if (response != null) {
+            UserGroups projectGroups = userGroupsRepository.findUserGroupsByProjectPersist(response);
+            String workspaceName = projectGroups.getWorkspaceUserGroup().getSpaceName();
+            List<Asset> tmp = kieRepositoryService.getListAssets(config.getKiewbUrl(),
+                    userConnected.getUserName(),
+                    userConnected.getUserPassword(),
+                    workspaceName,
+                    projectGroups.getProjectName());
+            List<Asset> result = new ArrayList<>();
+            for (Asset asset : tmp) {
+                if (asset.getTitle().endsWith(".template")
+                        || asset.getTitle().endsWith(".gdst")) {
+                    result.add(asset);
+                }
             }
+            dataProvider = new ListDataProvider<>(result);
+            filterDataProvider = dataProvider.withConfigurableFilter();
+            assetListGrid.setDataProvider(filterDataProvider);
+            reinitFilter();
+        } else {
+            List<Asset> result = new ArrayList<>();
+            dataProvider = new ListDataProvider<>(result);
+            filterDataProvider = dataProvider.withConfigurableFilter();
+            assetListGrid.setDataProvider(filterDataProvider);
+            reinitFilter();
         }
-        dataProvider=new ListDataProvider<>(result);
-        filterDataProvider = dataProvider.withConfigurableFilter();
-        assetListGrid.setDataProvider(filterDataProvider);
-        reinitFilter();
     }
 
-    public void refreshList(ComboBox<PlatformProjectData> spaceSelection) {
-        spaceSelection.setItems(userConnected.getProjectResponses());
+    public void refreshList(ComboBox<ProjectPersist> spaceSelection) {
+        spaceSelection.setItems(projectPersistService.findProjectsConnectedUser().values());
     }
-    public void edit(ComboBox<PlatformProjectData> spaceSelection){
+
+    public void edit(ComboBox<ProjectPersist> spaceSelection) {
         Set<Asset> selectedElements = assetListGrid.getSelectedItems();
         if (selectedElements.toArray().length > 0) {
             Optional<Asset> assetOptional = selectedElements.stream().findFirst();
             if (assetOptional.isPresent()) {
                 String assetName = assetOptional.get().getTitle();
                 if (assetName != null) {
-                    PlatformProjectData response = spaceSelection.getValue();
                     userConnectedService.addAssetToSession(assetName);
-                    userConnectedService.addProjectToSession(response.getName());
-                    userConnectedService.addSpaceToSession(response.getSpaceName());
+                    UserGroups projectGroups = userGroupsRepository.findUserGroupsByProjectPersist(spaceSelection.getValue());
+                    String workspaceName = projectGroups.getWorkspaceUserGroup().getSpaceName();
+                    userConnectedService.addProjectToSession(projectGroups.getProjectName());
+                    userConnectedService.addSpaceToSession(workspaceName);
                     DialogPerso dialog = new DialogPerso();
 
                     dialog.add(new EditTemplateView(dialog, assetName));
@@ -119,16 +140,18 @@ public class TemplateView extends VerticalLayout {
             }
         }
     }
-    private void refreshtGrid(String value,String type){
 
-        filterDataProvider.setFilter(filterGrid(value.toUpperCase(),type));
+    private void refreshtGrid(String value, String type) {
+
+        filterDataProvider.setFilter(filterGrid(value.toUpperCase(), type));
         assetListGrid.getDataProvider().refreshAll();
     }
-    private SerializablePredicate<Asset> filterGrid(String value, String type){
+
+    private SerializablePredicate<Asset> filterGrid(String value, String type) {
         SerializablePredicate<Asset> columnPredicate = null;
-        if(value.equals(" ")||type.equals(" ")){
+        if (value.equals(" ") || type.equals(" ")) {
             columnPredicate = asset -> (true);
-        }else {
+        } else {
             if (type.equals("Asset Title")) {
                 columnPredicate = asset -> (asset.getTitle().contains(value));
             }
@@ -144,9 +167,11 @@ public class TemplateView extends VerticalLayout {
         this.userConnectedService = userConnectedService;
     }
 
-    public void duplicate(){}
+    public void duplicate() {
+        //NOP
+    }
 
-    public void reinitFilter(){
+    public void reinitFilter() {
         searchTemplate.setValue("");
     }
 

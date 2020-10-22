@@ -11,6 +11,7 @@ import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
+import org.guvnor.rest.backend.UserManagementResourceHelper;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.repositories.Branch;
@@ -18,10 +19,14 @@ import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.RepositoryService;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.slf4j.LoggerFactory;
+import org.uberfire.backend.authz.AuthorizationService;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.base.options.CommentedOption;
 import org.uberfire.java.nio.file.DirectoryStream;
 import org.uberfire.java.nio.file.Paths;
+import org.uberfire.security.authz.AuthorizationPolicy;
+import org.uberfire.security.authz.PermissionManager;
+import org.uberfire.security.impl.authz.AuthorizationPolicyBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -63,7 +68,13 @@ public class PackageResource {
     private WorkspaceProjectService workspaceProjectService;
     @Inject
     private AssetService assetService;
+    @Inject
+    private PermissionManager permissionManager;
+    @Inject
+    private AuthorizationService authorizationService;
 
+    @Inject
+    private UserManagementResourceHelper userManagementResourceHelper;
 
     public PackageResource() {
         System.out.println("coucou");
@@ -82,11 +93,26 @@ public class PackageResource {
                 userLoginInformation.getRoles().add(role);
             }
         }
+        return userLoginInformation;
+
+    }
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/content")
+    public UserLoginInformation getUserContent() {
+
+        UserLoginInformation userLoginInformation = new UserLoginInformation();
+
+        userLoginInformation.setUsername(sc.getUserPrincipal().getName());
+        for (String role : PermissionConstants.tableauChaine) {
+            if (sc.isUserInRole(role) == true) {
+                userLoginInformation.getRoles().add(role);
+            }
+        }
         userLoginInformation.setProjects(assetService.getAllProjects());
         return userLoginInformation;
 
     }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/detailedSpaces")
@@ -122,6 +148,8 @@ public class PackageResource {
         }
         return null;
     }
+
+
 
     @GET
     @Path("{organizationalUnitName}/{projectName}/assets")
@@ -434,5 +462,22 @@ public class PackageResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
         }
 
+    }
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/auth")
+    public AuthorizationPolicy getAuth() {
+
+        AuthorizationPolicy authorizationPolicy = this.permissionManager.getAuthorizationPolicy();
+        return  authorizationPolicy;
+    }
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/auth2")
+    public AuthorizationPolicy getAuth2() {
+        AuthorizationPolicyBuilder tata = this.permissionManager.newAuthorizationPolicy();
+
+        AuthorizationPolicy authorizationPolicy =  this.permissionManager.getAuthorizationPolicy();
+        return  authorizationPolicy;
     }
 }

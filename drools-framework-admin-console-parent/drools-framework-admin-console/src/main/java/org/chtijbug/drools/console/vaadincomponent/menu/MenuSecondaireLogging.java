@@ -10,6 +10,7 @@ import org.chtijbug.drools.console.view.LoggingView;
 
 @StyleSheet("css/accueil.css")
 public class MenuSecondaireLogging extends HorizontalLayout {
+    private static String active="active";
 
     private Button logging;
 
@@ -30,23 +31,23 @@ public class MenuSecondaireLogging extends HorizontalLayout {
 
             ActionLogging actionLogging=new ActionLogging(loggingView);
             loggingView.setActionLogging(actionLogging);
-            squeletteComposant.navigate(loggingView,LoggingView.pageName,actionLogging);
+            squeletteComposant.navigate(loggingView,LoggingView.PAGE_NAME,actionLogging);
         });
     }
 
     private boolean isActive(Button button){
-        return button.getClassNames().contains("active");
+        return button.getClassNames().contains(active);
     }
     private void removeActive(Button button) {
 
-        if(button.getClassNames().contains("active")){
-            button.getClassNames().remove("active");
+        if(button.getClassNames().contains(active)){
+            button.getClassNames().remove(active);
         }
     }
     private void active(Button button){
         removeActive(logging);
 
-        button.getClassNames().add("active");
+        button.getClassNames().add(active);
     }
 
     public Button getLogging() {

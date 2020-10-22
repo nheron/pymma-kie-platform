@@ -213,7 +213,7 @@ public class DeploymentView extends VerticalLayout implements AddLog {
 
     public void setDataProvider() {
 
-        Map<String, ProjectPersist> projectPersists = projectPersistService.getProjectsSession();
+        Map<String, ProjectPersist> projectPersists = projectPersistService.findProjectsConnectedUser();
         if (projectPersists != null) {
             ListDataProvider<ProjectPersist> dataProvider = new ListDataProvider<>(projectPersists.values());
             filterDataProvider = dataProvider.withConfigurableFilter();

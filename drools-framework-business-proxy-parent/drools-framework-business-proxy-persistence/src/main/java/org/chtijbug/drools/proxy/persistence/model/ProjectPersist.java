@@ -34,6 +34,7 @@ public class ProjectPersist  implements Serializable {
     @DBRef
     private KieWorkbench kieWorkbench;
 
+
     private KieProject projectName;
 
     private String mainClass;
@@ -179,6 +180,18 @@ public class ProjectPersist  implements Serializable {
         this.serverNames = serverNames;
     }
 
+    public String getWorkspaceName(){
+        if (this.projectName!= null){
+            return projectName.getSpaceName();
+        }
+        return null;
+    }
+    public String getKieProjectName(){
+        if (this.projectName!= null){
+            return projectName.getName()+"-"+this.branch;
+        }
+        return null;
+    }
     public ProjectPersist duplicate(){
         ArrayList<String> listServerNames = new ArrayList<String>();
         listServerNames.addAll(serverNames);
