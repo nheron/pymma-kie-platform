@@ -54,7 +54,7 @@ The sequence is
 3. execute fireAllrules.
 The JSON message will contain something like this : 
 
-	
+```json	
 	{ "commands":[
 	       {
 	          "insert":{
@@ -80,7 +80,7 @@ The JSON message will contain something like this :
 	       } 
 	     ]
 	  }
-
+```
 
 On the server side, 
 1. instance A will be created with its attribute B  and inserted to the working memory. This new A instance will be created with a B instance that is not inserted. 
