@@ -230,7 +230,10 @@
                                         <assembly>
                                             <descriptorRef>artifact</descriptorRef>
                                         </assembly>
-
+                                        <tags>
+                                            <tag>${version.number}</tag>
+                                            <tag>latest</tag>
+                                        </tags>
                                     </build>
 
                                     <run>
