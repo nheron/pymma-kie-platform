@@ -386,7 +386,8 @@ public class KieServiceCommon {
             for (ContainerRuntimePojoPersist element : containerRuntimePojoPersists) {
                 logger.debug("runtime {} has status {}", element.getContainerId(), element.getStatus());
                 ContainerPojoPersist containerPojoPersist = containerRepository.findByServerNameAndContainerId(serverName, element.getContainerId());
-                if (element.getStatus().equals(ContainerRuntimePojoPersist.STATUS.TODEPLOY.name())) {
+                if (containerPojoPersist!= null
+                      && element.getStatus().equals(ContainerRuntimePojoPersist.STATUS.TODEPLOY.name())) {
                     logger.info("start deploy new container");
                     this.disposeContainer(element.getContainerId());
                     KieContainerResource newContainer = new KieContainerResource();

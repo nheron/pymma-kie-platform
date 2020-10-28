@@ -371,7 +371,10 @@
                                         <tags>
                                             <tag>latest</tag>
                                         </tags>
-
+                                        <tags>
+                                            <tag>${version.number}</tag>
+                                            <tag>latest</tag>
+                                        </tags>
                                     </build>
 
                                     <run>
