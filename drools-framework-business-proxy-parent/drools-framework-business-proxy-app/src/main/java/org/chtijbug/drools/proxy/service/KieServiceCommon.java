@@ -176,7 +176,6 @@ public class KieServiceCommon {
         }
         try {
             for (KieContainerResource kieContainerResource : this.server.getServerState().getResult().getContainers()) {
-                this.createContainer(kieContainerResource.getContainerId(), kieContainerResource);
                 ContainerPojoPersist container = containerRepository.findByServerNameAndContainerId(serverName, kieContainerResource.getContainerId());
                 if (container != null) {
                     ContainerRuntimePojoPersist containerRuntimePojoPersist = containerRuntimeRepository.findByServerNameAndContainerIdAndHostname(serverName, kieContainerResource.getContainerId(), hostName);
@@ -187,8 +186,9 @@ public class KieServiceCommon {
                         containerRuntimePojoPersist.setHostname(hostName);
                         containerRuntimePojoPersist.setStatus(ContainerRuntimePojoPersist.STATUS.UP.name());
                         containerRuntimeRepository.save(containerRuntimePojoPersist);
+                        this.createContainer(kieContainerResource.getContainerId(), kieContainerResource);
+                        this.initCamelBusinessRoute(container);
                     }
-                    this.initCamelBusinessRoute(container);
                 }
             }
         } catch (Exception e) {
@@ -406,8 +406,11 @@ public class KieServiceCommon {
                 } else if (element.getStatus().equals(ContainerRuntimePojoPersist.STATUS.TODELETE.name())) {
                     this.disposeContainer(element.getContainerId());
                     this.deleteCamelBusinessRoute(element.getContainerId());
-                    element.setStatus(ContainerRuntimePojoPersist.STATUS.DOWN.toString());
-                    containerRuntimeRepository.save(element);
+                    containerRuntimeRepository.delete(element);
+                    if (containerPojoPersist!= null){
+                        containerRepository.delete(containerPojoPersist);
+                    }
+
                 }
             }
 

@@ -43,6 +43,8 @@ public class GridRuntime extends Grid<RuntimePersist> {
 
     private String strStatus = "State";
 
+    private List<RuntimePersist> runtimeSelected= new ArrayList<>();
+
     private transient ProjectPersistService projectPersistService;
     private transient RuntimeService runtimeService;
 
@@ -146,12 +148,17 @@ public class GridRuntime extends Grid<RuntimePersist> {
         return columnPredicate;
     }
 
+    public List<RuntimePersist> getRuntimeSelected() {
+        return runtimeSelected;
+    }
+
     public void setDataProvider() {
 
         List<RuntimePersist> runtimePersists = runtimeService.getRuntimeRepository().findAll();
+
         if (runtimePersists != null) {
-            List<RuntimePersist> runtimeToShow = new ArrayList<>();
             Map<String, String> urlMap = new HashMap<>();
+            List<RuntimePersist> runtimeToShow= new ArrayList<>();
             for (RuntimePersist runtimePersist : runtimePersists) {
                 if (urlMap.containsKey(runtimePersist.getServerName()) == false) {
 
@@ -161,6 +168,7 @@ public class GridRuntime extends Grid<RuntimePersist> {
                         runtimeToShow.add(runtimePersist1);
                         if (projectPersist.getServerNames().contains(runtimePersist1.getServerName())) {
                             selectionModel.select(runtimePersist1);
+                            runtimeSelected.add(runtimePersist);
                         }
                     } else {
                         runtimeToShow.add(runtimePersist1);
