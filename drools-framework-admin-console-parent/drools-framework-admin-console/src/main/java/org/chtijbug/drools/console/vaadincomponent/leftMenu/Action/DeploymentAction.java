@@ -61,7 +61,7 @@ public class DeploymentAction extends VerticalLayout {
             }
         });
 
-        deployer =new Button("Déployer", VaadinIcon.EXTERNAL_LINK.create());
+        deployer =new Button("Deploy", VaadinIcon.EXTERNAL_LINK.create());
         deployer.setClassName("leftMenu-global-button");
         deployer.setEnabled(false);
         add(deployer);

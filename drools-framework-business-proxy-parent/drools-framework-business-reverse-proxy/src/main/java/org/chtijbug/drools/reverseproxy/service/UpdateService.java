@@ -63,7 +63,7 @@ public class UpdateService {
         }
         if (!found) {
             MappingProperties newMappingProperties = new MappingProperties();
-            newMappingProperties.setPath(update.getPath());
+            newMappingProperties.setPath(UpdateService.removeSlach(update.getPath()));
             logger.info("Creating path {}",update.getPath());
             for (String destination : update.getServerNames()) {
                 newMappingProperties.getDestinations().add(destination);

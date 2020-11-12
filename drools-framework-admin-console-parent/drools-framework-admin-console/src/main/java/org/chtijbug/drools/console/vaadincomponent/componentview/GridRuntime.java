@@ -1,7 +1,9 @@
 package org.chtijbug.drools.console.vaadincomponent.componentview;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSelectionModel;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -25,7 +27,7 @@ public class GridRuntime extends Grid<RuntimePersist> {
 
     private TextField hostName;
 
-    private TextField branch ;
+    private TextField branch;
 
     private TextField version;
 
@@ -48,6 +50,7 @@ public class GridRuntime extends Grid<RuntimePersist> {
     private ConfigurableFilterDataProvider<RuntimePersist, Void, SerializablePredicate<RuntimePersist>> filterDataProvider;
 
     private ProjectPersist projectPersist = null;
+    private GridSelectionModel<RuntimePersist> selectionModel;
 
     public GridRuntime(ProjectPersist projectPersist) {
         this.projectPersist = projectPersist;
@@ -66,8 +69,8 @@ public class GridRuntime extends Grid<RuntimePersist> {
         runtimeService = AppContext.getApplicationContext().getBean(RuntimeService.class);
 
         setClassName("deployment-grid-perso");
-        setSelectionMode(Grid.SelectionMode.MULTI);
-
+        selectionModel = setSelectionMode(SelectionMode.MULTI);
+        selectionModel.deselectAll();
         Grid.Column<RuntimePersist> runtimeNameCo = addColumn(runtimePersist -> runtimePersist.getServerName());
         runtimeName = new TextField(strRuntimeName);
         runtimeName.setValueChangeMode(ValueChangeMode.EAGER);
@@ -116,7 +119,6 @@ public class GridRuntime extends Grid<RuntimePersist> {
 
             return label;
         })).setHeader("associated projects");
-
         setDataProvider();
     }
 
@@ -158,9 +160,9 @@ public class GridRuntime extends Grid<RuntimePersist> {
                     if (projectPersist != null) {
                         runtimeToShow.add(runtimePersist1);
                         if (projectPersist.getServerNames().contains(runtimePersist1.getServerName())) {
-                            getSelectionModel().select(runtimePersist1);
+                            selectionModel.select(runtimePersist1);
                         }
-                    }else{
+                    } else {
                         runtimeToShow.add(runtimePersist1);
                     }
                 }
@@ -169,11 +171,18 @@ public class GridRuntime extends Grid<RuntimePersist> {
             dataProvider = new ListDataProvider<>(runtimeToShow);
             filterDataProvider = dataProvider.withConfigurableFilter();
             setDataProvider(filterDataProvider);
+            for (RuntimePersist runtimePersist : dataProvider.getItems()) {
+                if (projectPersist.getServerNames().contains(runtimePersist.getServerName())) {
+                    selectionModel.select(runtimePersist);
+                }
+            }
 
             reinitFilter();
 
         }
-    }
+
+
+}
 
     public void reinitFilter() {
         hostName.setValue("");
