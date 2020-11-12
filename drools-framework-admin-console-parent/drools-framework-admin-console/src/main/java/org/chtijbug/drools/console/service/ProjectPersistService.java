@@ -106,7 +106,7 @@ public class ProjectPersistService {
         return projectPersist;
     }
 
-    public void createProjectGroupIfNeeded(String projectName, KieWorkbench kieWorkbench,ProjectPersist projectPersist,UserGroups workspaceUserGroup ) {
+    public void createProjectGroupIfNeeded(String projectName, KieWorkbench kieWorkbench, ProjectPersist projectPersist, UserGroups workspaceUserGroup) {
         UserGroups userGroups = userGroupsRepository.findByName("prj_" + projectName);
         if (userGroups == null) {
             UserGroups projectGroup = new UserGroups(UUID.randomUUID().toString(), "prj_" + projectName);
@@ -119,7 +119,7 @@ public class ProjectPersistService {
             groupUser.getUserGroups().add(projectGroup);
             groupUser.getUserRoles().add(userRolesRepository.findByName("analyst"));
             userRepository.save(groupUser);
-        }else{
+        } else {
             userGroups.setWorkspaceUserGroup(workspaceUserGroup);
             userGroupsRepository.save(userGroups);
         }
@@ -144,30 +144,39 @@ public class ProjectPersistService {
 
     public Map<String, ProjectPersist> findProjectsConnectedUser() {
         //VaadinSession.getCurrent().get
-        boolean isAdmin =false;
+        boolean isAdmin = false;
 
         UserConnected userConnected = userConnectedService.getUserConnected();
         User user = userRepository.findByLogin(userConnected.getUserName());
-        for (UserRoles userRoles : user.getUserRoles()){
-            if ("admin".equals(userRoles.getName())){
-                isAdmin=true;
+        for (UserRoles userRoles : user.getUserRoles()) {
+            if ("admin".equals(userRoles.getName())) {
+                isAdmin = true;
             }
         }
         List<ProjectPersist> projectPersists = new ArrayList<>();
         if (isAdmin) {
             projectPersists = projectRepository.findAll();
-        }else {
+        } else {
             List<UserGroups> userGroups = user.getUserGroups();
 
         }
         Map<String, ProjectPersist> map = new HashMap<>();
-        for (ProjectPersist projectPersist : projectPersists){
-            map.put(projectPersist.getProjectName().toString() + "-" + projectPersist.getBranch(),projectPersist);
+        for (ProjectPersist projectPersist : projectPersists) {
+            map.put(projectPersist.getProjectName().toString() + "-" + projectPersist.getBranch(), projectPersist);
         }
 
         return map;
     }
 
+    public void removeAssociation(ProjectPersist projectPersist, List<RuntimePersist> runtimesRemove) {
+        for (RuntimePersist runtimePersist : runtimesRemove) {
+            List<ContainerRuntimePojoPersist> elts = containerRuntimeRepository.findByServerNameAndContainerId(runtimePersist.getServerName(), projectPersist.getContainerID());
+            for (ContainerRuntimePojoPersist elt : elts) {
+                elt.setStatus(ContainerRuntimePojoPersist.STATUS.TODELETE.name());
+                containerRuntimeRepository.save(elt);
+            }
+        }
+    }
 
 
     public boolean associate(ProjectPersist projectPersist, List<RuntimePersist> runtimePersists) {
@@ -189,10 +198,27 @@ public class ProjectPersistService {
                 newContainer.setServerName(runtimePersist.getServerName());
                 newContainer.setGroupId(projectPersist.getGroupID());
                 newContainer.setArtifactId(projectPersist.getArtifactID());
+
                 newContainer.setVersion(projectPersist.getProjectVersion());
                 containerRepository.save(newContainer);
+                List<ContainerRuntimePojoPersist> elts = containerRuntimeRepository.findByServerNameAndContainerId(runtimePersist.getServerName(), projectPersist.getContainerID());
+                if (!elts.isEmpty()) {
+                    for (ContainerRuntimePojoPersist elt : elts) {
+                        elt.setStatus(ContainerRuntimePojoPersist.STATUS.TODEPLOY.name());
+                        containerRuntimeRepository.save(elt);
+                    }
+                } else {
+
+                    ContainerRuntimePojoPersist runtimePojoPersist = new ContainerRuntimePojoPersist();
+                    runtimePojoPersist.setServerName(runtimePersist.getServerName());
+                    runtimePojoPersist.setHostname(runtimePersist.getHostname());
+                    runtimePojoPersist.setContainerId(projectPersist.getContainerID());
+                    runtimePojoPersist.setStatus(ContainerRuntimePojoPersist.STATUS.TODEPLOY.name());
+                    containerRuntimeRepository.save(runtimePojoPersist);
+                }
 
             }
+
             String hostName = runtimePersist.getServerUrl() + "/api/" + projectPersist.getContainerID();
             reverseProxyUpdate.getServerNames().add(hostName);
         }

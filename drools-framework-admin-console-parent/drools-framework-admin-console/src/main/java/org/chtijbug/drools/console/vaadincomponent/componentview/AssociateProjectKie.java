@@ -49,20 +49,34 @@ public class AssociateProjectKie extends VerticalLayout {
         add(associer);
         associer.addClickListener(buttonClickEvent -> {
             List<RuntimePersist> lstToSave = new ArrayList<>();
+            List<RuntimePersist> lstToDelete = new ArrayList<>();
             for (RuntimePersist runtimePersist : gridRuntime.getSelectedItems()) {
                 lstToSave.add(runtimePersist);
             }
+            for (RuntimePersist runtime : gridRuntime.getRuntimeSelected()){
+                boolean found=false;
+                for (RuntimePersist runtimePersist : gridRuntime.getSelectedItems()) {
+                    if (runtimePersist.getServerName().equals(runtime.getServerName())
+                        && runtimePersist.getServerPort().equals(runtime.getServerPort())){
+                        found=true;
+                    }
+
+                }
+                if (!found){
+                    lstToDelete.add(runtime);
+                }
+            }
+            if (!lstToDelete.isEmpty()){
+                projectPersistService.removeAssociation(projectPersist,lstToDelete);
+            }
             if (!lstToSave.isEmpty()) {
 
-                boolean tmp = projectPersistService.associate(projectPersist, lstToSave);
+                projectPersistService.associate(projectPersist, lstToSave);
 
-                if (tmp) {
-                    deploymentView.setDataProvider();
-                    dialog.close();
-                } else {
-                    associer.setEnabled(false);
-                    Notification.show("There is already a project of this name on this runtime");
-                }
+            }
+            if (!lstToDelete.isEmpty() || !lstToSave.isEmpty()){
+                deploymentView.setDataProvider();
+                dialog.close();
             }
         });
 
