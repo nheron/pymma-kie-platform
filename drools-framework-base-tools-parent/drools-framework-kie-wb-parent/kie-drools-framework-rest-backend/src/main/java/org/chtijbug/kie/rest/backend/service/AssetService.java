@@ -260,6 +260,26 @@ public class AssetService {
         return null;
     }
 
+    public org.uberfire.java.nio.file.Path getRuleDirectoryByName(DirectoryStream<org.uberfire.java.nio.file.Path> directoryStream, String assetName) {
+        for (org.uberfire.java.nio.file.Path elementPath : directoryStream) {
+            if (elementPath.getFileName().toString().equals(assetName)) {
+                return elementPath;
+            }
+            if (org.uberfire.java.nio.file.Files.isDirectory(elementPath)) {
+                DirectoryStream<org.uberfire.java.nio.file.Path> adirectoryStream = ioService.newDirectoryStream(elementPath);
+                org.uberfire.java.nio.file.Path foundElementPath = getRuleDirectoryByName(adirectoryStream, assetName);
+                if (foundElementPath != null) {
+                    return foundElementPath;
+                }
+            } else {
+                if (elementPath.getFileName().toString().equals(assetName)) {
+                    return elementPath;
+                }
+            }
+        }
+        return null;
+    }
+
     public org.uberfire.java.nio.file.Path getDirectoryElementPath(DirectoryStream<org.uberfire.java.nio.file.Path> directoryStream, String assetName) {
         for (org.uberfire.java.nio.file.Path elementPath : directoryStream) {
             if (org.uberfire.java.nio.file.Files.isDirectory(elementPath)) {

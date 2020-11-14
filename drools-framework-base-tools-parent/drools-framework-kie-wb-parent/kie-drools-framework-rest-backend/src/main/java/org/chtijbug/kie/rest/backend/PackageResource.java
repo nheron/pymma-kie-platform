@@ -354,7 +354,10 @@ public class PackageResource {
                     }
                 } else {//
                     if (isCreate) {
-                        org.uberfire.java.nio.file.Path directoryWhereCreateAsset = assetService.getRuleDirectory(directoryStream, assetName);
+                        String targetName = projectName.replace("-","_").replace(" ","_");
+                        org.uberfire.java.nio.file.Path ressourcesPath = nioPath.resolve("src/main/resources");
+                        DirectoryStream<org.uberfire.java.nio.file.Path> directoryStreamBase = ioService.newDirectoryStream(ressourcesPath);
+                        org.uberfire.java.nio.file.Path directoryWhereCreateAsset = assetService.getRuleDirectoryByName(directoryStreamBase, targetName);
 
                         if (directoryWhereCreateAsset != null) {
                             URI parentURI = directoryWhereCreateAsset.getParent().toUri();
