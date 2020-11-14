@@ -83,7 +83,7 @@ public class UpdateService {
 
     public static String removeSlach(String target){
         if (target!= null) {
-            return target.replace("/", "");
+            return target.replace("/", "").replace(" ","");
         }
         return null;
     }

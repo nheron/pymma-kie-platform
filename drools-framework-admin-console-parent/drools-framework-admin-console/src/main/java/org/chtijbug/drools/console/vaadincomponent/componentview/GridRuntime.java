@@ -16,10 +16,7 @@ import org.chtijbug.drools.console.service.util.AppContext;
 import org.chtijbug.drools.proxy.persistence.model.ProjectPersist;
 import org.chtijbug.drools.proxy.persistence.model.RuntimePersist;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GridRuntime extends Grid<RuntimePersist> {
 
@@ -43,7 +40,7 @@ public class GridRuntime extends Grid<RuntimePersist> {
 
     private String strStatus = "State";
 
-    private List<RuntimePersist> runtimeSelected= new ArrayList<>();
+    private List<RuntimePersist> runtimeSelected = new ArrayList<>();
 
     private transient ProjectPersistService projectPersistService;
     private transient RuntimeService runtimeService;
@@ -158,17 +155,23 @@ public class GridRuntime extends Grid<RuntimePersist> {
 
         if (runtimePersists != null) {
             Map<String, String> urlMap = new HashMap<>();
-            List<RuntimePersist> runtimeToShow= new ArrayList<>();
+            List<RuntimePersist> runtimeToShow = new ArrayList<>();
             for (RuntimePersist runtimePersist : runtimePersists) {
                 if (urlMap.containsKey(runtimePersist.getServerName()) == false) {
 
                     urlMap.put(runtimePersist.getServerName(), runtimePersist.getServerUrl());
                     RuntimePersist runtimePersist1 = runtimePersist.duplicate();
                     if (projectPersist != null) {
-                        runtimeToShow.add(runtimePersist1);
-                        if (projectPersist.getServerNames().contains(runtimePersist1.getServerName())) {
-                            selectionModel.select(runtimePersist1);
-                            runtimeSelected.add(runtimePersist);
+                        List<String> serverList = new ArrayList<>();
+                        serverList.add(runtimePersist.getServerName());
+                        List<ProjectPersist> projectPersists = projectPersistService.getProjectRepository().findByServerNamesIn(serverList);
+                        if (projectPersist.getServerNames().contains(runtimePersist.getServerName())
+                                || projectPersists.size() == 0) {
+                            runtimeToShow.add(runtimePersist1);
+                            if (projectPersist.getServerNames().contains(runtimePersist1.getServerName())) {
+                                selectionModel.select(runtimePersist1);
+                                runtimeSelected.add(runtimePersist);
+                            }
                         }
                     } else {
                         runtimeToShow.add(runtimePersist1);
@@ -190,7 +193,7 @@ public class GridRuntime extends Grid<RuntimePersist> {
         }
 
 
-}
+    }
 
     public void reinitFilter() {
         hostName.setValue("");
