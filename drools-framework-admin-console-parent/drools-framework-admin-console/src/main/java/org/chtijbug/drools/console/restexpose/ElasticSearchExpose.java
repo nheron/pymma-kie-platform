@@ -1,5 +1,6 @@
 package org.chtijbug.drools.console.restexpose;
 
+import io.swagger.annotations.Api;
 import org.chtijbug.drools.console.service.IndexerService;
 import org.chtijbug.drools.proxy.persistence.model.BusinessTransactionAction;
 import org.chtijbug.drools.proxy.persistence.model.BusinessTransactionPersistence;
@@ -13,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/elasticSearch")
+@RequestMapping("/api/logging")
+@Api("/api/logging")
 public class ElasticSearchExpose {
 
     @Autowired

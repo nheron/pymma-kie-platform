@@ -13,5 +13,6 @@
 
     <modules>
         <module>drools-framework-admin-console</module>
+        <module>drools-framework-admin-dto</module>
     </modules>
 </project>
