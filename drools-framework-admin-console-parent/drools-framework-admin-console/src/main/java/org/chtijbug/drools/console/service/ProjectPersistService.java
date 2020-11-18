@@ -106,7 +106,7 @@ public class ProjectPersistService {
         return projectPersist;
     }
 
-    public void createProjectGroupIfNeeded(String projectName, KieWorkbench kieWorkbench, ProjectPersist projectPersist, UserGroups workspaceUserGroup) {
+    public UserGroups createProjectGroupIfNeeded(String projectName, KieWorkbench kieWorkbench, ProjectPersist projectPersist, UserGroups workspaceUserGroup) {
         UserGroups userGroups = userGroupsRepository.findByName("prj_" + projectName);
         if (userGroups == null) {
             UserGroups projectGroup = new UserGroups(UUID.randomUUID().toString(), "prj_" + projectName);
@@ -114,15 +114,16 @@ public class ProjectPersistService {
             projectGroup.setProjectName(projectName);
             projectGroup.setProjectPersist(projectPersist);
             projectGroup.setWorkspaceUserGroup(workspaceUserGroup);
-            userGroupsRepository.save(projectGroup);
+            projectGroup = userGroupsRepository.save(projectGroup);
             User groupUser = new User(UUID.randomUUID().toString(), "prj_user_" + projectName, "adminadmin99#");
             groupUser.getUserGroups().add(projectGroup);
             groupUser.getUserRoles().add(userRolesRepository.findByName("analyst"));
             userRepository.save(groupUser);
         } else {
             userGroups.setWorkspaceUserGroup(workspaceUserGroup);
-            userGroupsRepository.save(userGroups);
+            userGroups=userGroupsRepository.save(userGroups);
         }
+        return userGroups;
     }
 
     public UserGroups createWorkSpaceGroupIfNeeded(String workSpaceName, KieWorkbench kieWorkbench) {

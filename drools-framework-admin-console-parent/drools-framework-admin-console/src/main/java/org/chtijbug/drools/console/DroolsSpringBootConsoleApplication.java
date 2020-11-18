@@ -14,7 +14,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.chtijbug.drools.KieContainerResponse;
 import org.chtijbug.drools.ReverseProxyUpdate;
 import org.chtijbug.drools.common.KafkaTopicConstants;
-import org.chtijbug.drools.console.middle.DababaseContentInit;
+import org.chtijbug.drools.console.middle.DababaseContentUpdate;
 import org.chtijbug.drools.console.service.model.kie.KieConfigurationData;
 import org.chtijbug.drools.console.service.util.ApplicationContextProvider;
 import org.chtijbug.drools.console.service.wbconnector.KieBusinessCentralConnector;
@@ -92,7 +92,7 @@ public class DroolsSpringBootConsoleApplication extends SpringBootServletInitial
     private String sslKeystoreType;
 
     @Autowired
-    private DababaseContentInit dababaseContentInit;
+    private DababaseContentUpdate dababaseContentUpdate;
     @Autowired
     private KieBusinessCentralConnector kieBusinessCentralConnector;
     @Autowired
@@ -218,7 +218,7 @@ public class DroolsSpringBootConsoleApplication extends SpringBootServletInitial
 
    @EventListener(ApplicationReadyEvent.class)
     public void initPlatform(){
-        dababaseContentInit.initDatabaseIfNecessary();
+        dababaseContentUpdate.initDatabaseIfNecessary();
         /**
        for (KieWorkbench kieWorkbench: kieWorkbenchRepository.findAll()) {
            Map<String, KieContainerResource> kies = new HashMap<>();
@@ -275,7 +275,7 @@ public class DroolsSpringBootConsoleApplication extends SpringBootServletInitial
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("org.chtijbug.drools.console.restexpose"))
                 //.paths(PathSelectors.regex("/api/wb./wb.*"))
-                .paths(PathSelectors.regex("/api/wb.*"))
+                .paths(PathSelectors.regex("/api.*"))
                 .build()
                 .pathMapping("/swagger");
     }
