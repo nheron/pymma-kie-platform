@@ -15,6 +15,7 @@
  */
 package org.chtijbug.drools.runtime.impl;
 
+import com.rits.cloning.Cloner;
 import org.chtijbug.drools.entity.DroolsJbpmVariableObject;
 import org.chtijbug.drools.entity.DroolsNodeInstanceObject;
 import org.chtijbug.drools.entity.DroolsProcessInstanceObject;
@@ -37,8 +38,10 @@ public class ProcessHandlerListener implements ProcessEventListener {
      */
     private final RuleBaseStatefulSession ruleBaseSession;
 
-    public ProcessHandlerListener(RuleBaseStatefulSession ruleBaseSession) {
+    private Cloner cloner;
+    public ProcessHandlerListener(RuleBaseStatefulSession ruleBaseSession, Cloner cloner) {
         this.ruleBaseSession = ruleBaseSession;
+        this.cloner = cloner;
     }
 
     @Override

@@ -15,6 +15,7 @@
  */
 package org.chtijbug.drools.runtime.impl;
 
+import com.rits.cloning.Cloner;
 import org.chtijbug.drools.entity.DroolsFactObject;
 import org.chtijbug.drools.entity.DroolsRuleFlowGroupObject;
 import org.chtijbug.drools.entity.DroolsRuleObject;
@@ -35,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 //import org.drools.core.common.InternalFactHandle;
@@ -66,14 +68,17 @@ public class RuleHandlerListener extends DefaultAgendaEventListener {
      */
     private int maxNumberRuleToExecute;
 
+    private Cloner cloner;
+
     /**
      * IfMaxNumberRulewasReached
      */
     private boolean maxNumerExecutedRulesReached = false;
 
-    public RuleHandlerListener(RuleBaseStatefulSession ruleBaseSession) {
+    public RuleHandlerListener(RuleBaseStatefulSession ruleBaseSession, Cloner cloner) {
         this.ruleBaseSession = ruleBaseSession;
         this.maxNumberRuleToExecute = ruleBaseSession.getMaxNumberRuleToExecute();
+        this.cloner=cloner;
     }
 
     public boolean isMaxNumerExecutedRulesReached() {
@@ -96,14 +101,18 @@ public class RuleHandlerListener extends DefaultAgendaEventListener {
                     if (h instanceof DefaultFactHandle) {
                         InternalFactHandle defaultFactHandle = (InternalFactHandle) h;
                         //System.out.println(defaultFactHandle.toString());
-                        Object object = defaultFactHandle.getObject();
+                        Object object = cloner.deepClone(defaultFactHandle.getObject());
                         DroolsFactObject sourceFactObject = ruleBaseSession.getLastFactObjectVersionFromFactHandle(h);
                         if (sourceFactObject==null){
                             try {
                                 if (object instanceof List){
                                     List lst = (List)object;
-                                    sourceFactObject = new DroolsFactObject(lst.toArray(), 1);
-                                }if (object instanceof InitialFactImpl){
+                                    List clonedList=new ArrayList();
+                                    for (Object l : lst){
+                                        clonedList.add(cloner.deepClone(l));
+                                    }
+                                    sourceFactObject = new DroolsFactObject(clonedList.toArray(), 1);
+                                }else if (object instanceof InitialFactImpl){
                                     //InitialFactImpl initialFact = (InitialFactImpl)object;
                                     // Do Nothing for the time
                                 }
