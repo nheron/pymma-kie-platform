@@ -15,6 +15,7 @@
  */
 package org.chtijbug.drools.runtime.impl;
 
+import com.rits.cloning.Cloner;
 import org.chtijbug.drools.entity.DroolsFactObject;
 import org.chtijbug.drools.entity.history.fact.DeletedFactHistoryEvent;
 import org.chtijbug.drools.entity.history.fact.FactHistoryEvent;
@@ -42,9 +43,11 @@ public class FactHandlerListener implements RuleRuntimeEventListener {
 
     private static Logger logger = LoggerFactory.getLogger(FactHandlerListener.class);
     private final RuleBaseStatefulSession ruleBaseSession;
+    private Cloner cloner;
 
-    public FactHandlerListener(RuleBaseStatefulSession ruleBaseSession) {
+    public FactHandlerListener(RuleBaseStatefulSession ruleBaseSession, Cloner cloner) {
         this.ruleBaseSession = ruleBaseSession;
+        this.cloner=cloner;
     }
 
     @Override
@@ -54,9 +57,9 @@ public class FactHandlerListener implements RuleRuntimeEventListener {
             //____ Updating reference into the facts map from knowledge Session
             //((RuleTerminalNode)((RuleTerminalNodeLeftTuple)((org.drools.common.DefaultFactHandle)event.getFactHandle()).getFirstLeftTuple()).getSink()).getRule().getRuleFlowGroup()
             FactHandle f = event.getFactHandle();
-            Object newObject = event.getObject();
+            Object newObject = cloner.deepClone(event.getObject());
             DroolsFactObject ff = DroolsFactObjectFactory.createFactObject(newObject);
-            ruleBaseSession.setData(f, newObject, ff);
+            ruleBaseSession.setData(f, event.getObject(), ff);
             //____ Adding the Insert Event from the History Container
             InsertedFactHistoryEvent insertFactHistoryEvent = new InsertedFactHistoryEvent(this.ruleBaseSession.nextEventId(), ff, this.ruleBaseSession.getRuleBaseID(), this.ruleBaseSession.getSessionId());
             if (insertFactHistoryEvent.getRuleName() == null && event instanceof ObjectInsertedEventImpl) {
@@ -77,12 +80,11 @@ public class FactHandlerListener implements RuleRuntimeEventListener {
         try {
             //____ Updating FactHandle Object reference from the knwoledge session
             FactHandle f = event.getFactHandle();
-            Object oldValue = event.getOldObject();
-            Object newValue = event.getObject();
+            Object newValue = cloner.deepClone(event.getObject());
 
-            DroolsFactObject factOldValue = this.ruleBaseSession.getLastFactObjectVersion(oldValue);
+            DroolsFactObject factOldValue = this.ruleBaseSession.getLastFactObjectVersion(event.getOldObject());
             DroolsFactObject factNewValue = DroolsFactObjectFactory.createFactObject(newValue, factOldValue.getNextObjectVersion());
-            ruleBaseSession.setData(f, newValue, factNewValue);
+            ruleBaseSession.setData(f, event.getObject(), factNewValue);
             //____ Adding the Update Event from the History Container
             UpdatedFactHistoryEvent updatedFactHistoryEvent = new UpdatedFactHistoryEvent(this.ruleBaseSession.nextEventId(), factOldValue, factNewValue, this.ruleBaseSession.getRuleBaseID(), this.ruleBaseSession.getSessionId());
             if (updatedFactHistoryEvent.getRuleName() == null && event instanceof ObjectUpdatedEventImpl) {
@@ -101,9 +103,9 @@ public class FactHandlerListener implements RuleRuntimeEventListener {
         try {
             //____ Removing FactHandle from the KnowledgeBase
             FactHandle f = event.getFactHandle();
-            Object newObject = event.getOldObject();
-            DroolsFactObject deletedFact = this.ruleBaseSession.getLastFactObjectVersion(newObject);
-            ruleBaseSession.unsetData(f, newObject);
+            Object deletedObject = cloner.deepClone(event.getOldObject());
+            DroolsFactObject deletedFact = this.ruleBaseSession.getLastFactObjectVersion(event.getOldObject());
+            ruleBaseSession.unsetData(f, event.getOldObject());
             //____ Adding a Delete Event from the HistoryContainer
 
             DeletedFactHistoryEvent deleteFactEvent = new DeletedFactHistoryEvent(this.ruleBaseSession.nextEventId(), deletedFact, this.ruleBaseSession.getRuleBaseID(), this.ruleBaseSession.getSessionId());

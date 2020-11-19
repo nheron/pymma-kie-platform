@@ -87,15 +87,16 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
 
     private HistoryListener historyListener;
     private EventCounter eventCounter = EventCounter.newCounter();
+    private Cloner cloner = new Cloner(new ObjenesisInstantiationStrategy());
 
     public RuleBaseStatefulSession(Long ruleBaseID, Long sessionId, KieSession knowledgeSession, int maxNumberRuleToExecute, HistoryListener historyListener) throws DroolsChtijbugException {
         this.ruleBaseID = ruleBaseID;
         this.sessionId = sessionId;
         this.knowledgeSession = knowledgeSession;
         this.maxNumberRuleToExecute = maxNumberRuleToExecute;
-        this.factListener = new FactHandlerListener(this);
-        this.ruleHandlerListener = new RuleHandlerListener(this);
-        this.processHandlerListener = new ProcessHandlerListener(this);
+        this.factListener = new FactHandlerListener(this,cloner);
+        this.ruleHandlerListener = new RuleHandlerListener(this,cloner);
+        this.processHandlerListener = new ProcessHandlerListener(this,cloner);
         this.historyContainer = new HistoryContainer(sessionId, historyListener);
         this.listFactObjects = new HashMap<>();
         this.listFact = new HashMap<>();
@@ -389,7 +390,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
             Thread currentThread = Thread.currentThread();
             ClassLoader old = currentThread.getContextClassLoader();
             currentThread.setContextClassLoader(inputObject.getClass().getClassLoader());
-            Cloner cloner = new Cloner(new ObjenesisInstantiationStrategy());
+
             inputObjectClone=cloner.deepClone(inputObject);
             currentThread.setContextClassLoader(old);
             inputDroolsObject = DroolsFactObjectFactory.createFactObject(inputObjectClone);
@@ -549,7 +550,6 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
         Object inputObjectClone;
         if (inputObject != null) {
             this.insertByReflection(inputObject);
-            Cloner cloner = new Cloner();
             inputObjectClone=cloner.deepClone(inputObject);
             inputDroolsObject = DroolsFactObjectFactory.createFactObject(inputObjectClone);
         }
