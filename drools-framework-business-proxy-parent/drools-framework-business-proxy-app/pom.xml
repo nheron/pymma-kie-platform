@@ -24,7 +24,7 @@
     <parent>
         <groupId>com.pymmasoftware.jbpm</groupId>
         <artifactId>drools-framework-business-proxy-parent</artifactId>
-        <version>0.1.0.Final</version>
+        <version>0.1.0.x</version>
     </parent>
 
     <artifactId>drools-framework-business-proxy-app</artifactId>

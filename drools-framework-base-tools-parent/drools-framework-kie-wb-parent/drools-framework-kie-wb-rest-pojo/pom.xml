@@ -5,7 +5,7 @@
     <parent>
         <artifactId>drools-framework-kie-wb-parent</artifactId>
         <groupId>com.pymmasoftware.jbpm</groupId>
-        <version>0.1.0.Final</version>
+        <version>0.1.0.x</version>
     </parent>
     <artifactId>drools-framework-kie-wb-rest-pojo</artifactId>
     <packaging>jar</packaging>

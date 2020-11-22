@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.pymmasoftware.jbpm</groupId>
         <artifactId>drools-framework-examples</artifactId>
-        <version>0.1.0.Final</version>
+        <version>0.1.0.x</version>
     </parent>
 
     <artifactId>drools-framework-swimmingpool-web-ui</artifactId>

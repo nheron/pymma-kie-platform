@@ -5,7 +5,7 @@
     <parent>
         <artifactId>pymma-jbpm-platform-parent</artifactId>
         <groupId>com.pymmasoftware.jbpm</groupId>
-        <version>0.1.0.Final</version>
+        <version>0.1.0.x</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
