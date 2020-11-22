@@ -7,7 +7,7 @@
 
     <groupId>com.pymmasoftware.jbpm</groupId>
     <artifactId>pymma-jbpm-platform-parent</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>0.1.0.Final</version>
     <modules>
         <!--module>kie-wb-webapp</module-->
         <module>drools-framework-admin-console-parent</module>

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>drools-framework-business-proxy-parent</artifactId>
         <groupId>com.pymmasoftware.jbpm</groupId>
-        <version>1.1-SNAPSHOT</version>
+        <version>0.1.0.Final</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.pymmasoftware.jbpm</groupId>
             <artifactId>drools-framework-admin-dto</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>0.1.0.Final</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
