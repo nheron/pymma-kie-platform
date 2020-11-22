@@ -222,7 +222,7 @@
                             <verbose>true</verbose>
                             <images>
                                 <image>
-                                    <name>pymmasoftware/runtime-indexer:${version.number}</name>
+                                    <name>pymmasoftware/runtime-indexer:${project.version}</name>
                                     <build>
                                         <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
 
@@ -233,6 +233,8 @@
                                         <tags>
                                             <tag>${version.number}</tag>
                                             <tag>latest</tag>
+                                            <tag>${project.version}</tag>
+
                                         </tags>
                                     </build>
 
