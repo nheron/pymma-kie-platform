@@ -441,7 +441,7 @@
                             <verbose>true</verbose>
                             <images>
                                 <image>
-                                    <name>pymmasoftware/kie-wb:${version.number}</name>
+                                    <name>pymmasoftware/kie-wb:${project.version}</name>
                                     <build>
                                         <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
 
@@ -486,6 +486,8 @@
                                         <tags>
                                             <tag>${version.number}</tag>
                                             <tag>latest</tag>
+                                            <tag>${project.version}</tag>
+
                                         </tags>
                                     </build>
 
