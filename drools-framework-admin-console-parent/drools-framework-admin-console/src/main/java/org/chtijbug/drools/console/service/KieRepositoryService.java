@@ -11,6 +11,7 @@ import org.chtijbug.drools.proxy.persistence.repository.UserRepository;
 import org.chtijbug.guvnor.server.jaxrs.api.UserLoginInformation;
 import org.chtijbug.guvnor.server.jaxrs.jaxb.Asset;
 import org.chtijbug.guvnor.server.jaxrs.model.PlatformProjectData;
+import org.chtijbug.guvnor.server.jaxrs.model.WorkspaceAuthData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -271,4 +272,38 @@ public class KieRepositoryService {
                     HttpHeaders.AUTHORIZATION, authHeader);
         };
     }
+    public String createSpaceRight(String url, String username, String password,String workbenchName,String groupName,String spaceName) {
+
+        User user = userRepository.findByLogin(username);
+        String completeurl = url + chtijbugprefix+"auth";
+        if (user != null && user.getPassword().equals(password)) {
+            if (user.getCustomer()!= null &&
+                    user.getCustomer().getKieWorkbench()!= null
+                    && user.getCustomer().getKieWorkbench().getInternalUrl()!= null){
+                completeurl = user.getCustomer().getKieWorkbench().getInternalUrl()+"/rest/chtijbug/auth";
+            }
+            completeurl=completeurl+"/"+groupName+"/"+spaceName;
+            logger.info("url moteur reco : {}" , completeurl);
+            ResponseEntity<WorkspaceAuthData> response = restTemplateKiewb
+                    .execute(completeurl, HttpMethod.POST, requestCallback(null, username, password), clientHttpResponse -> {
+                        WorkspaceAuthData extractedResponse =null;
+                        if (clientHttpResponse.getBody() != null) {
+                            Scanner s = new Scanner(clientHttpResponse.getBody()).useDelimiter("\\A");
+                            String result = s.hasNext() ? s.next() : "";
+                            extractedResponse = mapper.readValue(result, WorkspaceAuthData.class);
+
+                        }
+                        return new ResponseEntity<>(extractedResponse, clientHttpResponse.getHeaders(), clientHttpResponse.getStatusCode());
+                    });
+
+
+            WorkspaceAuthData responseBody = response.getBody();
+
+            return responseBody.getStatus();
+        } else {
+            return null;
+        }
+    }
+
+
 }

@@ -101,7 +101,6 @@ public class DababaseContentUpdate {
         adminUser.getUserGroups().add(userGroupsRepository.findByName("kiemgmt"));
         adminUser.getUserGroups().add(userGroupsRepository.findByName("admingroup"));
         adminUser.getUserRoles().add(userRolesRepository.findByName("admin"));
-        adminUser.getUserRoles().add(userRolesRepository.findByName("analyst"));
         adminUser.getUserRoles().add(userRolesRepository.findByName("rest-all"));
         userRepository.save(adminUser);
 
@@ -109,7 +108,6 @@ public class DababaseContentUpdate {
         nheronUser.getUserGroups().add(userGroupsRepository.findByName("kiemgmt"));
         nheronUser.getUserGroups().add(userGroupsRepository.findByName("admingroup"));
         nheronUser.getUserRoles().add(userRolesRepository.findByName("admin"));
-        nheronUser.getUserRoles().add(userRolesRepository.findByName("analyst"));
         nheronUser.getUserRoles().add(userRolesRepository.findByName("rest-all"));
         userRepository.save(nheronUser);
 
@@ -127,6 +125,8 @@ public class DababaseContentUpdate {
             String workspaceName = platformProjectData.getSpaceName();
             ProjectPersist projectPersist = projectPersistService.saveorUpdateProject(platformProjectData, mainWorkbench);
             UserGroups workspaceUserGroups = projectPersistService.createWorkSpaceGroupIfNeeded(workspaceName, mainWorkbench);
+            String result=kieRepositoryService.createSpaceRight(mainWorkbench.getExternalUrl() + "/rest",
+                    nheronUser.getLogin(), nheronUser.getPassword(), mainWorkbench.getName(),workspaceUserGroups.getName(),workspaceName);
             projectPersistService.createProjectGroupIfNeeded(projectName, mainWorkbench, projectPersist, workspaceUserGroups);
 
             //platformProjectData.getJavaClasses()
@@ -177,7 +177,7 @@ public class DababaseContentUpdate {
                             guidedRulesTemplateDefinition = new GuidedRulesTemplateDefinition();
                             guidedRulesTemplateDefinition.setTemplateName(asset.getTitle());
 
-                            guidedRulesTemplateDefinition.setProjectGroup(projectGroupIfNeeded);
+                            guidedRulesTemplateDefinition.setProjectGroup(workSpaceGroupIfNeeded);
 
                         }
                         String assetSource = kieRepositoryService.getAssetSource(kieWorkbench.getExternalUrl() + "/rest", nheronUser.getLogin(), nheronUser.getPassword(), workspaceName, projectName, asset.getTitle());
