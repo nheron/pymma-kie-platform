@@ -118,6 +118,7 @@ public class ProjectPersistService {
             User groupUser = new User(UUID.randomUUID().toString(), "prj_user_" + projectName, "adminadmin99#");
             groupUser.getUserGroups().add(projectGroup);
             groupUser.getUserRoles().add(userRolesRepository.findByName("analyst"));
+            groupUser.getUserRoles().add(userRolesRepository.findByName("rest-all"));
             userRepository.save(groupUser);
         } else {
             userGroups.setWorkspaceUserGroup(workspaceUserGroup);
@@ -136,6 +137,7 @@ public class ProjectPersistService {
             User groupUser = new User(UUID.randomUUID().toString(), "wrk_user_" + workSpaceName, "pymma#");
             groupUser.getUserGroups().add(userGroupsWorkSpace);
             groupUser.getUserRoles().add(userRolesRepository.findByName("analyst"));
+            groupUser.getUserRoles().add(userRolesRepository.findByName("rest-all"));
             userRepository.save(groupUser);
         }
 
