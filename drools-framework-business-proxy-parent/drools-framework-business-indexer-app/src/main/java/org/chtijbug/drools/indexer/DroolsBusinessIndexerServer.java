@@ -103,6 +103,7 @@ public class DroolsBusinessIndexerServer {
      * Main method to start the application.
      */
     public static void main(String[] args) {
+        System.setProperty(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, "41943040");
         SpringApplication.run(DroolsBusinessIndexerServer.class, args);
     }
 

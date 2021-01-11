@@ -22,6 +22,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.security.auth.SecurityProtocol;
@@ -184,6 +185,7 @@ public class DroolsBusinessProxyServer {
                 e.printStackTrace();
             }
         }
+        System.setProperty(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, "41943040");
         SpringApplication.run(DroolsBusinessProxyServer.class, args);
     }
 
