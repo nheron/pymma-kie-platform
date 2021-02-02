@@ -116,6 +116,9 @@ public class DroolsBusinessProxyServer {
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 JsonSerializer.class);
+        configProps.put(
+                ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 4655826);
+
         if (activateSsl) {
             configProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
             configProps.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, this.sslTruststoreLocation);
@@ -143,6 +146,8 @@ public class DroolsBusinessProxyServer {
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 JsonSerializer.class);
+        configProps.put(
+                ProducerConfig.MAX_REQUEST_SIZE_CONFIG,"41943040");
         if (activateSsl) {
             configProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
             configProps.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, this.sslTruststoreLocation);

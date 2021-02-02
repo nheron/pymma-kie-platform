@@ -56,8 +56,12 @@ public class RuleService {
             }
         }
         chtijbugObjectRequest.setTransactionEndTimeStamp(LocalDateTime.now());
-        kafkaTemplateLogging.send(KafkaTopicConstants.LOGING_TOPIC,chtijbugObjectRequest);
-        return  chtijbutObjectResponse.getObjectRequest();
+        try {
+            kafkaTemplateLogging.send(KafkaTopicConstants.LOGING_TOPIC,chtijbugObjectRequest);
+        }catch (Exception e){
+            logger.error(" kafkaTemplateLogging.send",e);
+        }
+          return  chtijbutObjectResponse.getObjectRequest();
     }
 
 }

@@ -357,10 +357,10 @@
 
                         <configuration>
                             <!--registry>192.168.1.184:12500</registry-->
-                            <dockerHost>${docker.Host}</dockerHost>
+
 
                             <!--  this is for Mac and Amazon Linux -->
-                            <!--dockerHost>unix:///var/run/docker.sock</dockerHost-->
+                            <dockerHost>unix:///var/run/docker.sock</dockerHost>
 
                             <verbose>true</verbose>
                             <images>
