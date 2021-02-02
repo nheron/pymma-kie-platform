@@ -77,6 +77,7 @@ public class DroolsBusinessIndexerServer {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupID);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG,  4655826);
         if (activateSsl) {
             props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
             props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, this.sslTruststoreLocation);
@@ -103,6 +104,7 @@ public class DroolsBusinessIndexerServer {
      * Main method to start the application.
      */
     public static void main(String[] args) {
+        System.setProperty(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, "41943040");
         SpringApplication.run(DroolsBusinessIndexerServer.class, args);
     }
 

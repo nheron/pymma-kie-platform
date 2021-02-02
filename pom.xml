@@ -18,7 +18,7 @@
 
     <properties>
         <fabri8.plugin.version>0.34.1</fabri8.plugin.version>
-        <jbpm.version>7.46.0.Final</jbpm.version>
+        <jbpm.version>7.47.0.Final</jbpm.version>
         <node.version>v10.16.3</node.version>
         <npm.version>6.11.3</npm.version>
         <frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>

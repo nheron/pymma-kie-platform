@@ -183,7 +183,7 @@ public class GridRuntime extends Grid<RuntimePersist> {
             filterDataProvider = dataProvider.withConfigurableFilter();
             setDataProvider(filterDataProvider);
             for (RuntimePersist runtimePersist : dataProvider.getItems()) {
-                if (projectPersist.getServerNames().contains(runtimePersist.getServerName())) {
+                if (projectPersist!= null && projectPersist.getServerNames().contains(runtimePersist.getServerName())) {
                     selectionModel.select(runtimePersist);
                 }
             }

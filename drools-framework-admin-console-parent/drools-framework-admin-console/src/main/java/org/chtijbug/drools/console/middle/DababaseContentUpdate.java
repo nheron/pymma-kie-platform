@@ -76,6 +76,7 @@ public class DababaseContentUpdate {
         User adminUser = userRepository.findByLogin("admin");
         if (adminUser == null) {
             this.initDatabase();
+            this.synchronizeDatabaseWithWorkbenches();
         } else {
             this.synchronizeDatabaseWithWorkbenches();
         }
@@ -98,18 +99,25 @@ public class DababaseContentUpdate {
         userGroupsRepository.save(new UserGroups(UUID.randomUUID().toString(), "demogroup"));
 
         User adminUser = new User(UUID.randomUUID().toString(), "admin", "adminadmin99#");
-        adminUser.getUserGroups().add(userGroupsRepository.findByName("kiemgmt"));
-        adminUser.getUserGroups().add(userGroupsRepository.findByName("admingroup"));
+       // adminUser.getUserGroups().add(userGroupsRepository.findByName("kiemgmt"));
+       // adminUser.getUserGroups().add(userGroupsRepository.findByName("admingroup"));
         adminUser.getUserRoles().add(userRolesRepository.findByName("admin"));
         adminUser.getUserRoles().add(userRolesRepository.findByName("rest-all"));
         userRepository.save(adminUser);
 
         User nheronUser = new User(UUID.randomUUID().toString(), "nheron", "adminnheron00@");
-        nheronUser.getUserGroups().add(userGroupsRepository.findByName("kiemgmt"));
-        nheronUser.getUserGroups().add(userGroupsRepository.findByName("admingroup"));
+     //   nheronUser.getUserGroups().add(userGroupsRepository.findByName("kiemgmt"));
+     //   nheronUser.getUserGroups().add(userGroupsRepository.findByName("admingroup"));
         nheronUser.getUserRoles().add(userRolesRepository.findByName("admin"));
         nheronUser.getUserRoles().add(userRolesRepository.findByName("rest-all"));
         userRepository.save(nheronUser);
+
+        User apiUser = new User(UUID.randomUUID().toString(), "api-user", "api-user");
+        //   nheronUser.getUserGroups().add(userGroupsRepository.findByName("kiemgmt"));
+        //   nheronUser.getUserGroups().add(userGroupsRepository.findByName("admingroup"));
+
+        apiUser.getUserRoles().add(userRolesRepository.findByName("rest-all"));
+        userRepository.save(apiUser);
 
         KieWorkbench mainWorkbench = new KieWorkbench();
         mainWorkbench.setID(UUID.randomUUID().toString());
