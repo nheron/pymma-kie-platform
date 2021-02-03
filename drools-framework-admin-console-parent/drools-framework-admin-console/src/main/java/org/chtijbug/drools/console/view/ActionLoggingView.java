@@ -50,7 +50,9 @@ public class ActionLoggingView extends VerticalLayout {
         dialogPerso.getClose().setVisible(false);
         this.uniqueID = businessTransactionPersistence.getTransactionId();
         this.dbID = businessTransactionPersistence.getId();
-
+        if (this.uniqueID==null){
+            this.uniqueID=this.dbID;
+        }
         title = new Label("TransactionID : " + businessTransactionPersistence.getTransactionId() + "--" + businessTransactionPersistence.getId());
         title.setClassName("creation-runtime-title");
 
