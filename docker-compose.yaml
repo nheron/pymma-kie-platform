@@ -331,6 +331,11 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2182,zoo3:2183"
       KAFKA_BROKER_ID: 1
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_FETCH_MAX_BYTES: 5048576
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 5048576
+      KAFKA_MESSAGE_MAX_BYTES: 5048576
+      KAFKA_PRODUCER_MAX_REQUEST_SIZE: 5048576
+      CONNECT_PRODUCER_MAX_REQUEST_SIZE: 5048576
     volumes:
       - kafka1_data:/var/lib/kafka/data
     depends_on:
@@ -353,6 +358,11 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2182,zoo3:2183"
       KAFKA_BROKER_ID: 2
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_FETCH_MAX_BYTES: 5048576
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 5048576
+      KAFKA_MESSAGE_MAX_BYTES: 5048576
+      KAFKA_PRODUCER_MAX_REQUEST_SIZE: 5048576
+      CONNECT_PRODUCER_MAX_REQUEST_SIZE: 5048576
     volumes:
       - kafka2_data:/var/lib/kafka/data
     depends_on:
@@ -375,6 +385,11 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2182,zoo3:2183"
       KAFKA_BROKER_ID: 3
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_FETCH_MAX_BYTES: 5048576
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 5048576
+      KAFKA_MESSAGE_MAX_BYTES: 5048576
+      KAFKA_PRODUCER_MAX_REQUEST_SIZE: 5048576
+      CONNECT_PRODUCER_MAX_REQUEST_SIZE: 5048576
     volumes:
       - kafka3_data:/var/lib/kafka/data
     depends_on:
