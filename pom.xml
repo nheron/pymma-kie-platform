@@ -95,7 +95,7 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <nexus.host>http://192.168.1.122:18081</nexus.host>
+                <nexus.host>http://nexus.pymmainternal:8081</nexus.host>
             </properties>
         </profile>
         <profile>
