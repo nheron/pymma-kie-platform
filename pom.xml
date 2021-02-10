@@ -42,7 +42,7 @@
         <profile>
             <id>sonar</id>
             <properties>
-                <sonar.host.url>http://sonarqube.infra.pymma-software.net</sonar.host.url>
+                <sonar.host.url>http://sonar.pymmainternal:9000</sonar.host.url>
                 <sonar.login>0b935500b338e4fd3f747b85964726e1b64c0d2d</sonar.login>
             </properties>
             <build>
@@ -95,7 +95,7 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <nexus.host>http://192.168.1.122:18081</nexus.host>
+                <nexus.host>http://nexus.pymmainternal:8081</nexus.host>
             </properties>
         </profile>
         <profile>
