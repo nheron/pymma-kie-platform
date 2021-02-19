@@ -123,7 +123,10 @@ public class DroolsChtijbugRulesExecutionService {
             }else if( chtijbugObjectRequest.getObjectRequest()==null){
                 logger.error("DroolsChtijbugRulesExecutionService.FireAllRulesAndStartProcess.chtijbugObjectRequest.getObjectRequest is null");
             }
-            messageHandlerResolver.setClassLoader(chtijbugObjectRequest.getObjectRequest().getClass().getClassLoader());
+            if (chtijbugObjectRequest.getObjectRequest().getClass()!= null
+                && chtijbugObjectRequest.getObjectRequest().getClass().getClassLoader() != null) {
+                messageHandlerResolver.setClassLoader(chtijbugObjectRequest.getObjectRequest().getClass().getClassLoader());
+            }
             RuleBasePackage ruleBasePackage = this.ruleBasePackages.get(kci.getResource().getContainerId());
             if (ruleBasePackage != null) {
                 Date startTime = new Date();
