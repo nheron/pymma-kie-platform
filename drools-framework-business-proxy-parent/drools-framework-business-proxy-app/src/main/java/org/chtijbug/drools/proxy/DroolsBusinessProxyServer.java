@@ -118,7 +118,7 @@ public class DroolsBusinessProxyServer {
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 JsonSerializer.class);
         configProps.put(
-                ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 4655826);
+                ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 41943040);
 
         if (activateSsl) {
             configProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
