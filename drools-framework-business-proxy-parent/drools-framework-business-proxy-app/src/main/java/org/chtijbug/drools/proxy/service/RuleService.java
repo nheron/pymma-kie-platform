@@ -60,8 +60,10 @@ public class RuleService {
             kafkaTemplateLogging.send(KafkaTopicConstants.LOGING_TOPIC,chtijbugObjectRequest);
         }catch (Exception e){
             logger.error(" kafkaTemplateLogging.send",e);
+        }finally {
+            return  chtijbutObjectResponse.getObjectRequest();
         }
-          return  chtijbutObjectResponse.getObjectRequest();
+
     }
 
 }
