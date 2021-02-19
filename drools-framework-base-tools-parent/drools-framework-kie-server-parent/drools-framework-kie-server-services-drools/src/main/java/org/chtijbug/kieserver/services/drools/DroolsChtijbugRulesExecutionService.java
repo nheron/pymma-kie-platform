@@ -115,6 +115,14 @@ public class DroolsChtijbugRulesExecutionService {
         Object result = null;
 
         try {
+            if (messageHandlerResolver==null){
+                logger.error("DroolsChtijbugRulesExecutionService.FireAllRulesAndStartProcess.messageHandlerResolver is null");
+            }
+            if (chtijbugObjectRequest==null){
+                logger.error("DroolsChtijbugRulesExecutionService.FireAllRulesAndStartProcess.chtijbugObjectRequest is null");
+            }else if( chtijbugObjectRequest.getObjectRequest()==null){
+                logger.error("DroolsChtijbugRulesExecutionService.FireAllRulesAndStartProcess.chtijbugObjectRequest.getObjectRequest is null");
+            }
             messageHandlerResolver.setClassLoader(chtijbugObjectRequest.getObjectRequest().getClass().getClassLoader());
             RuleBasePackage ruleBasePackage = this.ruleBasePackages.get(kci.getResource().getContainerId());
             if (ruleBasePackage != null) {
