@@ -33,4 +33,8 @@ public class TestHistoryListener implements HistoryListener {
     public boolean withDetails() {
         return withDetails;
     }
+    @Override
+    public void setDetails(Boolean details) {
+        withDetails = details;
+    }
 }

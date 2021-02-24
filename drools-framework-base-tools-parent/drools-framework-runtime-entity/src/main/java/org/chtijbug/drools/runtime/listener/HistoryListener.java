@@ -27,4 +27,6 @@ public interface HistoryListener extends Serializable {
 
     public boolean withDetails();
 
+    public void setDetails(Boolean details);
+
 }

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ChtijbugHistoryListener implements HistoryListener {
 
-    private boolean withDetails=true;
+    private boolean withDetails = true;
 
     private List<HistoryEvent> historyEventLinkedList = new ArrayList<>();
 
@@ -33,5 +33,10 @@ public class ChtijbugHistoryListener implements HistoryListener {
     @Override
     public boolean withDetails() {
         return withDetails;
+    }
+
+    @Override
+    public void setDetails(Boolean details) {
+        withDetails = details;
     }
 }

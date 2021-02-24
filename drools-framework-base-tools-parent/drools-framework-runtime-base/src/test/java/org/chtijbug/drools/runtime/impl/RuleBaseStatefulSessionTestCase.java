@@ -39,7 +39,9 @@ public class RuleBaseStatefulSessionTestCase {
             public void fireEvent(HistoryEvent newHistoryEvent) throws DroolsChtijbugException {
 
             }
-
+            @Override
+            public void setDetails(Boolean details) {
+            }
             @Override
             public boolean withDetails() {
                 return true;
