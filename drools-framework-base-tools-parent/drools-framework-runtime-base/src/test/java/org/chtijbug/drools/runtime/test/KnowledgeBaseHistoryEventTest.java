@@ -42,7 +42,9 @@ public class KnowledgeBaseHistoryEventTest {
             public void fireEvent(HistoryEvent newHistoryEvent) throws DroolsChtijbugException {
                 historyEvents.add(newHistoryEvent);
             }
-
+            @Override
+            public void setDetails(Boolean details) {
+            }
             @Override
             public boolean withDetails() {
                 return true;
@@ -86,7 +88,9 @@ public class KnowledgeBaseHistoryEventTest {
             public void fireEvent(HistoryEvent newHistoryEvent) throws DroolsChtijbugException {
                 historyEvents.add(newHistoryEvent);
             }
-
+            @Override
+            public void setDetails(Boolean details) {
+            }
             @Override
             public boolean withDetails() {
                 return true;
@@ -155,7 +159,9 @@ public class KnowledgeBaseHistoryEventTest {
             public void fireEvent(HistoryEvent newHistoryEvent) throws DroolsChtijbugException {
                 historyEvents.add(newHistoryEvent);
             }
-
+            @Override
+            public void setDetails(Boolean details) {
+            }
             @Override
             public boolean withDetails() {
                 return true;
