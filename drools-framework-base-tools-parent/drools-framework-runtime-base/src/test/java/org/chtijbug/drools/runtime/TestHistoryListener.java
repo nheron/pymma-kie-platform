@@ -1,7 +1,6 @@
-package org.chtijbug.kieserver.services.drools;
+package org.chtijbug.drools.runtime;
 
 import org.chtijbug.drools.entity.history.HistoryEvent;
-import org.chtijbug.drools.runtime.DroolsChtijbugException;
 import org.chtijbug.drools.runtime.listener.HistoryListener;
 
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.List;
 /**
  * Created by nheron on 07/07/2016.
  */
-public class ChtijbugHistoryListener implements HistoryListener {
+public class TestHistoryListener implements HistoryListener {
 
     private boolean withDetails=true;
 

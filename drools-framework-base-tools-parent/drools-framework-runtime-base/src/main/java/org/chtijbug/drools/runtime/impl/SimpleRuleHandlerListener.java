@@ -91,11 +91,25 @@ public class SimpleRuleHandlerListener extends DefaultAgendaEventListener implem
     @Override
     public void afterMatchFired(AfterMatchFiredEvent event) {
         logger.debug(">>afterActivationFired", event);
-
         nbRuleFired++;
         Match match = event.getMatch();
-        logger.info(" {} rules name {}", nbRuleFired, match.getRule().toString());
+        //____ Getting the Rule Object Summary from the session
+        DroolsRuleObject droolsRuleObject = ruleBaseSession.getDroolsRuleObject(match.getRule());
 
+        //____ Creating the specific "After Rule Fired" History Event
+        AfterRuleFiredHistoryEvent newAfterRuleEvent = new AfterRuleFiredHistoryEvent(this.ruleBaseSession.nextEventId(), this.nbRuleFired, droolsRuleObject, this.ruleBaseSession.getRuleBaseID(), this.ruleBaseSession.getSessionId());
+        ruleBaseSession.addHistoryElement(newAfterRuleEvent);
+
+        if (nbRuleFired >= maxNumberRuleToExecute) {
+            logger.warn(String.format("%d rules have been fired. This is the limit.", maxNumberRuleToExecute));
+            logger.warn("The session execution will be stop");
+            KieRuntime runtime = event.getKieRuntime();
+            this.maxNumerExecutedRulesReached = true;
+            //(int eventID, int sessionId, int numberOfRulesExecuted, int maxNumberOfRulesForSession)
+            SessionFireAllRulesMaxNumberReachedEvent sessionFireAllRulesMaxNumberReachedEvent = new SessionFireAllRulesMaxNumberReachedEvent(this.ruleBaseSession.nextEventId(), nbRuleFired, maxNumberRuleToExecute, this.ruleBaseSession.getRuleBaseID(), this.ruleBaseSession.getSessionId());
+            ruleBaseSession.addHistoryElement(sessionFireAllRulesMaxNumberReachedEvent);
+            runtime.halt();
+        }
     }
 
     @Override

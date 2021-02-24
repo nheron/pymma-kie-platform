@@ -4,10 +4,7 @@ import org.chtijbug.drools.entity.DroolsFactObjectAttribute;
 import org.chtijbug.drools.entity.history.HistoryEvent;
 import org.chtijbug.drools.entity.history.rule.AfterRuleFiredHistoryEvent;
 import org.chtijbug.drools.entity.history.rule.BeforeRuleFiredHistoryEvent;
-import org.chtijbug.drools.runtime.DroolsChtijbugException;
-import org.chtijbug.drools.runtime.RuleBaseBuilder;
-import org.chtijbug.drools.runtime.RuleBasePackage;
-import org.chtijbug.drools.runtime.RuleBaseSession;
+import org.chtijbug.drools.runtime.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -91,7 +88,7 @@ public class RuleHandlerListenerTest {
     public void RuleEvent() throws DroolsChtijbugException {
         ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(1L, "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT", "infiniteLoop.drl");
 
-        session = ruleBasePackage.createRuleBaseSession();
+        session = ruleBasePackage.createRuleBaseSession(1000,new TestHistoryListener());
 
         Fibonacci newObject = new Fibonacci(0);
         session.insertObject(newObject);
@@ -101,11 +98,11 @@ public class RuleHandlerListenerTest {
             e.printStackTrace();
         }
         List<HistoryEvent> eventList = session.getHistoryContainer().getListHistoryEvent();
-        assertThat(eventList).hasSize(6002);
+        assertThat(eventList).hasSize(3005);
         /*
             BeforeRuleFiredHistoryEvent
          */
-        HistoryEvent event1 = eventList.get(1);
+        HistoryEvent event1 = eventList.get(3);
         assertThat(event1).isInstanceOf(BeforeRuleFiredHistoryEvent.class);
         BeforeRuleFiredHistoryEvent beforeRuleFiredHistoryEvent = (BeforeRuleFiredHistoryEvent) event1;
         assertThat(beforeRuleFiredHistoryEvent.getRule().getRuleName()).isEqualTo("infiniteLoop");
@@ -117,7 +114,7 @@ public class RuleHandlerListenerTest {
         /*
            AfterRuleFiredHistoryEvent
         */
-        HistoryEvent event3 = eventList.get(3);
+        HistoryEvent event3 = eventList.get(5);
         assertThat(event3).isInstanceOf(AfterRuleFiredHistoryEvent.class);
         AfterRuleFiredHistoryEvent afterRuleFiredHistoryEvent = (AfterRuleFiredHistoryEvent) event3;
         assertThat(afterRuleFiredHistoryEvent.getRule().getRuleName()).isEqualTo("infiniteLoop");

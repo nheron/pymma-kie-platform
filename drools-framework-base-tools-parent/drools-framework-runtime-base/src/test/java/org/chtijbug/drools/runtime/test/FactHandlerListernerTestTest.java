@@ -6,9 +6,8 @@ import org.chtijbug.drools.entity.history.HistoryEvent;
 import org.chtijbug.drools.entity.history.fact.DeletedFactHistoryEvent;
 import org.chtijbug.drools.entity.history.fact.InsertedFactHistoryEvent;
 import org.chtijbug.drools.entity.history.fact.UpdatedFactHistoryEvent;
-import org.chtijbug.drools.runtime.RuleBaseBuilder;
-import org.chtijbug.drools.runtime.RuleBasePackage;
-import org.chtijbug.drools.runtime.RuleBaseSession;
+import org.chtijbug.drools.runtime.*;
+import org.chtijbug.drools.runtime.listener.HistoryListener;
 import org.junit.*;
 
 /**
@@ -46,11 +45,11 @@ public class FactHandlerListernerTestTest {
     @Test
     public void test1ObjectInserted() throws Exception {
         ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(new Long(1L), "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT)", "insert1.drl");
-        session = ruleBasePackage.createRuleBaseSession();
+        session = ruleBasePackage.createRuleBaseSession(1000,new TestHistoryListener());
         Fibonacci newObject = new Fibonacci(0);
         session.insertObject(newObject);
-        Assert.assertEquals(session.getHistoryContainer().getListHistoryEvent().size(), 1);
-        HistoryEvent event = session.getHistoryContainer().getListHistoryEvent().get(0);
+        Assert.assertEquals(session.getHistoryContainer().getListHistoryEvent().size(), 2);
+        HistoryEvent event = session.getHistoryContainer().getListHistoryEvent().get(1);
         if (event instanceof InsertedFactHistoryEvent) {
             Assert.assertEquals(1, 1);
             Assert.assertEquals(session.getRuleBaseID(), event.getRuleBaseID());
@@ -70,13 +69,13 @@ public class FactHandlerListernerTestTest {
     @Test
     public void test1ObjectUpdated() throws Exception {
         ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(new Long(1L), "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT)", "insert1.drl");
-        session = ruleBasePackage.createRuleBaseSession();
+        session = ruleBasePackage.createRuleBaseSession(1000,new TestHistoryListener());
         Fibonacci newObject = new Fibonacci(0);
         session.insertObject(newObject);
         newObject.setValue(100);
         session.updateObject(newObject);
-        Assert.assertEquals(session.getHistoryContainer().getListHistoryEvent().size(), 2);
-        HistoryEvent event = session.getHistoryContainer().getListHistoryEvent().get(1);
+        Assert.assertEquals(session.getHistoryContainer().getListHistoryEvent().size(), 3);
+        HistoryEvent event = session.getHistoryContainer().getListHistoryEvent().get(2);
         if (event instanceof UpdatedFactHistoryEvent) {
             Assert.assertEquals(1, 1);
             Assert.assertEquals(session.getRuleBaseID(), event.getRuleBaseID());
@@ -105,12 +104,12 @@ public class FactHandlerListernerTestTest {
     @Test
     public void retracted() throws Exception {
         ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(new Long(1L), "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT)", "insert1.drl");
-        session = ruleBasePackage.createRuleBaseSession();
+        session = ruleBasePackage.createRuleBaseSession(1000,new TestHistoryListener());
         Fibonacci newObject = new Fibonacci(0);
         session.insertObject(newObject);
         session.retractObject(newObject);
-        Assert.assertEquals(session.getHistoryContainer().getListHistoryEvent().size(), 2);
-        HistoryEvent event = session.getHistoryContainer().getListHistoryEvent().get(1);
+        Assert.assertEquals(session.getHistoryContainer().getListHistoryEvent().size(), 3);
+        HistoryEvent event = session.getHistoryContainer().getListHistoryEvent().get(2);
         if (event instanceof DeletedFactHistoryEvent) {
             Assert.assertEquals(1, 1);
             Assert.assertEquals(session.getRuleBaseID(), event.getRuleBaseID());
@@ -130,7 +129,7 @@ public class FactHandlerListernerTestTest {
     @Test
     public void test1RuleFired() throws Exception {
         ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(new Long(1L), "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT)", "insert1.drl");
-        session = ruleBasePackage.createRuleBaseSession();
+        session = ruleBasePackage.createRuleBaseSession(1000,new TestHistoryListener());
         session.fireAllRules();
         Assert.assertEquals(session.listRules().size(), 1);
         Assert.assertEquals(session.listLastVersionObjects().size(), 1);
