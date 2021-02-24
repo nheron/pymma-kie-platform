@@ -46,7 +46,7 @@ import java.util.List;
 /**
  * @author nheron
  */
-public class RuleHandlerListener extends DefaultAgendaEventListener {
+public class RuleHandlerListener extends DefaultAgendaEventListener implements  RuleHandlerListenerInterface{
     /**
      * Class logger
      */

@@ -35,6 +35,7 @@ import org.drools.core.definitions.rule.impl.RuleImpl;
 import org.jbpm.workflow.core.node.RuleSetNode;
 import org.jbpm.workflow.instance.node.*;
 import org.kie.api.definition.rule.Rule;
+import org.kie.api.event.rule.DefaultAgendaEventListener;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.ObjectFilter;
 import org.kie.api.runtime.process.NodeInstance;
@@ -77,7 +78,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
     private KieSession knowledgeSession = null;
     // Listeners can be dispose ...
     private FactHandlerListener factListener;
-    private RuleHandlerListener ruleHandlerListener;
+    private RuleHandlerListenerInterface ruleHandlerListener;
     private ProcessHandlerListener processHandlerListener;
     private int maxNumberRuleToExecute;
 
@@ -94,9 +95,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
         this.sessionId = sessionId;
         this.knowledgeSession = knowledgeSession;
         this.maxNumberRuleToExecute = maxNumberRuleToExecute;
-        this.factListener = new FactHandlerListener(this,cloner);
-        this.ruleHandlerListener = new RuleHandlerListener(this,cloner);
-        this.processHandlerListener = new ProcessHandlerListener(this,cloner);
+
         this.historyContainer = new HistoryContainer(sessionId, historyListener);
         this.listFactObjects = new HashMap<>();
         this.listFact = new HashMap<>();
@@ -104,13 +103,20 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
         this.listRules = new HashMap<>();
         this.processList = new HashMap<>();
         this.processInstanceList = new HashMap<>();
-        knowledgeSession.addEventListener(factListener);
-        knowledgeSession.addEventListener(ruleHandlerListener);
-        knowledgeSession.addEventListener(processHandlerListener);
+
         this.historyListener = historyListener;
         if (this.historyListener != null) {
+            this.factListener = new FactHandlerListener(this,cloner);
+            this.ruleHandlerListener = new RuleHandlerListener(this,cloner);
+            this.processHandlerListener = new ProcessHandlerListener(this,cloner);
+            knowledgeSession.addEventListener(factListener);
+            knowledgeSession.addEventListener(ruleHandlerListener);
+            knowledgeSession.addEventListener(processHandlerListener);
             SessionCreatedEvent sessionCreatedEvent = new SessionCreatedEvent(eventCounter.next(), this.ruleBaseID, this.sessionId);
             this.addHistoryElement(sessionCreatedEvent);
+        }else{
+            this.ruleHandlerListener = new SimpleRuleHandlerListener(this,cloner);
+            knowledgeSession.addEventListener(ruleHandlerListener);
         }
 
     }
