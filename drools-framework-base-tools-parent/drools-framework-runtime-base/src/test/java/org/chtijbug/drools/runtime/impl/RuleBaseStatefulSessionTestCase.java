@@ -1,6 +1,9 @@
 package org.chtijbug.drools.runtime.impl;
 
 import org.chtijbug.drools.entity.DroolsFactObject;
+import org.chtijbug.drools.entity.history.HistoryEvent;
+import org.chtijbug.drools.runtime.DroolsChtijbugException;
+import org.chtijbug.drools.runtime.listener.HistoryListener;
 import org.chtijbug.drools.runtime.resource.FileKnowledgeResource;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +34,17 @@ public class RuleBaseStatefulSessionTestCase {
         // TODO Créer une kbase
         ruleBase.createKBase(Arrays.asList(fibonacciFile));
         // TODO créer une session à partir dela KBase
-        session = (RuleBaseStatefulSession) ruleBase.createRuleBaseSession();
+        session = (RuleBaseStatefulSession) ruleBase.createRuleBaseSession(20, new HistoryListener() {
+            @Override
+            public void fireEvent(HistoryEvent newHistoryEvent) throws DroolsChtijbugException {
+
+            }
+
+            @Override
+            public boolean withDetails() {
+                return true;
+            }
+        });
     }
 
     @Test

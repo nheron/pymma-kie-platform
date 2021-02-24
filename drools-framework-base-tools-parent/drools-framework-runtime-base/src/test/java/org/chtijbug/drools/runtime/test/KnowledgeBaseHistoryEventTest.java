@@ -42,6 +42,11 @@ public class KnowledgeBaseHistoryEventTest {
             public void fireEvent(HistoryEvent newHistoryEvent) throws DroolsChtijbugException {
                 historyEvents.add(newHistoryEvent);
             }
+
+            @Override
+            public boolean withDetails() {
+                return true;
+            }
         };
         RuleBasePackage ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(new Long(1L), historyListener, "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT)", "fibonacci.drl");
         Long rulePackageID = ruleBasePackage.getRuleBaseID();
@@ -75,9 +80,16 @@ public class KnowledgeBaseHistoryEventTest {
 
         final List<HistoryEvent> historyEvents = new ArrayList<HistoryEvent>();
         HistoryListener historyListener = new HistoryListener() {
+
+
             @Override
             public void fireEvent(HistoryEvent newHistoryEvent) throws DroolsChtijbugException {
                 historyEvents.add(newHistoryEvent);
+            }
+
+            @Override
+            public boolean withDetails() {
+                return true;
             }
         };
         RuleBasePackage ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(new Long(1L), historyListener, "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT)", "fibonacci.drl");
@@ -119,6 +131,9 @@ public class KnowledgeBaseHistoryEventTest {
         SessionDisposedEvent sessionDisposedEvent = (SessionDisposedEvent) historyEvents.get(7);
         assertThat(sessionDisposedEvent.getRuleBaseID()).isEqualTo(rulePackageID);
         assertThat(sessionDisposedEvent.getEventID()).isEqualTo(2);
+
+
+
         assertThat(sessionDisposedEvent.getSessionId()).isEqualTo(1);
         assertThat(sessionCreatedEvent.getTypeEvent()).isEqualTo(HistoryEvent.TypeEvent.Session);
         ruleBaseSession2.dispose();
@@ -139,6 +154,11 @@ public class KnowledgeBaseHistoryEventTest {
             @Override
             public void fireEvent(HistoryEvent newHistoryEvent) throws DroolsChtijbugException {
                 historyEvents.add(newHistoryEvent);
+            }
+
+            @Override
+            public boolean withDetails() {
+                return true;
             }
         };
         RuleBasePackage ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(new Long(1L), historyListener, "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT)", "fibonacci.drl");

@@ -105,7 +105,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
         this.processInstanceList = new HashMap<>();
 
         this.historyListener = historyListener;
-        if (this.historyListener != null) {
+        if (this.historyListener != null && this.historyListener.withDetails()) {
             this.factListener = new FactHandlerListener(this,cloner);
             this.ruleHandlerListener = new RuleHandlerListener(this,cloner);
             this.processHandlerListener = new ProcessHandlerListener(this,cloner);

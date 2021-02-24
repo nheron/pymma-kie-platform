@@ -25,5 +25,6 @@ public interface HistoryListener extends Serializable {
 
     public void fireEvent(HistoryEvent newHistoryEvent) throws DroolsChtijbugException;
 
+    public boolean withDetails();
 
 }
