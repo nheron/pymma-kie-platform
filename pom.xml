@@ -30,7 +30,7 @@
         <registry.host>192.168.1.122:18083</registry.host>
         <version.org.wildfly.security.wildfly-elytron>1.2.3.Final</version.org.wildfly.security.wildfly-elytron>
         <version.org.wildfly.core>4.0.0.Final</version.org.wildfly.core>
-        <version.mongodb.driver>3.8.2</version.mongodb.driver>
+        <version.mongodb.driver>3.12.8</version.mongodb.driver>
         <version.number>${git.commit.time}.${git.commit.id.abbrev}</version.number>
         <kafka.version>2.3.7.RELEASE</kafka.version>
         <javax.activation.version>1.2.0</javax.activation.version>
