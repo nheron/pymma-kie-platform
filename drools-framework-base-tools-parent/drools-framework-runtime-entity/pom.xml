@@ -55,7 +55,7 @@
         <dependency>
             <groupId>io.github.kostaskougios</groupId>
             <artifactId>cloning</artifactId>
-            <version>1.O.O-chtijbug</version>
+            <version>1.10.3</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
