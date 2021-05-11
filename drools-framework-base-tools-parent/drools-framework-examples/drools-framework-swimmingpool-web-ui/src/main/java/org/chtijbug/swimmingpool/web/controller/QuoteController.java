@@ -83,6 +83,12 @@ public class QuoteController {
         return clientHttpRequest -> {
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(clientHttpRequest.getBody(), updatedInstance);
+            if (updatedInstance.getSessionLogging()!= null &&
+                updatedInstance.getSessionLogging().length()>0){
+                clientHttpRequest.getHeaders().add(
+                        "transactionId",  updatedInstance.getSessionLogging());
+
+            }
             clientHttpRequest.getHeaders().add(
                     HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             clientHttpRequest.getHeaders().add(

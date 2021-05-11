@@ -107,6 +107,7 @@ productManagerModule.controller('quoteManagerController', function ($scope, $htt
 
     $scope.calculatePrice = function () {
         var myQuote = $scope.quote;
+        myQuote.sessionLogging=uuidv4();
         $http.put(urlBase + "/quote/calculate/" + $scope.containerid + "/", myQuote).success(function (data) {
             $scope.quoteResult = data;
             $scope.allSessionExecutionDetails = JSON.parse(data.sessionLogging);
@@ -114,7 +115,12 @@ productManagerModule.controller('quoteManagerController', function ($scope, $htt
             // $scope.sessionLogging=data.sessionLogging;
         })
     }
-
+    function uuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
 
 });
 
