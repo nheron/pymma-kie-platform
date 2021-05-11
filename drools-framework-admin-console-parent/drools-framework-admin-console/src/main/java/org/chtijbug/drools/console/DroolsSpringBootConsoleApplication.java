@@ -26,6 +26,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
@@ -40,6 +41,7 @@ import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.util.unit.DataSize;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.PathSelectors;
@@ -48,6 +50,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import javax.servlet.MultipartConfigElement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -116,7 +119,17 @@ public class DroolsSpringBootConsoleApplication extends SpringBootServletInitial
         };
     }
 
+    @Bean
 
+    public MultipartConfigElement multipartConfigElement() {
+
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        DataSize dataSize =DataSize.ofMegabytes(100);
+        factory.setMaxFileSize(dataSize);
+        factory.setMaxRequestSize(dataSize);
+        return factory.createMultipartConfig();
+
+    }
     @Bean(name = "applicationContext")
     public ApplicationContextProvider getAppplicationContext() {
         return new ApplicationContextProvider();
