@@ -15,12 +15,11 @@
  */
 package org.training.leisure.swimmingpool;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@XmlRootElement
+
 public class Quote {
     private Date quoteDate;
     private Date validUntil;
