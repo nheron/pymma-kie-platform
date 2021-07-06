@@ -558,7 +558,57 @@ public class PackageResource {
             permissionManager.setAuthorizationPolicy(storedPolicies);
             savedEvent.fire(new AuthorizationPolicySavedEvent(storedPolicies));
         } else {
+            targetGroup = new GroupImpl(groupName);
+            AuthorizationPolicyBuilder groupPermissionBuilder = permissionManager.newAuthorizationPolicy().group(groupName);
 
+
+            groupPermissionBuilder = groupPermissionBuilder.permission("editor.read", true);
+            // groupPermissionBuilder = groupPermissionBuilder.permission("dataobject.edit", true);
+            //groupPermissionBuilder = groupPermissionBuilder.permission("editor.read.BPMNDiagramEditor", true);
+            //groupPermissionBuilder = groupPermissionBuilder.permission("editor.read.CaseManagementDiagramEditor", true);
+            //groupPermissionBuilder = groupPermissionBuilder.permission("editor.read.GuidedDecisionTreeEditorPresenter", true);
+            //groupPermissionBuilder = groupPermissionBuilder.permission("editor.read.GuidedScoreCardEditor", true);
+            //groupPermissionBuilder = groupPermissionBuilder.permission("editor.read.ScoreCardXLSEditor", true);
+
+            groupPermissionBuilder = groupPermissionBuilder.permission("globalExperimentalFeatures.edit", true);
+            // groupPermissionBuilder = groupPermissionBuilder.permission(groupPermissionbase + "globalpreferences.edit", false);
+            groupPermissionBuilder = groupPermissionBuilder.permission("guideddecisiontable.edit.columns", true);
+            groupPermissionBuilder = groupPermissionBuilder.permission("jar.download", true);
+            //  groupPermissionBuilder = groupPermissionBuilder.permission(groupPermissionbase + "orgunit.create", false);
+            //  groupPermissionBuilder = groupPermissionBuilder.permission(groupPermissionbase + "orgunit.delete", false);
+            //  groupPermissionBuilder = groupPermissionBuilder.permission(groupPermissionbase + "orgunit.read", false);
+
+            groupPermissionBuilder = groupPermissionBuilder.permission("orgunit.read." + organisationUnit, true);
+            //   groupPermissionBuilder = groupPermissionBuilder.permission(groupPermissionbase + "orgunit.update", false);
+            groupPermissionBuilder = groupPermissionBuilder.permission("orgunit.update." + organisationUnit, true);
+            // groupPermissionBuilder = groupPermissionBuilder.permission(groupPermissionbase + "perspective.create", false);
+            // groupPermissionBuilder = groupPermissionBuilder.permission(groupPermissionbase + "perspective.delete", false);
+            groupPermissionBuilder = groupPermissionBuilder.permission("perspective.read", true);
+            // groupPermissionBuilder = groupPermissionBuilder.permission(groupPermissionbase + "perspective.update", false);
+            //  groupPermissionBuilder = groupPermissionBuilder.permission(groupPermissionbase + "planner.available", false);
+            // groupPermissionBuilder = groupPermissionBuilder.permission(groupPermissionbase + "profilepreferences.edit", false);
+            groupPermissionBuilder = groupPermissionBuilder.permission("project.build", false);
+            groupPermissionBuilder = groupPermissionBuilder.permission("project.create", false);
+            groupPermissionBuilder = groupPermissionBuilder.permission("project.delete", false);
+            groupPermissionBuilder = groupPermissionBuilder.permission("project.read", false);
+            groupPermissionBuilder = groupPermissionBuilder.permission("project.release", false);
+            groupPermissionBuilder = groupPermissionBuilder.permission("project.update", false);
+            groupPermissionBuilder = groupPermissionBuilder.permission("repository.build", true);
+            groupPermissionBuilder = groupPermissionBuilder.permission("repository.configure", true);
+            groupPermissionBuilder = groupPermissionBuilder.permission("repository.create", true);
+            groupPermissionBuilder = groupPermissionBuilder.permission("repository.delete", true);
+            groupPermissionBuilder = groupPermissionBuilder.permission("repository.read", true);
+            groupPermissionBuilder = groupPermissionBuilder.permission("repository.update", true);
+            //groupPermissionBuilder = groupPermissionBuilder.priority(-10);
+
+            for (Permission p : groupPermissionBuilder.build().getPermissions(targetGroup).collection()) {
+                storedPolicies.addPermission(targetGroup, p);
+            }
+            storedPolicies.setHomePerspective(targetGroup,"AuthoringPerspective");
+            storedPolicies.setPriority(targetGroup,-10);
+            this.authorizationPolicyStorage.savePolicy(storedPolicies);
+            permissionManager.setAuthorizationPolicy(storedPolicies);
+            savedEvent.fire(new AuthorizationPolicySavedEvent(storedPolicies));
         }
         WorkspaceAuthData result=new WorkspaceAuthData();
         return Response.status(Response.Status.OK).entity(result).build();
