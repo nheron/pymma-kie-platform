@@ -370,11 +370,17 @@ public class PackageResource {
                     if (isCreate) {
                         String targetName = projectName.replace("-", "_").replace(" ", "_");
                         org.uberfire.java.nio.file.Path ressourcesPath = nioPath.resolve("src/main/resources");
+                        if (assetName.contains(".java")){
+                            ressourcesPath = nioPath.resolve("src/main/java");
+                            content=content.replace("\""," ").replace("\\n"," ").replace("\\t"," ");
+
+                        }
+
                         DirectoryStream<org.uberfire.java.nio.file.Path> directoryStreamBase = ioService.newDirectoryStream(ressourcesPath);
                         org.uberfire.java.nio.file.Path directoryWhereCreateAsset = assetService.getRuleDirectoryByName(directoryStreamBase, targetName);
 
                         if (directoryWhereCreateAsset != null) {
-                            URI parentURI = directoryWhereCreateAsset.getParent().toUri();
+                            URI parentURI = directoryWhereCreateAsset.toUri();
                             URI uri = new URI(parentURI.getScheme(), parentURI.getUserInfo(), parentURI.getHost(), parentURI.getPort(), parentURI.getPath() + "/" + assetName, parentURI.getQuery(), parentURI.getFragment());
                             final org.uberfire.java.nio.file.Path nioPathWhere = Paths.get(uri);
                             CommentedOption commentedOption = new CommentedOption("Created from rest");
