@@ -174,6 +174,9 @@ public class DababaseContentUpdate {
                 String workspaceName = platformProjectData.getSpaceName();
                 ProjectPersist projectPersist = projectPersistService.saveorUpdateProject(platformProjectData, kieWorkbench);
                 UserGroups workSpaceGroupIfNeeded = projectPersistService.createWorkSpaceGroupIfNeeded(workspaceName, kieWorkbench);
+                String result=kieRepositoryService.createSpaceRight(kieWorkbench.getExternalUrl() + "/rest",
+                        nheronUser.getLogin(), nheronUser.getPassword(), kieWorkbench.getName(),workSpaceGroupIfNeeded.getName(),workspaceName);
+
                 UserGroups projectGroupIfNeeded = projectPersistService.createProjectGroupIfNeeded(projectName, kieWorkbench, projectPersist, workSpaceGroupIfNeeded);
 
                 List<Asset> assets = kieRepositoryService.getListAssets(kieWorkbench.getExternalUrl() + "/rest", nheronUser.getLogin(), nheronUser.getPassword(), workspaceName, projectName);
