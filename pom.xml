@@ -17,7 +17,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <fabri8.plugin.version>0.34.1</fabri8.plugin.version>
+        <fabri8.plugin.version>0.36.1</fabri8.plugin.version>
         <jbpm.version>7.56.0.Final</jbpm.version>
         <node.version>v10.16.3</node.version>
         <npm.version>6.11.3</npm.version>
