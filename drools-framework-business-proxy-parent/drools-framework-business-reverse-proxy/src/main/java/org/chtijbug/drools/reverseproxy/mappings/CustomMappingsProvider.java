@@ -14,10 +14,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class CustomMappingsProvider extends MappingsProvider {
@@ -42,10 +39,17 @@ public class CustomMappingsProvider extends MappingsProvider {
         if (token!= null && token.length()>0){
             Claims claims = jwtService.decodeJWT(token);
             String uuid = (String)claims.get("uuid");
-            MappingProperties result = mappingJWTPropertiesMap.get(uuid);
-            if (result != null) {
-                return result;
-            } else {
+            Date expiration = claims.getExpiration();
+            long nowMillis = System.currentTimeMillis()-1000*3600*24*(long)6;
+            Date now = new Date(nowMillis);
+            if (!expiration.before(now)) {
+                MappingProperties result = mappingJWTPropertiesMap.get(uuid);
+                if (result != null) {
+                    return result;
+                } else {
+                    return super.resolveMapping(originUri, request);
+                }
+            }else{
                 return super.resolveMapping(originUri, request);
             }
         }else {
