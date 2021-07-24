@@ -17,6 +17,7 @@ package org.chtijbug.kieserver.services.drools;
 
 import org.chtijbug.drools.ChtijbugObjectRequest;
 import org.chtijbug.drools.SessionContext;
+import org.chtijbug.drools.entity.history.HistoryEvent;
 import org.chtijbug.drools.kieserver.extension.KieServerAddOnElement;
 import org.chtijbug.drools.kieserver.extension.KieServerGlobalVariableDefinition;
 import org.chtijbug.drools.kieserver.extension.KieServerListenerDefinition;
@@ -32,9 +33,7 @@ import org.kie.server.services.api.KieServerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Direct rules execution service that allow use of typed objects instead of string only
@@ -130,7 +129,10 @@ public class DroolsChtijbugRulesExecutionService {
             RuleBasePackage ruleBasePackage = this.ruleBasePackages.get(kci.getResource().getContainerId());
             if (ruleBasePackage != null) {
                 Date startTime = new Date();
-                ChtijbugHistoryListener chtijbugHistoryListener = new ChtijbugHistoryListener();
+                ChtijbugHistoryListener chtijbugHistoryListener=null;
+                if (!chtijbugObjectRequest.isDisableLogging()) {
+                    chtijbugHistoryListener = new ChtijbugHistoryListener();
+                }
                 RuleBaseSession session = ruleBasePackage.createRuleBaseSession(sessionMaxNumberRulesToExecute, chtijbugHistoryListener, sessionName);
                 if (kieServerAddOnElement != null) {
 
@@ -145,7 +147,11 @@ public class DroolsChtijbugRulesExecutionService {
                 result = session.fireAllRulesAndStartProcess(chtijbugObjectRequest.getObjectRequest(), processID);
                 session.dispose();
                 Date stopTime = new Date();
-                SessionContext sessionContext = this.messageHandlerResolver.getSessionFromHistoryEvent(chtijbugHistoryListener.getHistoryEventLinkedList());
+                List<HistoryEvent> events=new ArrayList<>();
+                if (chtijbugHistoryListener!= null){
+                    events = chtijbugHistoryListener.getHistoryEventLinkedList();
+                }
+                SessionContext sessionContext = this.messageHandlerResolver.getSessionFromHistoryEvent(events);
                 sessionContext.setGroupID(kci.getResource().getReleaseId().getGroupId());
                 sessionContext.setArtefactID(kci.getResource().getReleaseId().getArtifactId());
                 sessionContext.setVersion(kci.getResource().getReleaseId().getVersion());

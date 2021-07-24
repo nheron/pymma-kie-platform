@@ -64,95 +64,98 @@ public class StoreLoggingService {
             item.setServerName(sessionContext.getServerName());
             Map<Long, BusinessTransactionAction> actions = new HashMap<>();
             SessionExecution sessionExecution = sessionContext.getSessionExecution();
-            BusinessTransactionAction businessTransactionoutput = null;
-            for (Fact fact : sessionExecution.getFacts()) {
-                BusinessTransactionAction businessTransactionAction = new BusinessTransactionAction();
-                businessTransactionAction.setId(UUID.randomUUID().toString());
-                businessTransactionAction.setBusinessTransactionId(item.getId());
-                if (fact.getFactType().equals(FactType.INPUTDATA)) {
-                    businessTransactionAction.setEventType(EventType.INPUT);
-                    businessTransactionAction.setInputData(fact);
-                    businessTransactionAction.setEventNumber(0);
-                    actions.put(businessTransactionAction.getEventNumber(), businessTransactionAction);
-                } else if (fact.getFactType().equals(FactType.OUTPUTDATA)) {
-                    businessTransactionAction.setEventType(EventType.OUPUT);
-                    businessTransactionAction.setOutputData(fact);
-                    businessTransactionoutput = businessTransactionAction;
+            if (sessionExecution != null) {
+                BusinessTransactionAction businessTransactionoutput = null;
+                for (Fact fact : sessionExecution.getFacts()) {
+                    BusinessTransactionAction businessTransactionAction = new BusinessTransactionAction();
+                    businessTransactionAction.setId(UUID.randomUUID().toString());
+                    businessTransactionAction.setBusinessTransactionId(item.getId());
+                    if (fact.getFactType().equals(FactType.INPUTDATA)) {
+                        businessTransactionAction.setEventType(EventType.INPUT);
+                        businessTransactionAction.setInputData(fact);
+                        businessTransactionAction.setEventNumber(0);
+                        actions.put(businessTransactionAction.getEventNumber(), businessTransactionAction);
+                    } else if (fact.getFactType().equals(FactType.OUTPUTDATA)) {
+                        businessTransactionAction.setEventType(EventType.OUPUT);
+                        businessTransactionAction.setOutputData(fact);
+                        businessTransactionoutput = businessTransactionAction;
 
-                } else if (fact.getFactType().equals(FactType.INSERTED)) {
-                    businessTransactionAction.setEventType(EventType.INSERTFACT);
-                    businessTransactionAction.setFact(fact);
-                    businessTransactionAction.setEventNumber(ii++);
-                    actions.put(businessTransactionAction.getEventNumber(), businessTransactionAction);
-                } else if (fact.getFactType().equals(FactType.UPDATED_NEWVALUE)) {
-                    businessTransactionAction.setEventType(EventType.UPDATEFACTNEWVALUE);
-                    businessTransactionAction.setFact(fact);
-                    businessTransactionAction.setEventNumber(ii++);
-                    actions.put(businessTransactionAction.getEventNumber(), businessTransactionAction);
-                } else if (fact.getFactType().equals(FactType.UPDATED_OLDVALUE)) {
-                    businessTransactionAction.setEventType(EventType.UPDATEFACTOLDVALUE);
-                    businessTransactionAction.setFact(fact);
-                    businessTransactionAction.setEventNumber(ii++);
-                    actions.put(businessTransactionAction.getEventNumber(), businessTransactionAction);
-                } else if (fact.getFactType().equals(FactType.DELETED)) {
-                    businessTransactionAction.setEventType(EventType.RETRACTFACT);
-                    businessTransactionAction.setFact(fact);
-                    businessTransactionAction.setEventNumber(ii++);
-                    actions.put(businessTransactionAction.getEventNumber(), businessTransactionAction);
-                }
-            }
-            for (ProcessExecution processExecution : sessionExecution.getProcessExecutions()) {
-                BusinessTransactionAction businessTransactionActionStart = new BusinessTransactionAction();
-
-                businessTransactionActionStart.setEventType(EventType.STARTPROCESS);
-                businessTransactionActionStart.setProcessID(processExecution.getProcessId());
-
-                businessTransactionActionStart.setBusinessTransactionId(item.getId());
-                businessTransactionActionStart.setEventNumber(ii++);
-                businessTransactionActionStart.setId(UUID.randomUUID().toString());
-                actions.put(businessTransactionActionStart.getEventNumber(), businessTransactionActionStart);
-                for (RuleflowGroup rfg : processExecution.getRuleflowGroups()) {
-                    BusinessTransactionAction businessTransactionActionStartRFG = new BusinessTransactionAction();
-
-                    businessTransactionActionStartRFG.setBusinessTransactionId(item.getId());
-                    businessTransactionActionStartRFG.setEventType(EventType.STARTRULEFLOWGROUP);
-                    businessTransactionActionStartRFG.setRuleflowGroupName(rfg.getRuleflowGroup());
-                    businessTransactionActionStartRFG.setEventNumber(ii++);
-                    businessTransactionActionStartRFG.setId(UUID.randomUUID().toString());
-                    actions.put(businessTransactionActionStartRFG.getEventNumber(), businessTransactionActionStartRFG);
-                    for (RuleExecution ruleExecution : rfg.getRuleExecutionList()) {
-                        BusinessTransactionAction businessTransactionActionRule = new BusinessTransactionAction();
-
-                        businessTransactionActionRule.setEventType(EventType.RULE);
-                        businessTransactionActionRule.setRuleflowGroupName(rfg.getRuleflowGroup());
-                        businessTransactionActionRule.setRuleExecution(ruleExecution);
-                        businessTransactionActionRule.setBusinessTransactionId(item.getId());
-                        businessTransactionActionRule.setProcessID(processExecution.getProcessId());
-                        businessTransactionActionRule.setEventNumber(ii++);
-                        businessTransactionActionRule.setId(UUID.randomUUID().toString());
-                        actions.put(businessTransactionActionRule.getEventNumber(), businessTransactionActionRule);
+                    } else if (fact.getFactType().equals(FactType.INSERTED)) {
+                        businessTransactionAction.setEventType(EventType.INSERTFACT);
+                        businessTransactionAction.setFact(fact);
+                        businessTransactionAction.setEventNumber(ii++);
+                        actions.put(businessTransactionAction.getEventNumber(), businessTransactionAction);
+                    } else if (fact.getFactType().equals(FactType.UPDATED_NEWVALUE)) {
+                        businessTransactionAction.setEventType(EventType.UPDATEFACTNEWVALUE);
+                        businessTransactionAction.setFact(fact);
+                        businessTransactionAction.setEventNumber(ii++);
+                        actions.put(businessTransactionAction.getEventNumber(), businessTransactionAction);
+                    } else if (fact.getFactType().equals(FactType.UPDATED_OLDVALUE)) {
+                        businessTransactionAction.setEventType(EventType.UPDATEFACTOLDVALUE);
+                        businessTransactionAction.setFact(fact);
+                        businessTransactionAction.setEventNumber(ii++);
+                        actions.put(businessTransactionAction.getEventNumber(), businessTransactionAction);
+                    } else if (fact.getFactType().equals(FactType.DELETED)) {
+                        businessTransactionAction.setEventType(EventType.RETRACTFACT);
+                        businessTransactionAction.setFact(fact);
+                        businessTransactionAction.setEventNumber(ii++);
+                        actions.put(businessTransactionAction.getEventNumber(), businessTransactionAction);
                     }
-                    BusinessTransactionAction businessTransactionActionSTOPRFG = new BusinessTransactionAction();
-
-                    businessTransactionActionSTOPRFG.setEventType(EventType.STOPTRULEFLOWGROUP);
-                    businessTransactionActionSTOPRFG.setRuleflowGroupName(rfg.getRuleflowGroup());
-                    businessTransactionActionSTOPRFG.setBusinessTransactionId(item.getId());
-                    businessTransactionActionSTOPRFG.setEventNumber(ii++);
-                    businessTransactionActionSTOPRFG.setId(UUID.randomUUID().toString());
-                    actions.put(businessTransactionActionSTOPRFG.getEventNumber(), businessTransactionActionSTOPRFG);
                 }
-                BusinessTransactionAction businessTransactionActionEnd = new BusinessTransactionAction();
-                businessTransactionActionEnd.setEventType(EventType.STOPPROCESS);
-                businessTransactionActionEnd.setProcessID(processExecution.getProcessId());
-                businessTransactionActionEnd.setBusinessTransactionId(item.getId());
-                businessTransactionActionEnd.setEventNumber(ii++);
-                businessTransactionActionEnd.setId(UUID.randomUUID().toString());
+                for (ProcessExecution processExecution : sessionExecution.getProcessExecutions()) {
+                    BusinessTransactionAction businessTransactionActionStart = new BusinessTransactionAction();
 
-                actions.put(businessTransactionActionEnd.getEventNumber(), businessTransactionActionEnd);
-            }
-            if (businessTransactionoutput != null) {
-                businessTransactionoutput.setEventNumber(ii++);
-                actions.put(businessTransactionoutput.getEventNumber(), businessTransactionoutput);
+                    businessTransactionActionStart.setEventType(EventType.STARTPROCESS);
+                    businessTransactionActionStart.setProcessID(processExecution.getProcessId());
+
+                    businessTransactionActionStart.setBusinessTransactionId(item.getId());
+                    businessTransactionActionStart.setEventNumber(ii++);
+                    businessTransactionActionStart.setId(UUID.randomUUID().toString());
+                    actions.put(businessTransactionActionStart.getEventNumber(), businessTransactionActionStart);
+                    for (RuleflowGroup rfg : processExecution.getRuleflowGroups()) {
+                        BusinessTransactionAction businessTransactionActionStartRFG = new BusinessTransactionAction();
+
+                        businessTransactionActionStartRFG.setBusinessTransactionId(item.getId());
+                        businessTransactionActionStartRFG.setEventType(EventType.STARTRULEFLOWGROUP);
+                        businessTransactionActionStartRFG.setRuleflowGroupName(rfg.getRuleflowGroup());
+                        businessTransactionActionStartRFG.setEventNumber(ii++);
+                        businessTransactionActionStartRFG.setId(UUID.randomUUID().toString());
+                        actions.put(businessTransactionActionStartRFG.getEventNumber(), businessTransactionActionStartRFG);
+                        for (RuleExecution ruleExecution : rfg.getRuleExecutionList()) {
+                            BusinessTransactionAction businessTransactionActionRule = new BusinessTransactionAction();
+
+                            businessTransactionActionRule.setEventType(EventType.RULE);
+                            businessTransactionActionRule.setRuleflowGroupName(rfg.getRuleflowGroup());
+                            businessTransactionActionRule.setRuleExecution(ruleExecution);
+                            businessTransactionActionRule.setBusinessTransactionId(item.getId());
+                            businessTransactionActionRule.setProcessID(processExecution.getProcessId());
+                            businessTransactionActionRule.setEventNumber(ii++);
+                            businessTransactionActionRule.setId(UUID.randomUUID().toString());
+                            actions.put(businessTransactionActionRule.getEventNumber(), businessTransactionActionRule);
+                        }
+                        BusinessTransactionAction businessTransactionActionSTOPRFG = new BusinessTransactionAction();
+
+                        businessTransactionActionSTOPRFG.setEventType(EventType.STOPTRULEFLOWGROUP);
+                        businessTransactionActionSTOPRFG.setRuleflowGroupName(rfg.getRuleflowGroup());
+                        businessTransactionActionSTOPRFG.setBusinessTransactionId(item.getId());
+                        businessTransactionActionSTOPRFG.setEventNumber(ii++);
+                        businessTransactionActionSTOPRFG.setId(UUID.randomUUID().toString());
+                        actions.put(businessTransactionActionSTOPRFG.getEventNumber(), businessTransactionActionSTOPRFG);
+                    }
+                    BusinessTransactionAction businessTransactionActionEnd = new BusinessTransactionAction();
+                    businessTransactionActionEnd.setEventType(EventType.STOPPROCESS);
+                    businessTransactionActionEnd.setProcessID(processExecution.getProcessId());
+                    businessTransactionActionEnd.setBusinessTransactionId(item.getId());
+                    businessTransactionActionEnd.setEventNumber(ii++);
+                    businessTransactionActionEnd.setId(UUID.randomUUID().toString());
+
+                    actions.put(businessTransactionActionEnd.getEventNumber(), businessTransactionActionEnd);
+                }
+
+                if (businessTransactionoutput != null) {
+                    businessTransactionoutput.setEventNumber(ii++);
+                    actions.put(businessTransactionoutput.getEventNumber(), businessTransactionoutput);
+                }
             }
             List<Long> keys = new ArrayList<>(actions.keySet());
             Collections.sort(keys);

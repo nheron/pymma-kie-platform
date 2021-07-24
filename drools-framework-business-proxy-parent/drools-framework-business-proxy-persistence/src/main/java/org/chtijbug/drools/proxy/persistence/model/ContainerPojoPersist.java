@@ -4,15 +4,19 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.security.PrivateKey;
+
 @Document
 public class ContainerPojoPersist {
 
     @Id
     private String id;
 
+    private boolean disableRuleLogging;
 
     @Indexed
     private String className;
+
     @Indexed
     private String containerId;
     @Indexed
@@ -22,14 +26,13 @@ public class ContainerPojoPersist {
 
     private String projectName;
 
-
-
     private String groupId;
 
     private String artifactId;
 
     private String version;
 
+    private String projectUUID;
 
     public String getId() {
         return id;
@@ -79,7 +82,21 @@ public class ContainerPojoPersist {
         this.processID = processID;
     }
 
+    public String getProjectUUID() {
+        return projectUUID;
+    }
 
+    public void setProjectUUID(String projectUUID) {
+        this.projectUUID = projectUUID;
+    }
+
+    public boolean isDisableRuleLogging() {
+        return disableRuleLogging;
+    }
+
+    public void setDisableRuleLogging(boolean disableRuleLogging) {
+        this.disableRuleLogging = disableRuleLogging;
+    }
 
     public String getGroupId() {
         return groupId;

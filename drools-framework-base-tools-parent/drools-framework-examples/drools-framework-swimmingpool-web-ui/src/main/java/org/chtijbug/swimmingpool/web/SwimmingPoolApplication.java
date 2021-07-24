@@ -32,7 +32,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @EnableAutoConfiguration
 @PropertySource("classpath:application.properties")
-public class Application {
+public class SwimmingPoolApplication {
 
     @Value(value = "${url.swimmingpool.calculate}")
     private String url;
@@ -42,7 +42,7 @@ public class Application {
     private String password;
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(SwimmingPoolApplication.class, args);
     }
 
     @Bean

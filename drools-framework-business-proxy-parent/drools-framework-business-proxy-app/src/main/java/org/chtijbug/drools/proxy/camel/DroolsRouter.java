@@ -13,12 +13,14 @@ public class DroolsRouter extends RouteBuilder {
     private String projectName;
     private Class<?> clazzUser;
     private String processID;
+    private boolean disableRuleLogging;
 
-    public DroolsRouter(CamelContext camelContext, Class<?> clazzUser, String projectName,  String processID) {
+    public DroolsRouter(CamelContext camelContext, Class<?> clazzUser, String projectName,  String processID, boolean disableRuleLogging) {
         super(camelContext);
         this.clazzUser = clazzUser;
         this.projectName = projectName;
         this.processID = processID;
+        this.disableRuleLogging = disableRuleLogging;
     }
 
     @Override
@@ -33,6 +35,6 @@ public class DroolsRouter extends RouteBuilder {
                 .param().name("body").type(body).description("The Data drools should work on").endParam()
                 .responseMessage().code(200).message("Data drools worked on").endResponseMessage()
 
-                .to("bean:ruleService?method=runSessionObject(${header.transactionId}," + this.projectName + "," + this.processID + ",${body})");
+                .to("bean:ruleService?method=runSessionObject(${header.transactionId}," + this.projectName + "," + this.processID + ",${body},"+disableRuleLogging+")");
     }
 }

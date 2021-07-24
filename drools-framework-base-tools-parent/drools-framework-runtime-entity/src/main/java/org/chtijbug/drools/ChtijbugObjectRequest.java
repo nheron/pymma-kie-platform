@@ -23,6 +23,8 @@ public class ChtijbugObjectRequest {
 
     private SessionContext sessionLogging;
 
+    private boolean disableLogging;
+
     public String getTransactionID() {
         return transactionID;
     }
@@ -101,5 +103,13 @@ public class ChtijbugObjectRequest {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public boolean isDisableLogging() {
+        return disableLogging;
+    }
+
+    public void setDisableLogging(boolean disableLogging) {
+        this.disableLogging = disableLogging;
     }
 }

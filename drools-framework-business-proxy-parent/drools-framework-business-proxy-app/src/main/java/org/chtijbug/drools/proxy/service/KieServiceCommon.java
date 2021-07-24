@@ -25,6 +25,7 @@ import org.chtijbug.drools.proxy.persistence.model.ContainerRuntimePojoPersist;
 import org.chtijbug.drools.proxy.persistence.model.RuntimePersist;
 import org.chtijbug.drools.proxy.persistence.repository.ContainerRepository;
 import org.chtijbug.drools.proxy.persistence.repository.ContainerRuntimeRepository;
+import org.chtijbug.drools.proxy.persistence.repository.ProjectRepository;
 import org.chtijbug.drools.proxy.persistence.repository.RuntimeRepository;
 import org.chtijbug.kieserver.services.drools.DroolsChtijbugKieServerExtension;
 import org.chtijbug.kieserver.services.drools.DroolsChtijbugRulesExecutionService;
@@ -72,6 +73,8 @@ public class KieServiceCommon {
     private RuntimeRepository runtimeRepository;
     @Inject
     private ContainerRuntimeRepository containerRuntimeRepository;
+    @Inject
+    private ProjectRepository projectRepository;
 
     @Value("${server.port}")
     private int serverPort;
@@ -185,6 +188,7 @@ public class KieServiceCommon {
                         containerRuntimePojoPersist.setServerName(serverName);
                         containerRuntimePojoPersist.setHostname(hostName);
                         containerRuntimePojoPersist.setStatus(ContainerRuntimePojoPersist.STATUS.UP.name());
+                        containerRuntimePojoPersist.setProjectUUID(container.getProjectUUID());
                         containerRuntimeRepository.save(containerRuntimePojoPersist);
                         this.createContainer(kieContainerResource.getContainerId(), kieContainerResource);
                         this.initCamelBusinessRoute(container);
@@ -260,7 +264,7 @@ public class KieServiceCommon {
                     String projectName = container.getContainerId();
                     String processId = container.getProcessID();
                     this.deleteCamelBusinessRoute(projectName);
-                    DroolsRouter droolsRouter = new DroolsRouter(camelContext, theClass, projectName,  processId);
+                    DroolsRouter droolsRouter = new DroolsRouter(camelContext, theClass, projectName,  processId,container.isDisableRuleLogging());
                     camelContext.addRoutes(droolsRouter);
                     routes.put(containerId, droolsRouter);
                 }
