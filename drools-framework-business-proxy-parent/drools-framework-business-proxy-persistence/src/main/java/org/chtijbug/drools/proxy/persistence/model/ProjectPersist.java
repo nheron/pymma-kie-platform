@@ -16,13 +16,13 @@ import java.util.List;
 @CompoundIndexes({
         @CompoundIndex(def = "{'projectName':1, 'branch':1}", name = "projectName_branch_Index")
 })
-public class ProjectPersist  implements Serializable {
+public class ProjectPersist implements Serializable {
 
-    public static final String ADEFINIR="A définir";
+    public static final String ADEFINIR = "A définir";
 
-    public static final String DEFINI="Défini";
+    public static final String DEFINI = "Défini";
 
-    public static final String Deployable="Déployable";
+    public static final String Deployable = "Déployable";
 
     @Indexed
     private String deploymentName;
@@ -51,13 +51,22 @@ public class ProjectPersist  implements Serializable {
 
     private String branch;
 
-    private List<String> serverNames= new ArrayList<>();
+    private List<String> serverNames = new ArrayList<>();
 
     private String status;
 
     private List<String> classNameList;
 
-    public ProjectPersist(){}
+    private boolean disableRuleLogging;
+
+    private boolean enableHotDeploy;
+
+    private boolean useJWTToConnect;
+
+    private String jwtAPIToken;
+
+    public ProjectPersist() {
+    }
 
     public ProjectPersist(String deploymentName, KieProject projectName, String mainClass, String groupID, String artifactID, String processID, String projectVersion, String containerID, List<String> serverNames, String status) {
         this.deploymentName = deploymentName;
@@ -70,6 +79,10 @@ public class ProjectPersist  implements Serializable {
         this.containerID = containerID;
         this.serverNames = serverNames;
         this.status = status;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     public String getDeploymentName() {
@@ -180,22 +193,60 @@ public class ProjectPersist  implements Serializable {
         this.serverNames = serverNames;
     }
 
-    public String getWorkspaceName(){
-        if (this.projectName!= null){
+    public String getWorkspaceName() {
+        if (this.projectName != null) {
             return projectName.getSpaceName();
         }
         return null;
     }
-    public String getKieProjectName(){
-        if (this.projectName!= null){
-            return projectName.getName()+"-"+this.branch;
+
+    public boolean isUseJWTToConnect() {
+        return useJWTToConnect;
+    }
+
+    public void setUseJWTToConnect(boolean useJWTToConnect) {
+        this.useJWTToConnect = useJWTToConnect;
+    }
+
+    public String getKieProjectName() {
+        if (this.projectName != null) {
+            return projectName.getName() + "-" + this.branch;
         }
         return null;
     }
-    public ProjectPersist duplicate(){
+
+    public boolean isDisableRuleLogging() {
+        return disableRuleLogging;
+    }
+
+    public void setDisableRuleLogging(boolean disableRuleLogging) {
+        this.disableRuleLogging = disableRuleLogging;
+    }
+
+    public boolean isEnableHotDeploy() {
+        return enableHotDeploy;
+    }
+
+    public void setEnableHotDeploy(boolean enableHotDeploy) {
+        this.enableHotDeploy = enableHotDeploy;
+    }
+
+    public String getJwtAPIToken() {
+        return jwtAPIToken;
+    }
+
+    public void setJwtAPIToken(String jwtAPIToken) {
+        this.jwtAPIToken = jwtAPIToken;
+    }
+
+    public ProjectPersist duplicate() {
         ArrayList<String> listServerNames = new ArrayList<String>();
         listServerNames.addAll(serverNames);
-        ProjectPersist duplicate = new ProjectPersist(deploymentName,projectName,mainClass,groupID,artifactID,processID,projectVersion,containerID,listServerNames,status);
+        ProjectPersist duplicate = new ProjectPersist(deploymentName, projectName, mainClass, groupID, artifactID, processID, projectVersion, containerID, listServerNames, status);
+        duplicate.setEnableHotDeploy(enableHotDeploy);
+        duplicate.setJwtAPIToken(jwtAPIToken);
+        duplicate.setDisableRuleLogging(disableRuleLogging);
+        duplicate.setUseJWTToConnect(useJWTToConnect);
         return duplicate;
     }
 }

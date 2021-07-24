@@ -1,18 +1,27 @@
 package org.chtijbug.drools.console.vaadincomponent.componentview;
 
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import io.jsonwebtoken.Claims;
+import org.chtijbug.drools.console.middle.JwtService;
 import org.chtijbug.drools.console.service.ProjectPersistService;
+import org.chtijbug.drools.console.service.RuntimeService;
 import org.chtijbug.drools.console.service.util.AppContext;
 import org.chtijbug.drools.console.vaadincomponent.componentperso.ComboBoxPerso;
 import org.chtijbug.drools.console.vaadincomponent.componentperso.TextFieldPerso;
 import org.chtijbug.drools.console.view.DeploymentView;
 import org.chtijbug.drools.proxy.persistence.model.ProjectPersist;
+import org.vaadin.olli.ClipboardHelper;
 
 public class DefineProject extends VerticalLayout {
 
@@ -30,12 +39,31 @@ public class DefineProject extends VerticalLayout {
 
     private Button valider;
 
+    private Checkbox disableRuleLoggingCheckbox;
+
+    private Checkbox enableHotDeployCheckbox;
+    private Checkbox useJWTToConnectCheckbox;
+
+    private TextFieldPerso jwtTokenTextField;
+
+    private TextFieldPerso jwtPeriod;
+
+    private Button createJWTButton;
+
+    private Button copyJWTTextButton;
+
     private transient ProjectPersistService projectPersistService;
+
+    private transient RuntimeService runtimeService;
+
     private boolean createMode;
+
+    private JwtService jwtService;
 
     public DefineProject(DeploymentView deploymentView,Dialog dialog, ProjectPersist projectPersist){
 
-
+        jwtService = AppContext.getApplicationContext().getBean(JwtService.class);
+        runtimeService = AppContext.getApplicationContext().getBean(RuntimeService.class);
         projectPersistService=AppContext.getApplicationContext().getBean(ProjectPersistService.class);
 
         setClassName("creation-runtime-content");
@@ -44,7 +72,7 @@ public class DefineProject extends VerticalLayout {
         label.setClassName("creation-runtime-title");
         add(label);
 
-        label2=new Label("this step is essential before you can associate your project with a workbench");
+        label2=new Label("this step is essential before you can work on your project");
         label2.setClassName("creation-runtime-title2");
         add(label2);
 
@@ -98,6 +126,106 @@ public class DefineProject extends VerticalLayout {
 
         add(processID);
 
+        enableHotDeployCheckbox = new Checkbox("Enable Hot deployment (needs 2 runtimes)");
+        if (projectPersist.isEnableHotDeploy()){
+            enableHotDeployCheckbox.setValue(true);
+        }else{
+            enableHotDeployCheckbox.setValue(false);
+        }
+        enableHotDeployCheckbox.addValueChangeListener(new HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Checkbox, Boolean>>() {
+            @Override
+            public void valueChanged(AbstractField.ComponentValueChangeEvent<Checkbox, Boolean> checkboxBooleanComponentValueChangeEvent) {
+                projectPersist.setEnableHotDeploy(checkboxBooleanComponentValueChangeEvent.getValue());
+            }
+        });
+        add(enableHotDeployCheckbox);
+
+        disableRuleLoggingCheckbox = new Checkbox("Disable Rule logging");
+        if (projectPersist.isDisableRuleLogging()){
+            disableRuleLoggingCheckbox.setValue(true);
+        }else{
+            disableRuleLoggingCheckbox.setValue(false);
+        }
+        disableRuleLoggingCheckbox.addValueChangeListener(new HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Checkbox, Boolean>>() {
+            @Override
+            public void valueChanged(AbstractField.ComponentValueChangeEvent<Checkbox, Boolean> checkboxBooleanComponentValueChangeEvent) {
+                projectPersist.setDisableRuleLogging(disableRuleLoggingCheckbox.getValue());
+            }
+        });
+        add(disableRuleLoggingCheckbox);
+
+        useJWTToConnectCheckbox =new Checkbox("Use JWT token to connect to API");
+        add(useJWTToConnectCheckbox);
+
+
+
+        jwtTokenTextField=new TextFieldPerso("JWT Token for API","",VaadinIcon.TASKS.create());
+
+        if (projectPersist.getJwtAPIToken()!= null
+                && projectPersist.getJwtAPIToken().length()>0){
+            jwtTokenTextField.getTextField().setValue(projectPersist.getJwtAPIToken());
+        }
+        jwtTokenTextField.getTextField().setEnabled(false);
+
+
+        add(jwtTokenTextField);
+        copyJWTTextButton = new Button("Copy JWT token");
+        ClipboardHelper clipboardHelper = new ClipboardHelper(projectPersist.getJwtAPIToken(), copyJWTTextButton);
+        add(clipboardHelper);
+        jwtPeriod=new TextFieldPerso("JWT validity for API","",VaadinIcon.TASKS.create());
+        jwtPeriod.setEnabled(false);
+        if (projectPersist.getJwtAPIToken()!= null
+                && projectPersist.getJwtAPIToken().length()>0){
+            try {
+                Claims claims = jwtService.decodeJWT(projectPersist.getJwtAPIToken());
+                jwtPeriod.getTextField().setValue(claims.getExpiration().toString());
+            }catch (Exception e){
+
+            }
+            jwtTokenTextField.getTextField().setValue(projectPersist.getJwtAPIToken());
+        }
+        add(jwtPeriod);
+        createJWTButton = new Button("Generate JWT token for one year");
+        createJWTButton.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
+            @Override
+            public void onComponentEvent(ClickEvent<Button> buttonClickEvent) {
+                String token = jwtService.createJWT(projectPersist, 1000*3600*24*(long)365);
+                projectPersist.setJwtAPIToken(token);
+                jwtTokenTextField.getTextField().setValue(token);
+                Claims claims = jwtService.decodeJWT(projectPersist.getJwtAPIToken());
+                jwtPeriod.getTextField().setValue(claims.getExpiration().toString());
+            }
+        });
+        add(createJWTButton);
+        if (projectPersist.isUseJWTToConnect()){
+            useJWTToConnectCheckbox.setValue(true);
+        }else{
+            useJWTToConnectCheckbox.setValue(false);
+            jwtTokenTextField.getTextField().setValue("");
+            jwtTokenTextField.setEnabled(false);
+            projectPersist.setJwtAPIToken(null);
+            createJWTButton.setEnabled(false);
+            jwtPeriod.getTextField().setValue("");
+            copyJWTTextButton.setEnabled(false);
+        }
+        useJWTToConnectCheckbox.addValueChangeListener(new HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Checkbox, Boolean>>() {
+            @Override
+            public void valueChanged(AbstractField.ComponentValueChangeEvent<Checkbox, Boolean> checkboxBooleanComponentValueChangeEvent) {
+                projectPersist.setUseJWTToConnect(useJWTToConnectCheckbox.getValue());
+                if (!useJWTToConnectCheckbox.getValue()){
+                    jwtTokenTextField.getTextField().setValue("");
+                    createJWTButton.setEnabled(false);
+                    projectPersist.setJwtAPIToken(null);
+                    jwtPeriod.getTextField().setValue("");
+                    copyJWTTextButton.setEnabled(false);
+                }else{
+                    jwtTokenTextField.setEnabled(true);
+                    copyJWTTextButton.setEnabled(true);
+                    createJWTButton.setEnabled(true);
+                }
+            }
+        });
+
         valider=new Button("Save");
         if (projectPersist.getProcessID()!= null
                 && projectPersist.getProcessID().length()>0){
@@ -112,6 +240,7 @@ public class DefineProject extends VerticalLayout {
             if (createMode) {
                 projectPersist.setStatus(ProjectPersist.DEFINI);
             }
+            runtimeService.updateRuntimes(projectPersist);
             projectPersistService.getProjectRepository().save(projectPersist);
             deploymentView.setDataProvider();
             dialog.close();
@@ -127,6 +256,11 @@ public class DefineProject extends VerticalLayout {
         }else {
             valider.setEnabled(true);
         }
+    }
+    public void verifyToken(){
+
+            valider.setEnabled(true);
+
     }
 
 }

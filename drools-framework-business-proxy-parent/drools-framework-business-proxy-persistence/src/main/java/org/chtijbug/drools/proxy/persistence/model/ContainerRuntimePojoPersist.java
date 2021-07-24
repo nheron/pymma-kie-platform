@@ -24,6 +24,9 @@ public class ContainerRuntimePojoPersist {
 
     private String status;
 
+    private String projectUUID;
+
+    private boolean disableRuleLogging;
 
     public String getId() {
         return id;
@@ -33,6 +36,21 @@ public class ContainerRuntimePojoPersist {
         this.id = id;
     }
 
+    public String getProjectUUID() {
+        return projectUUID;
+    }
+
+    public void setProjectUUID(String projectUUID) {
+        this.projectUUID = projectUUID;
+    }
+
+    public boolean isDisableRuleLogging() {
+        return disableRuleLogging;
+    }
+
+    public void setDisableRuleLogging(boolean disableRuleLogging) {
+        this.disableRuleLogging = disableRuleLogging;
+    }
 
     public String getContainerId() {
         return containerId;

@@ -6,6 +6,10 @@ import java.util.List;
 public class ReverseProxyUpdate {
     private String path;
 
+    private String tokenUUID;
+
+    private String containerID;
+
     List<String> serverNames = new ArrayList<>();
 
     public String getPath() {
@@ -16,11 +20,27 @@ public class ReverseProxyUpdate {
         this.path = path;
     }
 
+    public String getTokenUUID() {
+        return tokenUUID;
+    }
+
+    public void setTokenUUID(String tokenUUID) {
+        this.tokenUUID = tokenUUID;
+    }
+
     public List<String> getServerNames() {
         return serverNames;
     }
 
     public void setServerNames(List<String> serverNames) {
         this.serverNames = serverNames;
+    }
+
+    public void setContainerID(String containerID) {
+        this.containerID = containerID;
+    }
+
+    public String getContainerID() {
+        return containerID;
     }
 }

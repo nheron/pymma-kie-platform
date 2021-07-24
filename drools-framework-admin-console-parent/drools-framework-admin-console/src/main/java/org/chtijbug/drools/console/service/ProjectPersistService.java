@@ -187,7 +187,12 @@ public class ProjectPersistService {
         projectPersist.setContainerID(projectPersist.getDeploymentName() + "-" + projectPersist.getProjectName());
         projectPersist.getServerNames().clear();
         ReverseProxyUpdate reverseProxyUpdate = new ReverseProxyUpdate();
-        reverseProxyUpdate.setPath("/" + projectPersist.getContainerID());
+        reverseProxyUpdate.setContainerID(projectPersist.getContainerID());
+        if (projectPersist.isUseJWTToConnect()) {
+            reverseProxyUpdate.setTokenUUID(projectPersist.getUuid());
+        }else{
+            reverseProxyUpdate.setPath("/" + projectPersist.getContainerID());
+        }
         for (RuntimePersist runtimePersist : runtimePersists) {
             List<String> names = new ArrayList<>();
             names.add(runtimePersist.getServerName());
@@ -201,7 +206,8 @@ public class ProjectPersistService {
                 newContainer.setServerName(runtimePersist.getServerName());
                 newContainer.setGroupId(projectPersist.getGroupID());
                 newContainer.setArtifactId(projectPersist.getArtifactID());
-
+                newContainer.setProjectUUID(projectPersist.getUuid());
+                newContainer.setDisableRuleLogging(projectPersist.isDisableRuleLogging());
                 newContainer.setVersion(projectPersist.getProjectVersion());
                 containerRepository.save(newContainer);
                 List<ContainerRuntimePojoPersist> elts = containerRuntimeRepository.findByServerNameAndContainerId(runtimePersist.getServerName(), projectPersist.getContainerID());
@@ -217,9 +223,15 @@ public class ProjectPersistService {
                     runtimePojoPersist.setHostname(runtimePersist.getHostname());
                     runtimePojoPersist.setContainerId(projectPersist.getContainerID());
                     runtimePojoPersist.setStatus(ContainerRuntimePojoPersist.STATUS.TODEPLOY.name());
+                    runtimePojoPersist.setProjectUUID(projectPersist.getUuid());
+                    runtimePojoPersist.setDisableRuleLogging(projectPersist.isDisableRuleLogging());
                     containerRuntimeRepository.save(runtimePojoPersist);
                 }
 
+            }else{
+                existingContainer.setDisableRuleLogging(projectPersist.isDisableRuleLogging());
+                existingContainer.setProjectUUID(projectPersist.getUuid());
+                containerRepository.save(existingContainer);
             }
 
             String hostName = runtimePersist.getServerUrl() + "/api/" + projectPersist.getContainerID();
@@ -288,6 +300,7 @@ public class ProjectPersistService {
                             runtimePojoPersist.setHostname(server.getHostname());
                             runtimePojoPersist.setContainerId(projectPersist.getContainerID());
                             runtimePojoPersist.setStatus(ContainerRuntimePojoPersist.STATUS.TODEPLOY.name());
+                            runtimePojoPersist.setProjectUUID(projectPersist.getUuid());
                             containerRuntimeRepository.save(runtimePojoPersist);
                         }
                     }

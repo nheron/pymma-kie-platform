@@ -31,10 +31,10 @@ public class UpdateService {
 
     private Boolean toUpdate = true;
 
-    private List<MappingProperties> mappings = new ArrayList<>();
+
 
     private Map<String, MappingProperties> mappingPropertiesMap = new HashMap<>();
-
+    private Map<String, MappingProperties> mappingJWTPropertiesMap = new HashMap<>();
     @Autowired
     private CustomMappingsProvider customMappingsProvider;
 
@@ -48,44 +48,68 @@ public class UpdateService {
             containerFactory = "mappingKafkaListenerContainerFactory")
     public void store(ReverseProxyUpdate update) {
         boolean found = false;
-        for (MappingProperties mappingProperties : mappingPropertiesMap.values()) {
-            if (UpdateService.removeSlach(mappingProperties.getPath()).equals(UpdateService.removeSlach(update.getPath()))) {
+        MappingProperties mappingProperties = null;
+        if (update.getTokenUUID() != null && update.getTokenUUID().length() > 0) {
+            mappingProperties = mappingJWTPropertiesMap.get(update.getTokenUUID());
+            if (mappingProperties != null) {
                 found = true;
-                mappingProperties.getDestinations().clear();
-                logger.info("Updating path {}",update.getPath());
-                for (String destination : update.getServerNames()) {
-                    mappingProperties.getDestinations().add(destination);
-                    logger.info("for path {} adding server {} ",update.getPath(),destination);
-                }
-
-                break;
+            }
+        } else {
+            mappingProperties = mappingPropertiesMap.get(UpdateService.removeSlach(update.getPath()));
+            if (mappingProperties != null) {
+                found = true;
             }
         }
-        if (!found) {
+        if (found) {
+            mappingProperties.getDestinations().clear();
+            logger.info("Updating path {}", update.getPath());
+            for (String destination : update.getServerNames()) {
+                mappingProperties.getDestinations().add(destination);
+                logger.info("for path {} adding server {} ", update.getPath(), destination);
+            }
+        } else {
             MappingProperties newMappingProperties = new MappingProperties();
-            newMappingProperties.setPath(UpdateService.removeSlach(update.getPath()));
-            logger.info("Creating path {}",update.getPath());
+
+            if (update.getTokenUUID() != null && update.getTokenUUID().length() > 0) {
+                mappingJWTPropertiesMap.put(update.getTokenUUID(), newMappingProperties);
+            } else {
+                newMappingProperties.setPath(UpdateService.removeSlach(update.getPath()));
+                logger.info("Creating path {}", update.getPath());
+                mappingPropertiesMap.put(UpdateService.removeSlach(update.getPath()), newMappingProperties);
+            }
+            newMappingProperties.setName(update.getContainerID());
+
+            newMappingProperties.getCustomConfiguration().put("connect", 2000);
+            newMappingProperties.getCustomConfiguration().put("read", 2000);
+            newMappingProperties.setStripPath(true);
             for (String destination : update.getServerNames()) {
                 newMappingProperties.getDestinations().add(destination);
-                logger.info("for path {} adding server {} ",update.getPath(),destination);
+                logger.info("for path {} adding server {} ", update.getPath(), destination);
             }
-            mappingPropertiesMap.put(UpdateService.removeSlach(update.getPath()), newMappingProperties);
         }
-        mappings.clear();
-        mappings.addAll(mappingPropertiesMap.values());
+
         this.toUpdate = true;
     }
 
-    public List<MappingProperties> retrievePath() {
-        this.toUpdate = false;
-        return mappings;
-    }
 
-    public static String removeSlach(String target){
-        if (target!= null) {
-            return target.replace("/", "").replace(" ","");
+
+    public static String removeSlach(String target) {
+        if (target != null) {
+            return target.replace("/", "").replace(" ", "");
         }
         return null;
+    }
+
+    private void generateUrlMap(){
+        Map<String, String> urlMap = new HashMap<>();
+        List<RuntimePersist> runtimePersists = runtimeRepository.findAll();
+        for (RuntimePersist runtimePersist : runtimePersists) {
+            if (!urlMap.containsKey(runtimePersist.getServerName()) ) {
+                urlMap.put(runtimePersist.getServerName(), runtimePersist.getServerUrl());
+                runtimes.put(runtimePersist.getServerName(), runtimePersist.duplicate());
+            }
+        }
+
     }
 
     private void generateMappings() {
@@ -93,16 +117,9 @@ public class UpdateService {
         mappingPropertiesMap.clear();
         List<MappingProperties> paths = new ArrayList<>();
         Collection<ProjectPersist> projectPersists = projectRepository.findAll();
-        Map<String, String> urlMap = new HashMap<>();
-        List<RuntimePersist> runtimePersists = runtimeRepository.findAll();
-        for (RuntimePersist runtimePersist : runtimePersists) {
-            if (urlMap.containsKey(runtimePersist.getServerName()) == false) {
-                urlMap.put(runtimePersist.getServerName(), runtimePersist.getServerUrl());
-                runtimes.put(runtimePersist.getServerName(), runtimePersist.duplicate());
-            }
-        }
+        generateUrlMap();
         for (ProjectPersist projectPersist : projectPersists) {
-            if (projectPersist.getServerNames().size() > 0) {
+            if (!projectPersist.getServerNames().isEmpty()) {
                 projects.put(projectPersist.getContainerID(), projectPersist.duplicate());
                 MappingProperties mappingProperties2 = new MappingProperties();
                 String servList = null;
@@ -114,7 +131,9 @@ public class UpdateService {
                         if (servList == null) {
                             servList = serverName;
                         } else {
-                            servList = servList + ":" + serverName;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append(servList).append(":").append(serverName);
+                            servList = stringBuilder.toString();
                         }
 
                     }
@@ -124,26 +143,35 @@ public class UpdateService {
                 mappingProperties2.getCustomConfiguration().put("connect", 2000);
                 mappingProperties2.getCustomConfiguration().put("read", 2000);
                 mappingProperties2.setStripPath(true);
-                if (mappingProperties2.getDestinations().size() > 0) {
-                    mappingPropertiesMap.put(UpdateService.removeSlach(mappingProperties2.getPath()), mappingProperties2);
-                    paths.add(mappingProperties2);
-                    logger.info("Startup creating path {}",mappingProperties2.getPath());
-                    for (String serverName : mappingProperties2.getDestinations()){
-                        logger.info("---------for path {} adding server {} ",mappingProperties2.getPath(),serverName);
-                    }
-                    logger.info("---------Project " + projectPersist.getContainerID() + " defined on servers - " + mappingProperties2.getDestinations().toString());
+                if (!mappingProperties2.getDestinations().isEmpty()) {
+                    if (projectPersist.isUseJWTToConnect()) {
+                        mappingJWTPropertiesMap.put(projectPersist.getUuid(), mappingProperties2);
+                        paths.add(mappingProperties2);
+                        logger.info("Startup creating path / and for token uuid {}", projectPersist.getUuid());
+                        for (String serverName : mappingProperties2.getDestinations()) {
+                            logger.info("---------for uuid {} adding server {} ", projectPersist.getUuid(), serverName);
+                        }
+                        logger.info("---------Project {}} defined on servers -{} " ,projectPersist.getContainerID(), mappingProperties2.getDestinations());
 
+                    } else {
+                        mappingPropertiesMap.put(UpdateService.removeSlach(mappingProperties2.getPath()), mappingProperties2);
+                        paths.add(mappingProperties2);
+                        logger.info("Startup creating path {}", mappingProperties2.getPath());
+                        for (String serverName : mappingProperties2.getDestinations()) {
+                            logger.info("---------for path {} adding server {} ", mappingProperties2.getPath(), serverName);
+                        }
+                        logger.info("---------Project {} defined on servers - {}" ,projectPersist.getContainerID(),mappingProperties2.getDestinations());
+                    }
                 } else {
-                    logger.error("Project " + projectPersist.getContainerID() + " defined on non existing server");
+                    logger.error("Project  {} defined on non existing server",projectPersist.getContainerID());
                 }
 
 
             }
 
         }
-        mappings.clear();
-        mappings.addAll(paths);
         this.customMappingsProvider.setMappingPropertiesMap(mappingPropertiesMap);
+        this.customMappingsProvider.setMappingJWTPropertiesMap(mappingJWTPropertiesMap);
     }
 
     @PostConstruct

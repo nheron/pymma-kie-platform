@@ -27,12 +27,13 @@ public class RuleService {
         logger.info("Rule Service created");
     }
 
-    public Object runSessionObject(String transactionID, String id, String processID, Object input) {
+    public Object runSessionObject(String transactionID, String id, String processID, Object input, boolean disableRuleLogging) {
 
         ChtijbugObjectRequest chtijbugObjectRequest = new ChtijbugObjectRequest();
         chtijbugObjectRequest.setTransactionID(transactionID);
         chtijbugObjectRequest.setProcessID(processID);
         chtijbugObjectRequest.setContainerID(id);
+        chtijbugObjectRequest.setDisableLogging(disableRuleLogging);
         chtijbugObjectRequest.setTransactionStartTimeStamp(LocalDateTime.now());
         KieContainerInstance kci = kieServiceCommon.getRegistry().getContainer(id);
         chtijbugObjectRequest.setArtifactID(kci.getKieContainer().getReleaseId().getArtifactId());

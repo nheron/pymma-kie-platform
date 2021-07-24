@@ -16,6 +16,7 @@ public interface ContainerRepository extends MongoRepository<ContainerPojoPersis
 
     List<ContainerPojoPersist> findByServerName(String serverName);
 
+    List<ContainerPojoPersist> findByProjectUUID(String projectUUID);
 
 
 }
