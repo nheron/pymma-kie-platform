@@ -100,21 +100,26 @@ public class UpdateService {
         return null;
     }
 
+    private void generateUrlMap(){
+        Map<String, String> urlMap = new HashMap<>();
+        List<RuntimePersist> runtimePersists = runtimeRepository.findAll();
+        for (RuntimePersist runtimePersist : runtimePersists) {
+            if (!urlMap.containsKey(runtimePersist.getServerName()) ) {
+                urlMap.put(runtimePersist.getServerName(), runtimePersist.getServerUrl());
+                runtimes.put(runtimePersist.getServerName(), runtimePersist.duplicate());
+            }
+        }
+
+    }
+
     private void generateMappings() {
         projects.clear();
         mappingPropertiesMap.clear();
         List<MappingProperties> paths = new ArrayList<>();
         Collection<ProjectPersist> projectPersists = projectRepository.findAll();
-        Map<String, String> urlMap = new HashMap<>();
-        List<RuntimePersist> runtimePersists = runtimeRepository.findAll();
-        for (RuntimePersist runtimePersist : runtimePersists) {
-            if (urlMap.containsKey(runtimePersist.getServerName()) == false) {
-                urlMap.put(runtimePersist.getServerName(), runtimePersist.getServerUrl());
-                runtimes.put(runtimePersist.getServerName(), runtimePersist.duplicate());
-            }
-        }
+        generateUrlMap();
         for (ProjectPersist projectPersist : projectPersists) {
-            if (projectPersist.getServerNames().size() > 0) {
+            if (!projectPersist.getServerNames().isEmpty()) {
                 projects.put(projectPersist.getContainerID(), projectPersist.duplicate());
                 MappingProperties mappingProperties2 = new MappingProperties();
                 String servList = null;
@@ -126,7 +131,9 @@ public class UpdateService {
                         if (servList == null) {
                             servList = serverName;
                         } else {
-                            servList = servList + ":" + serverName;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append(servList).append(":").append(serverName);
+                            servList = stringBuilder.toString();
                         }
 
                     }
@@ -136,7 +143,7 @@ public class UpdateService {
                 mappingProperties2.getCustomConfiguration().put("connect", 2000);
                 mappingProperties2.getCustomConfiguration().put("read", 2000);
                 mappingProperties2.setStripPath(true);
-                if (mappingProperties2.getDestinations().size() > 0) {
+                if (!mappingProperties2.getDestinations().isEmpty()) {
                     if (projectPersist.isUseJWTToConnect()) {
                         mappingJWTPropertiesMap.put(projectPersist.getUuid(), mappingProperties2);
                         paths.add(mappingProperties2);
@@ -144,7 +151,7 @@ public class UpdateService {
                         for (String serverName : mappingProperties2.getDestinations()) {
                             logger.info("---------for uuid {} adding server {} ", projectPersist.getUuid(), serverName);
                         }
-                        logger.info("---------Project " + projectPersist.getContainerID() + " defined on servers - " + mappingProperties2.getDestinations().toString());
+                        logger.info("---------Project {}} defined on servers -{} " ,projectPersist.getContainerID(), mappingProperties2.getDestinations());
 
                     } else {
                         mappingPropertiesMap.put(UpdateService.removeSlach(mappingProperties2.getPath()), mappingProperties2);
@@ -153,10 +160,10 @@ public class UpdateService {
                         for (String serverName : mappingProperties2.getDestinations()) {
                             logger.info("---------for path {} adding server {} ", mappingProperties2.getPath(), serverName);
                         }
-                        logger.info("---------Project " + projectPersist.getContainerID() + " defined on servers - " + mappingProperties2.getDestinations().toString());
+                        logger.info("---------Project {} defined on servers - {}" ,projectPersist.getContainerID(),mappingProperties2.getDestinations());
                     }
                 } else {
-                    logger.error("Project " + projectPersist.getContainerID() + " defined on non existing server");
+                    logger.error("Project  {} defined on non existing server",projectPersist.getContainerID());
                 }
 
 

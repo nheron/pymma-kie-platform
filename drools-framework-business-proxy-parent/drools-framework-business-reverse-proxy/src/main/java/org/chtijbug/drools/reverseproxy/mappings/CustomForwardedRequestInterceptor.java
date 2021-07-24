@@ -12,7 +12,6 @@ public class CustomForwardedRequestInterceptor implements ForwardedRequestInterc
     private static final Logger logger = LoggerFactory.getLogger(CustomForwardedRequestInterceptor.class);
     @Override
     public void intercept(RequestData data, MappingProperties mapping) {
-        logger.debug(data.toString());
-
+            logger.debug("data forwarded = {}",data);
     }
 }

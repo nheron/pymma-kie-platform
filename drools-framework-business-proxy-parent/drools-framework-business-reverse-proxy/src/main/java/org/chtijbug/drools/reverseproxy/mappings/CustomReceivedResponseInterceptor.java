@@ -12,6 +12,6 @@ public class CustomReceivedResponseInterceptor implements ReceivedResponseInterc
     private static final Logger logger = LoggerFactory.getLogger(CustomReceivedResponseInterceptor.class);
     @Override
     public void intercept(ResponseData responseData, MappingProperties mappingProperties) {
-        logger.debug(responseData.toString());
+        logger.debug("data received = {}",responseData);
     }
 }
