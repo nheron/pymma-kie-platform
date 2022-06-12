@@ -28,7 +28,7 @@
         <dependency>
             <groupId>org.kie</groupId>
             <artifactId>business-central</artifactId>
-            <classifier>wildfly19</classifier>
+            <classifier>wildfly23</classifier>
             <version>${jbpm.version}</version>
             <type>war</type>
             <exclusions>
@@ -92,7 +92,7 @@
                                 <artifactItem>
                                     <groupId>org.kie</groupId>
                                     <artifactId>business-central</artifactId>
-                                    <classifier>wildfly19</classifier>
+                                    <classifier>wildfly23</classifier>
                                     <version>${jbpm.version}</version>
                                     <type>war</type>
                                     <outputDirectory>${project.build.directory}/unpack-tmp</outputDirectory>

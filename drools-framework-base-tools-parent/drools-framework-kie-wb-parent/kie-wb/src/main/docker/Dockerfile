@@ -3,7 +3,7 @@
 ###########################################################################
 
 ####### BASE ############
-FROM jboss/wildfly:19.1.0.Final
+FROM jboss/wildfly:23.0.2.Final
 
 
 ####### MAINTAINER ############
@@ -14,9 +14,7 @@ ENV JBOSS_BIND_ADDRESS 0.0.0.0
 ENV KIE_REPOSITORY https://repository.jboss.org/nexus/content/groups/public-jboss
 ENV CHTIJBUG_REPOSITORY https://oss.sonatype.org/content/repositories/releases
 ENV KIE_VERSION 7.17.0.Final
-ENV KIE_CLASSIFIER wildfly10
 ENV KIE_CONTEXT_PATH kie-wb
-ENV KIE_SERVER_PROFILE standalone-full
 ENV CHTIJBUG_VERSION 2.0.10
 # Do NOT use demo neither examples by default in this image (no internet connection required).
 ENV KIE_DEMO false
