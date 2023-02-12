@@ -15,7 +15,7 @@
         <module>kie-drools-framework-rest-backend</module>
         <module>drools-framework-kie-wb-rest-pojo</module>
         <module>drools-framework-uberfire-security-service</module>
-        <!--module>drools-framework-wildfly-login-module</module-->
+        <module>drools-framework-wildfly-login-module</module>
     </modules>
 
     <dependencyManagement>
