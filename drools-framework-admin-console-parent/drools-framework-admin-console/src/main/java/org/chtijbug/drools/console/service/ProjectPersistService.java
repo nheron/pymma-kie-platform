@@ -109,13 +109,13 @@ public class ProjectPersistService {
     public UserGroups createProjectGroupIfNeeded(String projectName, KieWorkbench kieWorkbench, ProjectPersist projectPersist, UserGroups workspaceUserGroup) {
         UserGroups userGroups = userGroupsRepository.findByName("prj_" + projectName);
         if (userGroups == null) {
-            UserGroups projectGroup = new UserGroups(UUID.randomUUID().toString(), "prj_" + projectName);
+            UserGroups projectGroup = new UserGroups( "prj_" + projectName);
             projectGroup.setKieWorkbench(kieWorkbench);
             projectGroup.setProjectName(projectName);
             projectGroup.setProjectPersist(projectPersist);
             projectGroup.setWorkspaceUserGroup(workspaceUserGroup);
             projectGroup = userGroupsRepository.save(projectGroup);
-            User groupUser = new User(UUID.randomUUID().toString(), "prj_user_" + projectName, "adminadmin99#");
+            User groupUser = new User( "prj_user_" + projectName, "adminadmin99#");
             groupUser.getUserGroups().add(projectGroup);
             groupUser.getUserRoles().add(userRolesRepository.findByName("analyst"));
             groupUser.getUserRoles().add(userRolesRepository.findByName("rest-all"));
@@ -130,11 +130,11 @@ public class ProjectPersistService {
     public UserGroups createWorkSpaceGroupIfNeeded(String workSpaceName, KieWorkbench kieWorkbench) {
         UserGroups userGroupsWorkSpace = userGroupsRepository.findByName("wrk_" + workSpaceName);
         if (userGroupsWorkSpace == null) {
-            userGroupsWorkSpace = new UserGroups(UUID.randomUUID().toString(), "wrk_" + workSpaceName);
+            userGroupsWorkSpace = new UserGroups( "wrk_" + workSpaceName);
             userGroupsWorkSpace.setKieWorkbench(kieWorkbench);
             userGroupsWorkSpace.setSpaceName(workSpaceName);
             userGroupsRepository.save(userGroupsWorkSpace);
-            User groupUser = new User(UUID.randomUUID().toString(), "wrk_user_" + workSpaceName, "pymma#");
+            User groupUser = new User( "wrk_user_" + workSpaceName, "pymma#");
             groupUser.getUserGroups().add(userGroupsWorkSpace);
             groupUser.getUserRoles().add(userRolesRepository.findByName("analyst"));
             groupUser.getUserRoles().add(userRolesRepository.findByName("rest-all"));

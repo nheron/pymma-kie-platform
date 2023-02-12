@@ -27,7 +27,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -40,7 +40,7 @@ import java.util.Map;
 // CHECKSTYLE:OFF
 @SpringBootApplication
 @Configuration
-@EnableMongoRepositories(basePackages = "org.chtijbug.drools.proxy.persistence.repository")
+@EnableJpaRepositories(basePackages = "org.chtijbug.drools.proxy.persistence.repository")
 @EnableKafka
 public class DroolsBusinessIndexerServer {
     public final static String LOGING_TOPIC ="logging";

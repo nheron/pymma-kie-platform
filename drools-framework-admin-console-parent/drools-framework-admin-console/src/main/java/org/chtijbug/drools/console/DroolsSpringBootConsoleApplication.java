@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.event.EventListener;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
@@ -56,7 +56,7 @@ import java.util.Map;
 
 @Configuration
 @SpringBootApplication
-@EnableMongoRepositories("org.chtijbug.drools.proxy.persistence.repository")
+@EnableJpaRepositories("org.chtijbug.drools.proxy.persistence.repository")
 @EnableKafka
 @PropertySource("classpath:application.properties")
 @EnableSwagger2

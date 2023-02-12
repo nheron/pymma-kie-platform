@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.pymmasoftware.jbpm</groupId>
         <artifactId>drools-framework-examples</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>drools-framework-swimmingpool-web-ui</artifactId>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.9.8</version>
+            <version>${jackson.version}</version>
         </dependency>
 
     </dependencies>

@@ -16,7 +16,6 @@ import org.jboss.security.auth.spi.UsernamePasswordLoginModule;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;

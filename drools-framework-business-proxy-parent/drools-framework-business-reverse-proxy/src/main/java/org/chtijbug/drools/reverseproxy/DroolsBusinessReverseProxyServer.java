@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SpringBootApplication
-@EnableMongoRepositories(basePackages = "org.chtijbug.drools.proxy.persistence.repository")
+@EnableJpaRepositories(basePackages = "org.chtijbug.drools.proxy.persistence.repository")
 public class DroolsBusinessReverseProxyServer {
 
     @Value(value = "${kafka.bootstrapAddress}")

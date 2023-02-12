@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>drools-framework-kie-wb-parent</artifactId>
         <groupId>com.pymmasoftware.jbpm</groupId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>kie-wb</artifactId>
 
@@ -47,12 +47,12 @@
             <artifactId>jackson-module-jaxb-annotations</artifactId>
             <version>2.10.4</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>com.pymmasoftware.jbpm</groupId>
             <artifactId>drools-framework-wildfly-login-module</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>org.uberfire</groupId>
             <artifactId>uberfire-security-management-wildfly</artifactId>
@@ -151,6 +151,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -187,7 +188,7 @@
                         </goals>
                         <configuration>
                             <artifactItems>
-                                <artifactItem>
+                                <!--artifactItem>
                                     <groupId>com.pymmasoftware.jbpm</groupId>
                                     <artifactId>drools-framework-wildfly-login-module</artifactId>
                                     <version>${project.version}</version>
@@ -195,7 +196,7 @@
                                     <overWrite>yes</overWrite>
                                     <outputDirectory>${project.build.directory}/</outputDirectory>
                                     <destFileName>pymma-kie-login-module.jar</destFileName>
-                                </artifactItem>
+                                </artifactItem-->
                                 <artifactItem>
                                     <groupId>org.mongodb</groupId>
                                     <artifactId>mongodb-driver</artifactId>

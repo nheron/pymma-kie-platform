@@ -5,7 +5,7 @@
     <parent>
         <artifactId>drools-framework-admin-console-parent</artifactId>
         <groupId>com.pymmasoftware.jbpm</groupId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
@@ -22,7 +22,7 @@
     <repositories>
         <repository>
             <id>vaadin-addons</id>
-            <url>http://maven.vaadin.com/vaadin-addons</url>
+            <url>https://maven.vaadin.com/vaadin-addons</url>
         </repository>
     </repositories>
 
@@ -211,17 +211,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>4.3.6.Release</version>
-        </dependency-->
-
-        <!--dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.9.4</version>
-        </dependency-->
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>commons-codec</groupId>
@@ -235,7 +229,7 @@
         </dependency>
         <dependency>
             <groupId>com.pymmasoftware.jbpm</groupId>
-            <artifactId>drools-framework-business-proxy-persistence</artifactId>
+            <artifactId>drools-framework-business-proxy-jpa</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

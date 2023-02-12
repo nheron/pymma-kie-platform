@@ -5,7 +5,7 @@
     <parent>
         <artifactId>pymma-jbpm-platform-parent</artifactId>
         <groupId>com.pymmasoftware.jbpm</groupId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -90,17 +90,17 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.8.9</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.8.9</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <version>2.10.4</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>

@@ -7,6 +7,9 @@ public class DummyFact {
     private DummyFact property;
     private List<DummyFact> listOfFacts;
 
+    public DummyFact() {
+    }
+
     DummyFact(String name) {
         this.name = name;
     }

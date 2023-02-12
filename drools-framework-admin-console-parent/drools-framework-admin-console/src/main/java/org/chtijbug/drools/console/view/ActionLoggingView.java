@@ -49,17 +49,17 @@ public class ActionLoggingView extends VerticalLayout {
         indexerService = AppContext.getApplicationContext().getBean(IndexerService.class);
         dialogPerso.getClose().setVisible(false);
         this.uniqueID = businessTransactionPersistence.getTransactionId();
-        this.dbID = businessTransactionPersistence.getId();
+        this.dbID = businessTransactionPersistence.getUniqueId().toString();
         if (this.uniqueID==null){
             this.uniqueID=this.dbID;
         }
-        title = new Label("TransactionID : " + businessTransactionPersistence.getTransactionId() + "--" + businessTransactionPersistence.getId());
+        title = new Label("TransactionID : " + businessTransactionPersistence.getTransactionId() + "--" + businessTransactionPersistence.getUniqueId());
         title.setClassName("creation-runtime-title");
 
         add(title);
 
 
-        gridActionLogging = new GridActionLogging(businessTransactionPersistence.getId());
+        gridActionLogging = new GridActionLogging(businessTransactionPersistence.getUniqueId().toString());
         Anchor anchor = new Anchor(new StreamResource(uniqueID.trim().toLowerCase()+".csv", this::getInputStream), "Export as CSV");
         anchor.getElement().setAttribute("download", true);
         add(gridActionLogging, anchor);

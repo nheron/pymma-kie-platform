@@ -52,7 +52,7 @@ public class StoreLoggingService {
             item.setSecond(second);
             item.setMillis(millis);
             item.setTransactionId(id);
-            item.setId(UUID.randomUUID().toString());
+
             long ii = 1;
 
             SessionContext sessionContext = result.getSessionLogging();
@@ -68,8 +68,8 @@ public class StoreLoggingService {
                 BusinessTransactionAction businessTransactionoutput = null;
                 for (Fact fact : sessionExecution.getFacts()) {
                     BusinessTransactionAction businessTransactionAction = new BusinessTransactionAction();
-                    businessTransactionAction.setId(UUID.randomUUID().toString());
-                    businessTransactionAction.setBusinessTransactionId(item.getId());
+
+                    businessTransactionAction.setBusinessTransactionId(item.getTransactionId());
                     if (fact.getFactType().equals(FactType.INPUTDATA)) {
                         businessTransactionAction.setEventType(EventType.INPUT);
                         businessTransactionAction.setInputData(fact);
@@ -108,18 +108,18 @@ public class StoreLoggingService {
                     businessTransactionActionStart.setEventType(EventType.STARTPROCESS);
                     businessTransactionActionStart.setProcessID(processExecution.getProcessId());
 
-                    businessTransactionActionStart.setBusinessTransactionId(item.getId());
+                    businessTransactionActionStart.setBusinessTransactionId(item.getTransactionId());
                     businessTransactionActionStart.setEventNumber(ii++);
-                    businessTransactionActionStart.setId(UUID.randomUUID().toString());
+
                     actions.put(businessTransactionActionStart.getEventNumber(), businessTransactionActionStart);
                     for (RuleflowGroup rfg : processExecution.getRuleflowGroups()) {
                         BusinessTransactionAction businessTransactionActionStartRFG = new BusinessTransactionAction();
 
-                        businessTransactionActionStartRFG.setBusinessTransactionId(item.getId());
+                        businessTransactionActionStartRFG.setBusinessTransactionId(item.getTransactionId());
                         businessTransactionActionStartRFG.setEventType(EventType.STARTRULEFLOWGROUP);
                         businessTransactionActionStartRFG.setRuleflowGroupName(rfg.getRuleflowGroup());
                         businessTransactionActionStartRFG.setEventNumber(ii++);
-                        businessTransactionActionStartRFG.setId(UUID.randomUUID().toString());
+
                         actions.put(businessTransactionActionStartRFG.getEventNumber(), businessTransactionActionStartRFG);
                         for (RuleExecution ruleExecution : rfg.getRuleExecutionList()) {
                             BusinessTransactionAction businessTransactionActionRule = new BusinessTransactionAction();
@@ -127,27 +127,27 @@ public class StoreLoggingService {
                             businessTransactionActionRule.setEventType(EventType.RULE);
                             businessTransactionActionRule.setRuleflowGroupName(rfg.getRuleflowGroup());
                             businessTransactionActionRule.setRuleExecution(ruleExecution);
-                            businessTransactionActionRule.setBusinessTransactionId(item.getId());
+                            businessTransactionActionRule.setBusinessTransactionId(item.getTransactionId());
                             businessTransactionActionRule.setProcessID(processExecution.getProcessId());
                             businessTransactionActionRule.setEventNumber(ii++);
-                            businessTransactionActionRule.setId(UUID.randomUUID().toString());
+
                             actions.put(businessTransactionActionRule.getEventNumber(), businessTransactionActionRule);
                         }
                         BusinessTransactionAction businessTransactionActionSTOPRFG = new BusinessTransactionAction();
 
                         businessTransactionActionSTOPRFG.setEventType(EventType.STOPTRULEFLOWGROUP);
                         businessTransactionActionSTOPRFG.setRuleflowGroupName(rfg.getRuleflowGroup());
-                        businessTransactionActionSTOPRFG.setBusinessTransactionId(item.getId());
+                        businessTransactionActionSTOPRFG.setBusinessTransactionId(item.getTransactionId());
                         businessTransactionActionSTOPRFG.setEventNumber(ii++);
-                        businessTransactionActionSTOPRFG.setId(UUID.randomUUID().toString());
+
                         actions.put(businessTransactionActionSTOPRFG.getEventNumber(), businessTransactionActionSTOPRFG);
                     }
                     BusinessTransactionAction businessTransactionActionEnd = new BusinessTransactionAction();
                     businessTransactionActionEnd.setEventType(EventType.STOPPROCESS);
                     businessTransactionActionEnd.setProcessID(processExecution.getProcessId());
-                    businessTransactionActionEnd.setBusinessTransactionId(item.getId());
+                    businessTransactionActionEnd.setBusinessTransactionId(item.getTransactionId());
                     businessTransactionActionEnd.setEventNumber(ii++);
-                    businessTransactionActionEnd.setId(UUID.randomUUID().toString());
+
 
                     actions.put(businessTransactionActionEnd.getEventNumber(), businessTransactionActionEnd);
                 }
