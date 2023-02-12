@@ -289,7 +289,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-
+                <version>${spring-boot.version}</version>
                 <configuration>
                     <jvmArguments>-Dvaadin.productionMode</jvmArguments>
                     <executable>true</executable>

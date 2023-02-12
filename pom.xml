@@ -22,7 +22,7 @@
         <node.version>v10.16.3</node.version>
         <npm.version>6.11.3</npm.version>
         <frontend-maven-plugin.version>1.11.3</frontend-maven-plugin.version>
-       <spring.boot.version>2.7.5</spring.boot.version>
+       <spring.boot.version>2.7.8</spring.boot.version>
 
         <spring.version>5.3.23</spring.version>
         <version.thorntail>2.2.1.Final</version.thorntail>
