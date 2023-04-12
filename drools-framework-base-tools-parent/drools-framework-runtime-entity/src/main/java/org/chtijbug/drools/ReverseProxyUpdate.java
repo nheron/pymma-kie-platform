@@ -3,7 +3,7 @@ package org.chtijbug.drools;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReverseProxyUpdate {
+public class ReverseProxyUpdate implements java.io.Serializable{
     private String path;
 
     private String tokenUUID;

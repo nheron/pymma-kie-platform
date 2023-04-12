@@ -8,6 +8,7 @@ import org.chtijbug.drools.console.service.model.UserConnected;
 import org.chtijbug.drools.console.service.model.kie.JobStatus;
 import org.chtijbug.drools.console.service.model.kie.KieConfigurationData;
 import org.chtijbug.drools.console.service.util.AppContext;
+import org.chtijbug.drools.jms.ReverseProxyMessageCreator;
 import org.chtijbug.drools.proxy.persistence.json.KieProject;
 import org.chtijbug.drools.proxy.persistence.model.*;
 import org.chtijbug.drools.proxy.persistence.repository.*;
@@ -16,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -63,7 +64,7 @@ public class ProjectPersistService {
     private KieWorkbenchRepository workbenchRepository;
 
     @Autowired
-    private KafkaTemplate<String, ReverseProxyUpdate> kafkaTemplateProxyUpdate;
+    private JmsTemplate jmsTemplate;
 
     @Autowired
     private UserGroupsRepository userGroupsRepository;
@@ -238,7 +239,8 @@ public class ProjectPersistService {
             reverseProxyUpdate.getServerNames().add(hostName);
         }
         projectRepository.save(projectPersist);
-        kafkaTemplateProxyUpdate.send(KafkaTopicConstants.REVERSE_PROXY, reverseProxyUpdate);
+        jmsTemplate.send(KafkaTopicConstants.REVERSE_PROXY, new ReverseProxyMessageCreator(reverseProxyUpdate));
+
         return true;
     }
 

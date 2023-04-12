@@ -12,6 +12,7 @@ import org.chtijbug.drools.proxy.persistence.repository.BusinessTransactionPersi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +30,7 @@ public class StoreLoggingService {
     private BusinessTransactionActionRepository actionRepository;
 
 
-    @KafkaListener(
-            topics = KafkaTopicConstants.LOGING_TOPIC, groupId = "${kafka.index.groupid}",
-            containerFactory = "ruleKafkaListenerContainerFactory")
+    @JmsListener(destination = KafkaTopicConstants.LOGING_TOPIC)
     public void store(ChtijbugObjectRequest result) {
         if (result != null) {
 

@@ -41,6 +41,7 @@
         <jackson.bind.version>2.13.4.2</jackson.bind.version>
         <postgres.version>42.2.8</postgres.version>
         <postgresql.version>42.2.8</postgresql.version>
+        <activemq.version>5.15.10</activemq.version>
     </properties>
     <profiles>
         <profile>

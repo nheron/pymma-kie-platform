@@ -1,0 +1,401 @@
+version: "3"
+
+
+networks:
+  drools-network-dev:
+    ipam:
+      config:
+        - subnet: 172.27.1.0/24
+
+
+services:
+
+  kie-wb:
+    image: kie-wb
+    container_name: "businessCentral"
+    volumes:
+      - gitdata:/home/niodir
+      - lucenedata:/home/lucene
+    hostname: kie-wb.pymma
+    environment:
+      PYMMA_OPTS: "  -DconnectionString=mongodb://mongodb:27017 -Dname=businessProxyDB "
+    links:
+      - businessProxyDB:mongodb
+    depends_on:
+      - businessProxyDB
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.5
+    ports:
+      - 8080:8080
+      - 8001:8001
+    restart: always
+
+
+
+  admin-console:
+    image: runtime-admin-console
+    container_name: "admin-console"
+    environment:
+      PYMMA_OPTS: " -Dkafka.bootstrapAddress=kafka1:19092,kafka2:19093,kafka3:19094 "
+    hostname: admin.pymma
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.6
+    ports:
+      - 8200:8200
+    links:
+      - kie-wb:kie-wb
+      - businessProxyDB:mongodb
+      - kafka1:kafka1
+      - kafka2:kafka2
+      - kafka3:kafka3
+    depends_on:
+      - businessProxyDB
+    restart: always
+
+
+  swimmingpool-wb:
+    image: swimmingpool-web-ui
+    container_name: "swimmingpool-web-ui"
+    environment:
+      PYMMA_OPTS: " "
+    hostname: swimmingpool-wb.pymma
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.15
+    ports:
+      - 12099:12099
+    links:
+      - runtime-reverse-proxy:reverse-proxy
+    depends_on:
+      - runtime-reverse-proxy
+    restart: always
+
+
+#-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=y
+
+
+  runtime-proxy-1:
+    image: runtime-proxy
+    container_name: "runtime-proxy-1"
+    volumes:
+      - kieserverdir:/niodir-kieserver
+    environment:
+      PYMMA_OPTS: "-Dorg.kie.server.id=server1 -Dkafka.bootstrapAddress=kafka1:19092,kafka2:19093,kafka3:19094 "
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.22
+    ports:
+      - 8090
+      - 9080
+    links:
+      - businessProxyDB:mongodb
+      - kie-wb:kie-wb
+      - kafka1:kafka1
+      - kafka2:kafka2
+      - kafka3:kafka3
+    depends_on:
+      - businessProxyDB
+      - kie-wb
+    restart: always
+
+  runtime-proxy-2:
+    image: runtime-proxy
+    container_name: "runtime-proxy-2"
+    volumes:
+      - kieserverdir:/niodir-kieserver
+    environment:
+      PYMMA_OPTS: "-Dorg.kie.server.id=server2 -Dkafka.bootstrapAddress=kafka1:19092,kafka2:19093,kafka3:19094 "
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.32
+    ports:
+      - 8090
+      - 9080
+    links:
+      - businessProxyDB:mongodb
+      - kie-wb:kie-wb
+      - kafka1:kafka1
+      - kafka2:kafka2
+      - kafka3:kafka3
+    depends_on:
+      - businessProxyDB
+      - kie-wb
+    restart: always
+
+  runtime-proxy-3:
+    image: runtime-proxy
+    container_name: "runtime-proxy-3"
+    volumes:
+      - kieserverdir:/niodir-kieserver
+    environment:
+      PYMMA_OPTS: "-Dorg.kie.server.id=server3 -Dkafka.bootstrapAddress=kafka1:19092,kafka2:19093,kafka3:19094 "
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.42
+    ports:
+      - 8090
+      - 9080
+    links:
+      - businessProxyDB:mongodb
+      - kie-wb:kie-wb
+      - kafka1:kafka1
+      - kafka2:kafka2
+      - kafka3:kafka3
+    depends_on:
+      - businessProxyDB
+      - kie-wb
+    restart: always
+
+  runtime-proxy-4:
+    image: runtime-proxy
+    container_name: "runtime-proxy-4"
+    volumes:
+      - kieserverdir:/niodir-kieserver
+    environment:
+      PYMMA_OPTS: "-Dorg.kie.server.id=server4 -Dkafka.bootstrapAddress=kafka1:19092,kafka2:19093,kafka3:19094 "
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.52
+    ports:
+      - 8090
+      - 9080
+    links:
+      - businessProxyDB:mongodb
+      - kie-wb:kie-wb
+      - kafka1:kafka1
+      - kafka2:kafka2
+      - kafka3:kafka3
+    depends_on:
+      - businessProxyDB
+      - kie-wb
+    restart: always
+
+  runtime-proxy-5:
+    image: runtime-proxy
+    container_name: "runtime-proxy-5"
+    volumes:
+      - kieserverdir:/niodir-kieserver
+    environment:
+      PYMMA_OPTS: "-Dorg.kie.server.id=server5 -Dkafka.bootstrapAddress=kafka1:19092,kafka2:19093,kafka3:19094 "
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.62
+    ports:
+      - 8090
+      - 9080
+    links:
+      - businessProxyDB:mongodb
+      - kie-wb:kie-wb
+      - kafka1:kafka1
+      - kafka2:kafka2
+      - kafka3:kafka3
+    depends_on:
+      - businessProxyDB
+      - kie-wb
+    restart: always
+
+
+  runtime-indexer:
+    image: runtime-indexer
+    container_name: "runtime-indexer"
+    hostname: indexer.pymma
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.23
+    links:
+      - businessProxyDB:mongodb
+      - kafka1:kafka1
+      - kafka2:kafka2
+      - kafka3:kafka3
+    depends_on:
+      - businessProxyDB
+    restart: always
+
+  runtime-reverse-proxy:
+    image: runtime-reverse-proxy
+    container_name: "runtime-reverse-proxy"
+    environment:
+      PYMMA_OPTS: " -Dkafka.bootstrapAddress=kafka1:19092,kafka2:19093,kafka3:19094 "
+    hostname: reverse-proxy.pymma
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.25
+    links:
+      - businessProxyDB:mongodb
+      - kafka1:kafka1
+      - kafka2:kafka2
+      - kafka3:kafka3
+    depends_on:
+      - businessProxyDB
+    ports:
+      - 9500:9500
+    restart: always
+
+
+  postgreskie:
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    image: postgres:13.4-alpine
+    environment:
+      - POSTGRES_DB=chti-data
+      - POSTGRES_USER=database_admin
+      - POSTGRES_PASSWORD=
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - MAX_CONNECTIONS=500
+      - MAX_WAL_SENDERS=100
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data
+      - ./backend/docker/pgsql_scripts:/docker-entrypoint-initdb.d
+    ports:
+      - 12432:5432
+
+
+  zoo1:
+    image: zookeeper:3.4.9
+    hostname: zoo1
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.100
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_PORT: 2181
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+      - zoo1_data:/data
+      - zoo1_data_datalog:/datalog
+
+  zoo2:
+    image: zookeeper:3.4.9
+    hostname: zoo2
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.101
+    ports:
+      - "2182:2182"
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_PORT: 2182
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+      - zoo2_data:/data
+      - zoo2_data_datalog:/datalog
+
+  zoo3:
+    image: zookeeper:3.4.9
+    hostname: zoo3
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.102
+    ports:
+      - "2183:2183"
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_PORT: 2183
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+      - zoo3_data:/data
+      - zoo3_data_datalog:/datalog
+
+
+  kafka1:
+    image: confluentinc/cp-kafka:5.5.0
+    hostname: kafka1.pymma
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.103
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka1:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2182,zoo3:2183"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_FETCH_MAX_BYTES: 5048576
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 5048576
+      KAFKA_MESSAGE_MAX_BYTES: 5048576
+      KAFKA_PRODUCER_MAX_REQUEST_SIZE: 5048576
+      CONNECT_PRODUCER_MAX_REQUEST_SIZE: 5048576
+    volumes:
+      - kafka1_data:/var/lib/kafka/data
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+
+  kafka2:
+    image: confluentinc/cp-kafka:5.5.0
+    hostname: kafka2.pymma
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.104
+    ports:
+      - "9093:9093"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka2:19093,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2182,zoo3:2183"
+      KAFKA_BROKER_ID: 2
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_FETCH_MAX_BYTES: 5048576
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 5048576
+      KAFKA_MESSAGE_MAX_BYTES: 5048576
+      KAFKA_PRODUCER_MAX_REQUEST_SIZE: 5048576
+      CONNECT_PRODUCER_MAX_REQUEST_SIZE: 5048576
+    volumes:
+      - kafka2_data:/var/lib/kafka/data
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+
+  kafka3:
+    image: confluentinc/cp-kafka:5.5.0
+    hostname: kafka3.pymma
+    networks:
+      drools-network-dev:
+        ipv4_address: 172.27.1.105
+    ports:
+      - "9094:9094"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka3:19094,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2182,zoo3:2183"
+      KAFKA_BROKER_ID: 3
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_FETCH_MAX_BYTES: 5048576
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 5048576
+      KAFKA_MESSAGE_MAX_BYTES: 5048576
+      KAFKA_PRODUCER_MAX_REQUEST_SIZE: 5048576
+      CONNECT_PRODUCER_MAX_REQUEST_SIZE: 5048576
+    volumes:
+      - kafka3_data:/var/lib/kafka/data
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+
+volumes:
+  pgsql-data:
+
+  gitdata:
+  lucenedata:
+  kieserverdir:
+  zoo1_data:
+  zoo2_data:
+  zoo3_data:
+  zoo1_data_datalog:
+  zoo2_data_datalog:
+  zoo3_data_datalog:
+  kafka1_data:
+  kafka2_data:
+  kafka3_data:

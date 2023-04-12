@@ -2,18 +2,7 @@ package org.chtijbug.drools.console;
 
 
 import com.vaadin.flow.spring.SpringServlet;
-import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.config.SslConfigs;
-import org.apache.kafka.common.security.auth.SecurityProtocol;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.chtijbug.drools.KieContainerResponse;
-import org.chtijbug.drools.ReverseProxyUpdate;
-import org.chtijbug.drools.common.KafkaTopicConstants;
+import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.chtijbug.drools.console.middle.DababaseContentUpdate;
 import org.chtijbug.drools.console.service.model.kie.KieConfigurationData;
 import org.chtijbug.drools.console.service.util.ApplicationContextProvider;
@@ -35,12 +24,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.*;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -51,48 +37,25 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.MultipartConfigElement;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @SpringBootApplication
 @EnableJpaRepositories("org.chtijbug.drools.proxy.persistence.repository")
-@EnableKafka
 @PropertySource("classpath:application.properties")
 @EnableSwagger2
 @EnableScheduling
+@EnableTransactionManagement
 public class DroolsSpringBootConsoleApplication extends SpringBootServletInitializer {
-
-
-
 
 
     @Value("${kie-wb.baseurl}")
     private String kiewbUrl;
 
-    @Value(value = "${kafka.bootstrapAddress}")
-    private String bootstrapAddress;
+    @Value("${almady.jms.url}")
+    private String jmsUrl;
+    private JmsTemplate jmsTemplate;
+    private ActiveMQXAConnectionFactory connectionFactory;
 
-    @Value("${pymma.kafka.activateSsl:false}")
-    private boolean activateSsl;
-
-    @Value("${pymma.kafka.sslTruststoreLocation:}")
-    private String sslTruststoreLocation;
-
-    @Value("${pymma.kafka.sslTruststorePassword:}")
-    private String sslTruststorePassword;
-
-    @Value("${pymma.kafka.sslKeyPassword:}")
-    private String sslKeyPassword;
-
-    @Value("${pymma.kafka.sslKeystorePassword:}")
-    private String sslKeystorePassword;
-
-    @Value("${pymma.kafka.sslKeystoreLocation:}")
-    private String sslKeystoreLocation;
-
-    @Value("${pymma.kafka.sslKeystoreType:}")
-    private String sslKeystoreType;
 
     @Autowired
     private DababaseContentUpdate dababaseContentUpdate;
@@ -148,75 +111,6 @@ public class DroolsSpringBootConsoleApplication extends SpringBootServletInitial
     }
 
 
-    @Bean
-    public KafkaAdmin kafkaAdmin() {
-        Map<String, Object> configs = new HashMap<>();
-        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        if (activateSsl) {
-            configs.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
-            configs.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, this.sslTruststoreLocation);
-            configs.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, this.sslTruststorePassword);
-            configs.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, this.sslKeyPassword);
-            configs.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, this.sslKeystorePassword);
-            configs.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, this.sslKeystoreLocation);
-            configs.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, this.sslKeystoreType);
-        }
-        return new KafkaAdmin(configs);
-    }
-
-    @Bean
-    public NewTopic loggingTopic() {
-        return new NewTopic(KafkaTopicConstants.REVERSE_PROXY, 1, (short) 1);
-    }
-
-    @Bean
-    public ProducerFactory<String, ReverseProxyUpdate> producerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                bootstrapAddress);
-        configProps.put(
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                StringSerializer.class);
-        configProps.put(
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                JsonSerializer.class);
-        if (activateSsl) {
-            configProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
-            configProps.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, this.sslTruststoreLocation);
-            configProps.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, this.sslTruststorePassword);
-            configProps.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, this.sslKeyPassword);
-            configProps.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, this.sslKeystorePassword);
-            configProps.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, this.sslKeystoreLocation);
-            configProps.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, this.sslKeystoreType);
-        }
-        return new DefaultKafkaProducerFactory<>(configProps);
-    }
-
-
-    @Bean
-    public KafkaTemplate<String, ReverseProxyUpdate> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
-    }
-
-
-
-
-    public ConsumerFactory<String, KieContainerResponse> greetingConsumerFactory() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG,"Console");
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(KieContainerResponse.class));
-    }
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, KieContainerResponse>
-    ruleKafkaListenerKieContainerUpdateFactory() {
-
-        ConcurrentKafkaListenerContainerFactory<String, KieContainerResponse> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(greetingConsumerFactory());
-        return factory;
-    }
 
     @Bean
     public ServletRegistrationBean<SpringServlet> springServlet(ApplicationContext context) {
@@ -228,6 +122,15 @@ public class DroolsSpringBootConsoleApplication extends SpringBootServletInitial
         SpringApplication.run(DroolsSpringBootConsoleApplication.class, args);
     }
 
+    @Bean(name = "jmsTemplate")
+    JmsTemplate createJmsTemplate() {
+        connectionFactory = new ActiveMQXAConnectionFactory(jmsUrl);
+        connectionFactory.setTrustAllPackages(true);
+        connectionFactory.setAlwaysSyncSend(true);
+        connectionFactory.setProducerWindowSize(1024000);
+        jmsTemplate = new JmsTemplate(connectionFactory);
+        return jmsTemplate;
+    }
 
    @EventListener(ApplicationReadyEvent.class)
     public void initPlatform(){
