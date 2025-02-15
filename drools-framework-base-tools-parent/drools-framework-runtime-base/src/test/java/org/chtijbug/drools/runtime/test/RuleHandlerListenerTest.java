@@ -123,7 +123,7 @@ public class RuleHandlerListenerTest {
 
     @Test
     public void RuleFLowgroup1() throws Exception {
-        ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(1L, "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT", "ruleflow1.drl", "RuleFlowProcess1.bpmn2");
+        ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(1L, "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT", "ruleflow1.drl", "ruleflow1-new.bpmn2");
 
         session = ruleBasePackage.createRuleBaseSession();
 

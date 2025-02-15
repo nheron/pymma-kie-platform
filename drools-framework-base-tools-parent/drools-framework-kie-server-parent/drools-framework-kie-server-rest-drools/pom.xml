@@ -18,18 +18,7 @@
             <groupId>com.pymmasoftware.jbpm</groupId>
             <artifactId>drools-framework-kie-server-services-drools</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.thoughtworks.xstream</groupId>
-                    <artifactId>xstream</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.4.10</version>
-        </dependency>
+         </dependency>
 
         <!--dependency>
             <groupId>com.pymmasoftware.jbpm</groupId>

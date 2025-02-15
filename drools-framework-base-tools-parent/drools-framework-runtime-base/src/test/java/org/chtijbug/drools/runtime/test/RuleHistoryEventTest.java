@@ -100,7 +100,7 @@ public class RuleHistoryEventTest {
                 return true;
             }
         };
-        RuleBasePackage ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(1L, historyListener, "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT", "ruleflow2.drl", "RuleFlowProcess2.bpmn2");
+        RuleBasePackage ruleBasePackage = RuleBaseBuilder.createRuleBasePackage(1L, historyListener, "com.pymmasoftware.test", "fibonacci", "1.0.0_SNAPSHOT", "ruleflow2.drl", "ruleflow2-new.bpmn2");
         Long rulePackageID = ruleBasePackage.getRuleBaseID();
 
         RuleBaseSession ruleBaseSession1 = ruleBasePackage.createRuleBaseSession();

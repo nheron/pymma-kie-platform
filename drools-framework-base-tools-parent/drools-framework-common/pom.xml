@@ -5,7 +5,7 @@
     <parent>
         <artifactId>drools-framework-base-tools-parent</artifactId>
         <groupId>com.pymmasoftware.jbpm</groupId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -29,29 +29,8 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>javax.activation</artifactId>
-            <version>${javax.activation.version}</version>
-        </dependency>
 
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>${jaxb.api.version}</version>
-        </dependency>
 
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>${jaxb.api.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb.api.version}</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

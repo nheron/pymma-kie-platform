@@ -71,11 +71,8 @@ public interface RuleBaseSession {
 
     HistoryContainer getHistoryContainer();
 
-    String getHistoryContainerXML();
 
     Collection<DroolsFactObject> listLastVersionObjects();
-
-    String listLastVersionObjectsXML();
 
     Collection<DroolsRuleObject> listRules();
 

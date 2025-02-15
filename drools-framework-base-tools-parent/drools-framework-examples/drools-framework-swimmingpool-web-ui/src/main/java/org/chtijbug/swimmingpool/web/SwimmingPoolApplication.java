@@ -16,8 +16,7 @@
 package org.chtijbug.swimmingpool.web;
 
 
-import org.chtijbug.drools.generic.restclient.GenericConnexionConfiguration;
-import org.chtijbug.drools.generic.restclient.rest.UsedRestAPI;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -45,11 +44,5 @@ public class SwimmingPoolApplication {
         SpringApplication.run(SwimmingPoolApplication.class, args);
     }
 
-    @Bean
-    public UsedRestAPI serviceCalculate() {
-        GenericConnexionConfiguration swimmingPoolConnexionConfiguration = new GenericConnexionConfiguration(url, username, password);
 
-        return swimmingPoolConnexionConfiguration.getGenericRestAPI();
-
-    }
 }

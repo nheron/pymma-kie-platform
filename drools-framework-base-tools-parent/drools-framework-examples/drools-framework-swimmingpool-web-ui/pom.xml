@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.pymmasoftware.jbpm</groupId>
         <artifactId>drools-framework-examples</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>drools-framework-swimmingpool-web-ui</artifactId>
@@ -48,17 +48,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>com.pymmasoftware.jbpm</groupId>
-            <artifactId>drools-framework-kie-server-client-connector</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

@@ -27,7 +27,6 @@ import org.chtijbug.drools.entity.history.session.SessionFireAllRulesMaxNumberRe
 import org.drools.core.common.DefaultFactHandle;
 import org.drools.core.common.InternalFactHandle;
 import org.drools.core.event.rule.impl.BeforeActivationFiredEventImpl;
-import org.drools.core.reteoo.InitialFactImpl;
 import org.kie.api.event.rule.*;
 import org.kie.api.runtime.KieRuntime;
 import org.kie.api.runtime.rule.FactHandle;

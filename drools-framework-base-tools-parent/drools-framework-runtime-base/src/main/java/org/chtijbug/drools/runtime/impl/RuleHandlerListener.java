@@ -24,10 +24,10 @@ import org.chtijbug.drools.entity.history.rule.AfterRuleFlowActivatedHistoryEven
 import org.chtijbug.drools.entity.history.rule.AfterRuleFlowDeactivatedHistoryEvent;
 import org.chtijbug.drools.entity.history.rule.BeforeRuleFiredHistoryEvent;
 import org.chtijbug.drools.entity.history.session.SessionFireAllRulesMaxNumberReachedEvent;
+import org.drools.base.reteoo.InitialFactImpl;
 import org.drools.core.common.DefaultFactHandle;
 import org.drools.core.common.InternalFactHandle;
 import org.drools.core.event.rule.impl.BeforeActivationFiredEventImpl;
-import org.drools.core.reteoo.InitialFactImpl;
 import org.kie.api.event.rule.*;
 import org.kie.api.runtime.KieRuntime;
 import org.kie.api.runtime.rule.FactHandle;

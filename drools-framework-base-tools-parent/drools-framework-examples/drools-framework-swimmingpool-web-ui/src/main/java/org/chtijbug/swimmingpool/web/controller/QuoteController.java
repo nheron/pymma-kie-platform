@@ -17,7 +17,6 @@ package org.chtijbug.swimmingpool.web.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.chtijbug.drools.common.rest.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -90,8 +89,8 @@ public class QuoteController {
                         "transactionId",  updatedInstance.getSessionLogging());
 
             }
-            clientHttpRequest.getHeaders().add(
-                    Constants.AUTHORISATION_HEADER, token);
+         //   clientHttpRequest.getHeaders().add(
+          //          Constants.AUTHORISATION_HEADER, token);
             clientHttpRequest.getHeaders().add(
                     HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             clientHttpRequest.getHeaders().add(

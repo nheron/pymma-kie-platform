@@ -5,7 +5,7 @@
     <parent>
         <artifactId>pymma-jbpm-platform-parent</artifactId>
         <groupId>com.pymmasoftware.jbpm</groupId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -13,23 +13,23 @@
     <modules>
         <module>drools-framework-common</module>
         <module>drools-framework-examples</module>
-        <module>drools-framework-kie-server-parent</module>
+        <!--module>drools-framework-kie-server-parent</module-->
         <module>drools-framework-runtime-base</module>
         <module>drools-framework-runtime-entity</module>
-        <module>drools-framework-kie-wb-parent</module>
-        <module>drools-framework-spring-boot-parent</module>
+        <!--module>drools-framework-kie-wb-parent</module-->
+        <!--module>drools-framework-spring-boot-parent</module-->
     </modules>
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.kie</groupId>
-                <artifactId>kie-bom</artifactId>
+                <groupId>org.kie.kogito</groupId>
+                <artifactId>kogito-bom</artifactId>
                 <version>${jbpm.version}</version>
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>org.jbpm</groupId>
-                <artifactId>jbpm-bom</artifactId>
+                <groupId>org.kie.kogito</groupId>
+                <artifactId>kogito-bom</artifactId>
                 <version>${jbpm.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
@@ -107,11 +107,6 @@
                 <artifactId>logback-classic</artifactId>
                 <version>1.0.9</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.thoughtworks.xstream</groupId>
-                <artifactId>xstream</artifactId>
-                <version>1.4.10</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>

@@ -17,8 +17,6 @@ package org.chtijbug.drools.runtime.impl;
 
 import com.rits.cloning.Cloner;
 import com.rits.cloning.ObjenesisInstantiationStrategy;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import org.chtijbug.drools.common.reflection.ReflectionUtils;
 import org.chtijbug.drools.entity.*;
 import org.chtijbug.drools.entity.history.EventCounter;
@@ -31,11 +29,11 @@ import org.chtijbug.drools.runtime.DroolsChtijbugException;
 import org.chtijbug.drools.runtime.DroolsFactObjectFactory;
 import org.chtijbug.drools.runtime.RuleBaseSession;
 import org.chtijbug.drools.runtime.listener.HistoryListener;
-import org.drools.core.definitions.rule.impl.RuleImpl;
+
+import org.drools.base.definitions.rule.impl.RuleImpl;
 import org.jbpm.workflow.core.node.RuleSetNode;
 import org.jbpm.workflow.instance.node.*;
 import org.kie.api.definition.rule.Rule;
-import org.kie.api.event.rule.DefaultAgendaEventListener;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.ObjectFilter;
 import org.kie.api.runtime.process.NodeInstance;
@@ -82,7 +80,6 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
     private ProcessHandlerListener processHandlerListener;
     private int maxNumberRuleToExecute;
 
-    private XStream xstream = new XStream(new JettisonMappedXmlDriver());
     private Long ruleBaseID;
     private Long sessionId;
 
@@ -127,7 +124,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
 
     public DroolsProcessInstanceObject getDroolsProcessInstanceObject(ProcessInstance processInstance) {
 
-        DroolsProcessInstanceObject droolsProcessInstanceObject = processInstanceList.get(Long.toString(processInstance.getId()));
+        DroolsProcessInstanceObject droolsProcessInstanceObject = processInstanceList.get(processInstance.getId());
         if (droolsProcessInstanceObject == null) {
             DroolsProcessObject droolsProcessObject = processList.get(processInstance.getProcess().getId());
 
@@ -153,7 +150,9 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
             nodeType = DroolsNodeType.RuleNode;
             RuleSetNode ruleSetNode = this.getRuleSetNode(nodeInstance);
             if (ruleSetNode != null) {
-                ruleFlowGroupName = ruleSetNode.getRuleFlowGroup();
+                if (ruleSetNode.getRuleType().isRuleFlowGroup()) {
+                    ruleFlowGroupName = ruleSetNode.getRuleType().getName();
+                }
             }
         } else if (nodeInstance instanceof SplitInstance) {
             nodeType = DroolsNodeType.SplitNode;
@@ -162,7 +161,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
         } else if (nodeInstance instanceof EndNodeInstance) {
             nodeType = DroolsNodeType.EndNode;
         }
-        DroolsProcessInstanceObject droolsProcessInstanceObject = processInstanceList.get(Long.toString(nodeInstance.getProcessInstance().getId()));
+        DroolsProcessInstanceObject droolsProcessInstanceObject = processInstanceList.get(nodeInstance.getProcessInstance().getId());
         if (droolsProcessInstanceObject == null) {
             droolsProcessInstanceObject = this.getDroolsProcessInstanceObject(nodeInstance.getProcessInstance());
         }
@@ -185,7 +184,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
        RuleImpl ruleInstance = (RuleImpl) rule;
         if (droolsRuleObject == null) {
             droolsRuleObject = DroolsRuleObject.createDroolRuleObject(rule.getName(), rule.getPackageName());
-            droolsRuleObject.setRuleFlowGroup(ruleInstance.getRuleFlowGroup());
+            droolsRuleObject.setRuleFlowGroup(ruleInstance.getAgendaGroup());
             addDroolsRuleObject(droolsRuleObject);
         }
 
@@ -237,16 +236,6 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
     }
 
     @Override
-    public String getHistoryContainerXML() {
-        String result = null;
-        if (historyContainer != null) {
-            xstream.setMode(XStream.NO_REFERENCES);
-            result = xstream.toXML(historyContainer);
-        }
-        return result;
-    }
-
-    @Override
     public Collection<DroolsFactObject> listLastVersionObjects() {
         Collection<DroolsFactObject> list = new ArrayList<>();
         for (Object o : this.listFact.keySet()) {
@@ -257,16 +246,6 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
         return list;
     }
 
-    @Override
-    public String listLastVersionObjectsXML() {
-        String result = null;
-        Collection<DroolsFactObject> list = this.listLastVersionObjects();
-        if (list != null) {
-            xstream.setMode(XStream.NO_REFERENCES);
-            result = xstream.toXML(list);
-        }
-        return result;
-    }
 
     public void setData(FactHandle f, Object o, DroolsFactObject fObject) {
 

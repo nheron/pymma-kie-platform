@@ -26,45 +26,16 @@
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.kie</groupId>
-            <artifactId>kie-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie</groupId>
-            <artifactId>kie-internal</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie</groupId>
-            <artifactId>kie-ci</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-workbench-models-guided-template</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.server</groupId>
-            <artifactId>kie-server-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.server</groupId>
-            <artifactId>kie-server-services-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.4.10</version>
-        </dependency>
+
+
+
+
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.pymmasoftware.jbpm</groupId>
-            <artifactId>drools-framework-kie-server-extension-interface</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>

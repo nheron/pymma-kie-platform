@@ -17,7 +17,6 @@ package org.chtijbug.drools.runtime.impl;
 
 import org.chtijbug.drools.entity.history.EventCounter;
 import org.chtijbug.drools.entity.history.knowledge.*;
-import org.chtijbug.drools.kieserver.extension.KieServerAddOnElement;
 import org.chtijbug.drools.runtime.DroolsChtijbugException;
 import org.chtijbug.drools.runtime.RuleBasePackage;
 import org.chtijbug.drools.runtime.RuleBaseSession;
@@ -81,10 +80,7 @@ public class RuleBaseSingleton implements RuleBasePackage {
      * Global Maps
      */
     Map<String, Object> globals = new HashMap<>();
-    /**
-     * extensions Points
-     */
-    private KieServerAddOnElement kieServerAddOnElement = null;
+
 
     /**
      * @param kieContainer
@@ -96,11 +92,7 @@ public class RuleBaseSingleton implements RuleBasePackage {
         this.maxNumberRuleToExecute = maxNumberRulesToExecute;
     }
 
-    public RuleBaseSingleton(KieContainer kieContainer, int maxNumberRulesToExecute, KieServerAddOnElement kieServerAddOnElement) {
-        this.kieServerAddOnElement = kieServerAddOnElement;
-        this.kieContainer = kieContainer;
-        this.maxNumberRuleToExecute = maxNumberRulesToExecute;
-    }
+
 
     public RuleBaseSingleton(KieContainer kieContainer, int maxNumberRulesToExecute, HistoryListener historyListener) {
         this.kieContainer = kieContainer;
