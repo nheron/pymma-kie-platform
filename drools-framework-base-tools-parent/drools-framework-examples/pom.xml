@@ -17,7 +17,7 @@
     <modules>
         <!--module>drools-framework-loyalty-model</module-->
         <module>drools-framework-swimming-pool-model</module>
-        <module>drools-framework-swimmingpool-web-ui</module>
+        <!--module>drools-framework-swimmingpool-web-ui</module-->
         <!--module>drools-framework-loyalty-web</module-->
     </modules>
 

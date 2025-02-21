@@ -17,10 +17,10 @@ package org.chtijbug.drools.runtime;
 
 import junit.framework.Assert;
 import org.apache.commons.io.IOUtils;
-import org.chtijbug.drools.common.date.DateHelper;
 import org.chtijbug.drools.entity.DroolsFactObject;
 import org.chtijbug.drools.runtime.pojotest.User;
 import org.chtijbug.drools.runtime.pojotest.UserName;
+import org.chtijbug.drools.common.date.DateHelper;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -43,7 +43,7 @@ public class JSONdroolsObjecttest {
         User user = new User();
         user.setUserId("1");
         user.setUserName(userName);
-        user.setDob(DateHelper.getDate("2013-12-31"));
+        user.setDob(DateHelper.Companion.getDate("2013-12-31"));
         DroolsFactObject droolsFactObject = new DroolsFactObject(user, 1);
         InputStream stream = JSONdroolsObjecttest.class.getResourceAsStream("/user.json");
         String toto = IOUtils.toString(stream, "utf-8");

@@ -41,6 +41,7 @@
         <postgres.version>42.2.8</postgres.version>
         <postgresql.version>42.2.8</postgresql.version>
         <activemq.version>5.15.10</activemq.version>
+        <kotlin.version>1.9.25</kotlin.version>
     </properties>
 
 
@@ -111,7 +112,7 @@
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
+            <!--plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.4</version>
@@ -127,7 +128,7 @@
                     <additionalparam>-Xdoclint:none</additionalparam>
                     <detectJavaApiLink>false</detectJavaApiLink>
                 </configuration>
-            </plugin>
+            </plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
