@@ -52,8 +52,8 @@ public class RuleBaseSingleton implements RuleBasePackage {
     /**
      * unique ID of the RuleBase in the JVM
      */
-    protected EventCounter eventCounter = EventCounter.newCounter();
-    protected EventCounter sessionCounter = EventCounter.newCounter();
+    protected EventCounter eventCounter = EventCounter.Companion.newCounter();
+    protected EventCounter sessionCounter = EventCounter.Companion.newCounter();
     /**
      * Rule Base ID
      */
@@ -170,7 +170,7 @@ public class RuleBaseSingleton implements RuleBasePackage {
                 try {
                     lockKbase.acquire();
                 } catch (Exception e) {
-                    throw new DroolsChtijbugException(DroolsChtijbugException.KbaseAcquire, "", e);
+                    throw new DroolsChtijbugException(DroolsChtijbugException.Companion.getKbaseAcquire(),  "", e);
                 }
                 //_____ Now we can create a new stateful session using KnowledgeBase
                 //_____ Now we can create a new stateful session using KnowledgeBase
@@ -200,7 +200,7 @@ public class RuleBaseSingleton implements RuleBasePackage {
                 newRuleBaseSession = new RuleBaseStatefulSession(this.ruleBaseID, sessionId, newDroolsSession, maxNumberRulesToExecute, sessionHistoryListener);
                 //_____ Release semaphore
             } else {
-                throw new DroolsChtijbugException(DroolsChtijbugException.KbaseNotInitialised, "", null);
+                throw new DroolsChtijbugException(DroolsChtijbugException.Companion.getKbaseNotInitialised(),  "", null);
             }
             //____ return the wrapped KnowledgeSession
             return newRuleBaseSession;
@@ -228,7 +228,7 @@ public class RuleBaseSingleton implements RuleBasePackage {
             kieContainer = this.knowledgeModule.build();
         } catch (Exception e) {
             logger.error("error to load Agent", e);
-            throw new DroolsChtijbugException(DroolsChtijbugException.ErrorToLoadAgent, "", e);
+            throw new DroolsChtijbugException(DroolsChtijbugException.Companion.getErrorToLoadAgent(),  "", e);
         }
     }
 

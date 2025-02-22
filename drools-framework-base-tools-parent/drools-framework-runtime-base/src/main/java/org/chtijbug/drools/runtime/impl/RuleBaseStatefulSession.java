@@ -84,7 +84,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
     private Long sessionId;
 
     private HistoryListener historyListener;
-    private EventCounter eventCounter = EventCounter.newCounter();
+    private EventCounter eventCounter = EventCounter.Companion.newCounter();
     private Cloner cloner = new Cloner(new ObjenesisInstantiationStrategy());
 
     public RuleBaseStatefulSession(Long ruleBaseID, Long sessionId, KieSession knowledgeSession, int maxNumberRuleToExecute, HistoryListener historyListener) throws DroolsChtijbugException {
@@ -129,13 +129,13 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
             DroolsProcessObject droolsProcessObject = processList.get(processInstance.getProcess().getId());
 
             if (droolsProcessObject == null) {
-                droolsProcessObject = DroolsProcessObject.createDroolsProcessObject(processInstance.getProcess().getId(),
+                droolsProcessObject = DroolsProcessObject.Companion.createDroolsProcessObject(processInstance.getProcess().getId(),
                         processInstance.getProcess().getName(),
                         processInstance.getProcess().getPackageName(), processInstance.getProcess().getType(), processInstance.getProcess().getVersion());
                 processList.put(processInstance.getProcess().getId(), droolsProcessObject);
             }
 
-            droolsProcessInstanceObject = DroolsProcessInstanceObject.createDroolsProcessInstanceObject(String.valueOf(processInstance.getId()), droolsProcessObject);
+            droolsProcessInstanceObject = DroolsProcessInstanceObject.Companion.createDroolsProcessInstanceObject(String.valueOf(processInstance.getId()), droolsProcessObject);
             processInstanceList.put(droolsProcessInstanceObject.getId(), droolsProcessInstanceObject);
         }
         return droolsProcessInstanceObject;
@@ -168,10 +168,10 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
 
         DroolsNodeInstanceObject droolsNodeInstanceObject = droolsProcessInstanceObject.getDroolsNodeInstanceObjet(String.valueOf(nodeInstance.getId()));
         if (droolsNodeInstanceObject == null) {
-            DroolsNodeObject droolsNodeObject = DroolsNodeObject.createDroolsNodeObject(String.valueOf(nodeInstance.getNode().getId()), nodeType);
+            DroolsNodeObject droolsNodeObject = DroolsNodeObject.Companion.createDroolsNodeObject(String.valueOf(nodeInstance.getNode().getId()), nodeType);
             droolsProcessInstanceObject.getProcess().addDroolsNodeObject(droolsNodeObject);
             droolsNodeObject.setRuleflowGroupName(ruleFlowGroupName);
-            droolsNodeInstanceObject = DroolsNodeInstanceObject.createDroolsNodeInstanceObject(String.valueOf(nodeInstance.getId()), droolsNodeObject);
+            droolsNodeInstanceObject = DroolsNodeInstanceObject.Companion.createDroolsNodeInstanceObject(String.valueOf(nodeInstance.getId()), droolsNodeObject);
             droolsProcessInstanceObject.addDroolsNodeInstanceObject(droolsNodeInstanceObject);
         }
 
@@ -183,7 +183,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
         DroolsRuleObject droolsRuleObject = listRules.get(rule.toString());
        RuleImpl ruleInstance = (RuleImpl) rule;
         if (droolsRuleObject == null) {
-            droolsRuleObject = DroolsRuleObject.createDroolRuleObject(rule.getName(), rule.getPackageName());
+            droolsRuleObject = DroolsRuleObject.Companion.createDroolRuleObject(rule.getName(), rule.getPackageName());
             droolsRuleObject.setRuleFlowGroup(ruleInstance.getAgendaGroup());
             addDroolsRuleObject(droolsRuleObject);
         }
@@ -327,7 +327,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
             try {
                 getterValue = method.invoke(newObject, (Object[]) null);
             } catch (Exception e) {
-                throw new DroolsChtijbugException(DroolsChtijbugException.insertByReflection, "getterValue = method.invoke(newObject, (Object[]) null);", e);
+                throw new DroolsChtijbugException(DroolsChtijbugException.Companion.getInsertByReflection(), "getterValue = method.invoke(newObject, (Object[]) null);", e);
             }
             if (getterValue == null)
                 continue;
@@ -406,7 +406,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
         try {
             this.knowledgeSession.fireAllRules();
         } catch (Exception e) {
-            throw new DroolsChtijbugException(DroolsChtijbugException.fireAllRules, "", e);
+            throw new DroolsChtijbugException(DroolsChtijbugException.Companion.getFireAllRules(),  "", e);
         }
 
         long stopTime = System.currentTimeMillis();
@@ -416,7 +416,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
                 SessionFireAllRulesMaxNumberReachedEvent sessionFireAllRulesMaxNumberReachedEvent = new SessionFireAllRulesMaxNumberReachedEvent(eventCounter.next(), ruleHandlerListener.getNbRuleFired(), maxNumberRuleToExecute, this.ruleBaseID, this.sessionId);
                 this.addHistoryElement(sessionFireAllRulesMaxNumberReachedEvent);
             }
-            throw new DroolsChtijbugException(DroolsChtijbugException.MaxNumberRuleExecutionReached, "nbRulesExecuted" + afterNumberRules + " and MaxNumberRules for the session is set to " + maxNumberRuleToExecute, null);
+            throw new DroolsChtijbugException(DroolsChtijbugException.Companion.getMaxNumberRuleExecutionReached(),  "nbRulesExecuted" + afterNumberRules + " and MaxNumberRules for the session is set to " + maxNumberRuleToExecute, null);
         }
         if (this.historyListener != null) {
             SessionFireAllRulesEndEvent sessionFireAllRulesEndEvent = new SessionFireAllRulesEndEvent(eventCounter.next(), this.ruleBaseID, this.sessionId, stopTime - startTime, afterNumberRules - beforeNumberRules);
