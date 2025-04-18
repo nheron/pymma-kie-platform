@@ -6,9 +6,9 @@ import java.io.Serializable
 
 interface HistoryListener : Serializable {
     @Throws(DroolsChtijbugException::class)
-    open fun fireEvent(newHistoryEvent: HistoryEvent?)
+     fun fireEvent(newHistoryEvent: HistoryEvent?)
 
-    open fun withDetails(): Boolean
+     fun withDetails(): Boolean
 
-    open fun setDetails(details: Boolean?)
+     fun setDetails(details: Boolean?)
 }
