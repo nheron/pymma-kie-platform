@@ -7,7 +7,6 @@ import org.chtijbug.drools.entity.history.fact.DeletedFactHistoryEvent;
 import org.chtijbug.drools.entity.history.fact.InsertedFactHistoryEvent;
 import org.chtijbug.drools.entity.history.fact.UpdatedFactHistoryEvent;
 import org.chtijbug.drools.runtime.*;
-import org.chtijbug.drools.runtime.listener.HistoryListener;
 import org.junit.*;
 
 /**

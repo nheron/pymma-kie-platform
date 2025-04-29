@@ -1,9 +1,10 @@
 package org.chtijbug.drools.entity.history
 
 import org.chtijbug.drools.runtime.DroolsChtijbugException
+import java.io.Serializable
 import java.util.*
 
-open class HistoryEvent {
+open class HistoryEvent : Serializable{
 
     val serialVersionUID: Long = -6640538290066213804L
      var dateEvent: Date? = null
