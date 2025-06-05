@@ -5,7 +5,7 @@
     <parent>
         <artifactId>drools-framework-base-tools-parent</artifactId>
         <groupId>com.pymmasoftware.jbpm</groupId>
-        <version>1.3.0-SNAPSHOT</version>
+         <version>7.57.0-SNAPSHOT</version>
     </parent>
 
 
@@ -48,34 +48,41 @@
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-compiler</artifactId>
-            <version>${jbpm.version}</version>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>com.thoughtworks.xstream</groupId>
                     <artifactId>xstream</artifactId>
                 </exclusion>
             </exclusions>
-          </dependency>
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.4.21</version>
         </dependency>
-        <dependency>
-            <groupId>org.kie.kogito</groupId>
-            <artifactId>jbpm-bpmn2</artifactId>
-            <version>${jbpm.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.drools</groupId>
-            <artifactId>drools-wiring-dynamic</artifactId>
-            <version>${jbpm.version}</version>
+            <artifactId>drools-compiler</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-bpmn2</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.server</groupId>
+            <artifactId>kie-server-client</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
@@ -89,7 +96,16 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.kie.server</groupId>
+            <artifactId>kie-server-api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>org.reflections</groupId>
@@ -110,7 +126,11 @@
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.10</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
@@ -120,17 +140,31 @@
             <artifactId>drools-core</artifactId>
             <exclusions>
                 <exclusion>
-                    <groupId>org.drools</groupId>
-                    <artifactId>drools-wiring-static</artifactId>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.kie.kogito</groupId>
+            <groupId>org.jbpm</groupId>
             <artifactId>jbpm-flow</artifactId>
-            <version>${jbpm.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-internal</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
@@ -141,7 +175,10 @@
             <artifactId>powermock-api-mockito</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-workbench-models-guided-dtable</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

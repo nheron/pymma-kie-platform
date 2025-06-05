@@ -29,11 +29,11 @@ import org.chtijbug.drools.runtime.DroolsChtijbugException;
 import org.chtijbug.drools.runtime.DroolsFactObjectFactory;
 import org.chtijbug.drools.runtime.RuleBaseSession;
 import org.chtijbug.drools.runtime.listener.HistoryListener;
-
-import org.drools.base.definitions.rule.impl.RuleImpl;
+import org.drools.core.definitions.rule.impl.RuleImpl;
 import org.jbpm.workflow.core.node.RuleSetNode;
 import org.jbpm.workflow.instance.node.*;
 import org.kie.api.definition.rule.Rule;
+import org.kie.api.event.rule.DefaultAgendaEventListener;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.ObjectFilter;
 import org.kie.api.runtime.process.NodeInstance;
@@ -150,9 +150,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
             nodeType = DroolsNodeType.RuleNode;
             RuleSetNode ruleSetNode = this.getRuleSetNode(nodeInstance);
             if (ruleSetNode != null) {
-                if (ruleSetNode.getRuleType().isRuleFlowGroup()) {
-                    ruleFlowGroupName = ruleSetNode.getRuleType().getName();
-                }
+                ruleFlowGroupName = ruleSetNode.getRuleFlowGroup();
             }
         } else if (nodeInstance instanceof SplitInstance) {
             nodeType = DroolsNodeType.SplitNode;
@@ -320,7 +318,7 @@ public class RuleBaseStatefulSession implements RuleBaseSession {
         //____ Then foreach getters insert item by reflection
         for (Method method : newObject.getClass().getMethods()) {
             //____ only manage getters
-            if (!ReflectionUtils.IsGetter(method)) {
+            if (!ReflectionUtils.Companion.IsGetter(method)) {
                 continue;
             }
             Object getterValue;

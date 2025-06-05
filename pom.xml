@@ -7,7 +7,7 @@
 
     <groupId>com.pymmasoftware.jbpm</groupId>
     <artifactId>pymma-jbpm-platform-parent</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>7.57.0-SNAPSHOT</version>
     <modules>
         <!--module>kie-wb-webapp</module-->
         <!--module>drools-framework-business-proxy-parent</module-->
@@ -17,7 +17,7 @@
 
     <properties>
         <fabri8.plugin.version>0.34.1</fabri8.plugin.version>
-        <jbpm.version>10.0.0</jbpm.version>
+        <jbpm.version>7.57.0.Final</jbpm.version>
         <node.version>v10.16.3</node.version>
         <npm.version>6.11.3</npm.version>
         <frontend-maven-plugin.version>1.11.3</frontend-maven-plugin.version>
@@ -35,7 +35,7 @@
         <javax.activation.version>1.2.0</javax.activation.version>
         <jaxb.api.version>2.3.0</jaxb.api.version>
         <maven.plugin.version>3.11.0</maven.plugin.version>
-        <pymma.java.version>11</pymma.java.version>
+        <pymma.java.version>8</pymma.java.version>
         <jackson.version>2.13.4</jackson.version>
         <jackson.bind.version>2.13.4.2</jackson.bind.version>
         <postgres.version>42.2.8</postgres.version>

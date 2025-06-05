@@ -35,10 +35,10 @@ public class ReflectionUtilsTestCase {
 
         try {
             Method methodToEval = TestClass.class.getMethod("getProperty");
-            assertTrue(ReflectionUtils.IsGetter(methodToEval));
+            assertTrue(ReflectionUtils.Companion.IsGetter(methodToEval));
 
             methodToEval = TestClass.class.getMethod("execute");
-            assertFalse(ReflectionUtils.IsGetter(methodToEval));
+            assertFalse(ReflectionUtils.Companion.IsGetter(methodToEval));
 
 
         } catch (NoSuchMethodException e) {

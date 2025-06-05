@@ -22,11 +22,12 @@ import org.chtijbug.drools.entity.history.fact.FactHistoryEvent;
 import org.chtijbug.drools.entity.history.fact.InsertedFactHistoryEvent;
 import org.chtijbug.drools.entity.history.fact.UpdatedFactHistoryEvent;
 import org.chtijbug.drools.runtime.DroolsFactObjectFactory;
-import org.drools.base.definitions.rule.impl.RuleImpl;
-import org.drools.core.common.PropagationContext;
+
+import org.drools.core.definitions.rule.impl.RuleImpl;
 import org.drools.core.event.rule.impl.ObjectDeletedEventImpl;
 import org.drools.core.event.rule.impl.ObjectInsertedEventImpl;
 import org.drools.core.event.rule.impl.ObjectUpdatedEventImpl;
+import org.drools.core.spi.PropagationContext;
 import org.kie.api.event.rule.ObjectDeletedEvent;
 import org.kie.api.event.rule.ObjectInsertedEvent;
 import org.kie.api.event.rule.ObjectUpdatedEvent;
